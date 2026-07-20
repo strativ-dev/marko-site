@@ -27,7 +27,7 @@
     body {
       background: var(--white);
       color: var(--text);
-      font: 17px/1.6 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font: 16px/1.6 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; text-decoration: none; }
@@ -37,22 +37,16 @@
     .navbar {
       position: fixed; top: 0; left: 50%; transform: translateX(-50%);
       z-index: 100;
-      width: min(680px, calc(100% - 32px));
+      width: min(600px, calc(100% - 32px));
       background: var(--ink);
-      border-radius: 0 0 26px 26px;
+      border-radius: 0 0 22px 22px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 22px;
+      padding: 11px 18px;
       color: #fff;
     }
-    .navbar .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 19px; }
-    .logo-chip {
-      width: 34px; height: 34px; border-radius: 9px;
-      background: linear-gradient(180deg, #5a9df8 0%, #2f6ae8 45%, #1a2fbe 100%);
-      box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -2px 4px rgba(0,0,0,.25);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 800; font-size: 18px;
-    }
-    .nav-links { display: flex; align-items: center; gap: 20px; font-size: 14.5px; }
+    .navbar .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16.5px; }
+    .logo-chip { width: 28px; height: 28px; border-radius: 7px; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13.5px; }
     .nav-links a { color: rgba(255,255,255,.75); }
     .nav-links a:hover { color: #fff; }
 
@@ -61,19 +55,19 @@
       background: linear-gradient(180deg, #2242e0 0%, #2f63ec 34%, #4e8df5 68%, #8fc0fb 92%, #dceafe 100%);
       color: #fff;
       text-align: center;
-      padding: 150px 24px 90px;
+      padding: 118px 24px 72px;
     }
     .eyebrow {
-      display: inline-flex; align-items: center; gap: 9px;
-      font-weight: 600; font-size: 19px; margin-bottom: 34px;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-weight: 600; font-size: 15.5px; margin-bottom: 26px;
     }
-    .eyebrow img { width: 26px; height: 26px; border-radius: 7px; }
+    .eyebrow img { width: 22px; height: 22px; border-radius: 6px; }
     .hero h1 {
       font-family: "Inter", sans-serif;
       font-weight: 800;
-      font-size: clamp(48px, 9vw, 88px);
-      line-height: 1.02;
-      letter-spacing: -2.5px;
+      font-size: clamp(38px, 6.6vw, 64px);
+      line-height: 1.05;
+      letter-spacing: -1.8px;
     }
     .hero h1 .serif {
       display: block;
@@ -83,30 +77,30 @@
       letter-spacing: -1px;
     }
     .hero .sub {
-      max-width: 760px; margin: 34px auto 0;
-      font-size: clamp(17px, 2.4vw, 22px); line-height: 1.55;
-      color: rgba(255,255,255,.96);
+      max-width: 620px; margin: 24px auto 0;
+      font-size: clamp(15px, 2vw, 18px); line-height: 1.6;
+      color: rgba(255,255,255,.95);
     }
     .cta-big {
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      width: min(920px, 100%);
-      margin: 44px auto 0;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-width: min(440px, 100%);
+      margin: 34px auto 0;
       background: var(--ink); color: #fff;
       border-radius: 999px;
-      padding: 24px 34px;
-      font-size: clamp(18px, 2.6vw, 24px); font-weight: 700;
+      padding: 16px 32px;
+      font-size: clamp(15px, 2vw, 18px); font-weight: 600;
       transition: transform .15s, box-shadow .15s;
-      box-shadow: 0 18px 50px rgba(0,0,0,.28);
+      box-shadow: 0 14px 40px rgba(0,0,0,.25);
     }
-    .cta-big:hover { transform: translateY(-2px); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+    .cta-big:hover { transform: translateY(-2px); box-shadow: 0 20px 50px rgba(0,0,0,.32); }
     .trust {
-      display: flex; justify-content: center; gap: 34px; flex-wrap: wrap;
-      margin-top: 26px;
-      color: rgba(255,255,255,.75); font-size: 15px;
+      display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
+      margin-top: 20px;
+      color: rgba(255,255,255,.75); font-size: 13.5px;
     }
     /* HTML product mock: browser window + pin + comment box */
     .mock {
-      margin: 64px auto 0; max-width: 860px;
+      margin: 52px auto 0; max-width: 780px;
       background: #fff; border-radius: 22px; overflow: hidden;
       box-shadow: 0 50px 140px rgba(10, 30, 90, .35);
       text-align: left;
@@ -193,50 +187,50 @@
     }
 
     /* ── Sections (white) ───────────────────────────── */
-    section { padding: 96px 0; }
+    section { padding: 76px 0; }
     .kicker {
       text-align: center; font-weight: 600; color: var(--blue-mid);
-      font-size: 15px; letter-spacing: .4px; text-transform: uppercase; margin-bottom: 14px;
+      font-size: 12.5px; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 12px;
     }
     h2 {
       text-align: center;
-      font-size: clamp(34px, 5.4vw, 54px);
-      font-weight: 800; letter-spacing: -1.5px; line-height: 1.08;
-      margin-bottom: 14px;
+      font-size: clamp(27px, 4.2vw, 40px);
+      font-weight: 800; letter-spacing: -1px; line-height: 1.12;
+      margin-bottom: 12px;
     }
     h2 .serif {
       font-family: "Instrument Serif", Georgia, serif;
       font-style: italic; font-weight: 400;
     }
-    .section-sub { text-align: center; color: var(--muted); max-width: 620px; margin: 0 auto 56px; font-size: 18px; }
+    .section-sub { text-align: center; color: var(--muted); max-width: 560px; margin: 0 auto 44px; font-size: 15.5px; }
 
     /* Feature blocks */
     .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
     .feature {
-      background: var(--card); border-radius: var(--radius-xl);
-      padding: 34px 30px;
+      background: var(--card); border-radius: 22px;
+      padding: 26px 24px;
     }
     .feature .ico {
-      width: 52px; height: 52px; border-radius: 14px;
+      width: 44px; height: 44px; border-radius: 12px;
       background: linear-gradient(180deg, #eaf2fe, #d8e6fc);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 18px;
+      font-size: 20px; margin-bottom: 14px;
     }
-    .feature h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 10px; }
-    .feature p { color: var(--muted); font-size: 15.5px; }
+    .feature h3 { font-size: 16.5px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 7px; }
+    .feature p { color: var(--muted); font-size: 14px; }
 
     /* Detailed flow */
-    .flow { display: flex; flex-direction: column; gap: 18px; max-width: 780px; margin: 0 auto; }
-    .fstep { background: var(--card); border-radius: var(--radius-xl); padding: 30px 32px; }
-    .fhead { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+    .flow { display: flex; flex-direction: column; gap: 14px; max-width: 720px; margin: 0 auto; }
+    .fstep { background: var(--card); border-radius: 20px; padding: 24px 26px; }
+    .fhead { display: flex; align-items: center; gap: 13px; margin-bottom: 11px; }
     .fhead .n {
-      flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
-      background: var(--ink); color: #fff; font-weight: 700; font-size: 16px;
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+      background: var(--ink); color: #fff; font-weight: 700; font-size: 14px;
       display: flex; align-items: center; justify-content: center;
     }
-    .fhead h3 { font-size: 21px; font-weight: 700; letter-spacing: -0.4px; }
-    .fstep ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
-    .fstep li { color: #4a4f5c; font-size: 15.5px; padding-left: 20px; position: relative; }
+    .fhead h3 { font-size: 17.5px; font-weight: 700; letter-spacing: -0.3px; }
+    .fstep ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .fstep li { color: #4a4f5c; font-size: 14px; padding-left: 18px; position: relative; }
     .fstep li::before { content: "•"; color: var(--blue-mid); position: absolute; left: 4px; }
     .fstep b { color: var(--text); }
     .fstep em { font-style: normal; color: var(--text); border-bottom: 2px solid var(--blue-light); }
@@ -254,16 +248,16 @@
     /* Install */
     .install-steps { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
     .istep {
-      display: flex; gap: 18px; align-items: flex-start;
-      background: var(--card); border-radius: 20px; padding: 22px 24px;
+      display: flex; gap: 15px; align-items: flex-start;
+      background: var(--card); border-radius: 16px; padding: 17px 20px;
     }
     .istep .n {
-      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
-      background: var(--blue-mid); color: #fff; font-weight: 700; font-size: 14px;
+      flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%;
+      background: var(--blue-mid); color: #fff; font-weight: 700; font-size: 13px;
       display: flex; align-items: center; justify-content: center;
     }
-    .istep p { font-size: 16px; }
-    .istep .hint { color: var(--muted); font-size: 14px; margin-top: 2px; }
+    .istep p { font-size: 14.5px; }
+    .istep .hint { color: var(--muted); font-size: 13px; margin-top: 2px; }
     .istep a { color: var(--blue-deep); font-weight: 600; }
     .istep code {
       background: #fff; border: 1px solid var(--line);
@@ -273,33 +267,33 @@
 
     /* Privacy band (blue) */
     .privacy-band {
-      background: linear-gradient(180deg, var(--blue-deep), var(--blue-mid));
-      border-radius: 36px;
+      background: linear-gradient(180deg, #2f63ec, #5a95f6);
+      border-radius: 30px;
       color: #fff;
-      padding: 70px 40px;
-      max-width: 1040px; margin: 0 auto;
+      padding: 54px 36px;
+      max-width: 1000px; margin: 0 auto;
     }
     .privacy-band h2 { color: #fff; }
-    .privacy-band .section-sub { color: rgba(255,255,255,.8); }
-    .privacy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-    .pcard { text-align: center; padding: 10px; }
-    .pcard .big { font-size: 34px; display: block; margin-bottom: 12px; }
-    .pcard h3 { font-size: 17px; margin-bottom: 6px; font-weight: 700; }
-    .pcard p { color: rgba(255,255,255,.78); font-size: 14px; }
+    .privacy-band .section-sub { color: rgba(255,255,255,.82); }
+    .privacy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+    .pcard { text-align: center; padding: 8px; }
+    .pcard .big { font-size: 28px; display: block; margin-bottom: 10px; }
+    .pcard h3 { font-size: 15px; margin-bottom: 5px; font-weight: 700; }
+    .pcard p { color: rgba(255,255,255,.8); font-size: 13px; }
 
     /* FAQ */
     .faq { max-width: 720px; margin: 0 auto; }
-    details { background: var(--card); border-radius: 20px; padding: 22px 26px; margin-bottom: 12px; }
-    summary { cursor: pointer; font-weight: 700; font-size: 17px; list-style: none; position: relative; padding-right: 30px; letter-spacing: -0.2px; }
+    details { background: var(--card); border-radius: 16px; padding: 18px 22px; margin-bottom: 10px; }
+    summary { cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; position: relative; padding-right: 28px; letter-spacing: -0.2px; }
     summary::-webkit-details-marker { display: none; }
-    summary::after { content: "+"; position: absolute; right: 0; top: -2px; color: var(--muted); font-size: 24px; font-weight: 400; }
+    summary::after { content: "+"; position: absolute; right: 0; top: -2px; color: var(--muted); font-size: 21px; font-weight: 400; }
     details[open] summary::after { content: "–"; }
-    details p { color: var(--muted); font-size: 15.5px; margin-top: 12px; }
+    details p { color: var(--muted); font-size: 14px; margin-top: 10px; }
     details a { color: var(--blue-deep); font-weight: 600; }
 
     /* Final CTA */
-    .final { text-align: center; padding-bottom: 110px; }
-    .final .cta-big { width: min(720px, 100%); }
+    .final { text-align: center; padding-bottom: 90px; }
+    .final .cta-big { min-width: min(440px, 100%); }
 
     footer {
       border-top: 1px solid var(--line);
@@ -322,7 +316,7 @@
 <body>
 
 <nav class="navbar">
-  <a class="brand" href="#"><span class="logo-chip">M</span>Marko</a>
+  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png" alt="" />Marko</a>
   <div class="nav-links">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
@@ -378,7 +372,7 @@
      to the annotation / report / share flow in marko-ux-tool MUST
      update this section in the same commit. CI mirrors docs/ to the
      public marko-site repo on push (see .github/workflows/).
-     Documents behavior as of: v1.0.0
+     Documents behavior as of: v1.1.0
      ============================================================ -->
 <section id="how">
   <div class="wrap">
@@ -450,7 +444,7 @@
         <div class="fhead"><span class="n">7</span><h3>Share it</h3></div>
         <ul>
           <li><b>Standalone HTML</b>: one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
-          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your own</em> backend for short team links (reference server included, optional per-link passwords).</li>
+          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your own</em> backend for short team links. A one-file Cloudflare Worker ships in the repo; uploads are authenticated with <b>Sign in with Google</b> only.</li>
           <li><b>Per-pin deep links</b> that scroll straight to a pin, whole-<b>project exports</b>, <b>PDF</b> via print, <b>CSV</b> of reports or pins, and <b>JSON</b> backup/restore.</li>
           <li>Invite teammates from the project sidebar. Marko drafts the email with the link or file attached.</li>
         </ul>
@@ -546,7 +540,7 @@
 
 <footer>
   <div class="foot-inner">
-    <span>© 2026 Marko · MIT License · docs describe v1.0.0 behavior</span>
+    <span>© 2026 Marko · MIT License · docs describe v1.1.0 behavior</span>
     <div class="foot-links">
       <a href="https://github.com/strativ-dev/marko-ux-tool">GitHub</a>
       <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/PRIVACY.md">Privacy</a>
