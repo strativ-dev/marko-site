@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Marko — Free bug report &amp; UX check extension</title>
-  <meta name="description" content="Marko is a free, local-first Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports — no signup." />
+  <title>Marko: Free bug report &amp; UX check extension</title>
+  <meta name="description" content="Marko is a free, local-first Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. No signup." />
   <link rel="icon" href="marko-128.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,7 +47,7 @@
     .navbar .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 19px; }
     .logo-chip {
       width: 34px; height: 34px; border-radius: 9px;
-      background: linear-gradient(180deg, #ff8a5c 0%, #ff5a28 45%, #e93d0e 100%);
+      background: linear-gradient(180deg, #5a9df8 0%, #2f6ae8 45%, #1a2fbe 100%);
       box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -2px 4px rgba(0,0,0,.25);
       display: flex; align-items: center; justify-content: center;
       color: #fff; font-weight: 800; font-size: 18px;
@@ -251,18 +251,18 @@
     Spot it. Pin it.
     <span class="serif">Shipped by Friday.</span>
   </h1>
-  <p class="sub">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with annotated screenshots, severities, and comments — so your team can find, fix, and close anything in minutes.</p>
+  <p class="sub">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with annotated screenshots, severities, and comments, so your team can find, fix, and close anything in minutes.</p>
   <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">⬇&nbsp; Download for Chrome</a>
   <div class="trust">
     <span>Free forever</span>
     <span>Fully offline &amp; private</span>
     <span>Open source · MIT</span>
   </div>
-  <div class="shot"><img src="promo.png" alt="Marko — pin comments to any element" /></div>
+  <div class="shot"><img src="promo.png" alt="Marko: pin comments to any element" /></div>
 </header>
 
 <!-- ============================================================
-     HOW IT WORKS — keep in sync with the extension!
+     HOW IT WORKS: keep in sync with the extension!
      This section documents the EXACT current workflow. Any change
      to the annotation / report / share flow in marko-ux-tool MUST
      update this section in the same commit. CI mirrors docs/ to the
@@ -272,14 +272,14 @@
 <section id="how">
   <div class="wrap">
     <div class="kicker">The workflow</div>
-    <h2>How it works — <span class="serif">exactly.</span></h2>
+    <h2>How it works, <span class="serif">exactly.</span></h2>
     <p class="section-sub">The full workflow, step by step. No magic, no hand-waving.</p>
 
     <div class="flow">
       <div class="fstep">
         <div class="fhead"><span class="n">1</span><h3>Start a review</h3></div>
         <ul>
-          <li>Press <kbd>Alt</kbd>+<kbd>M</kbd> on any website, or click the Marko toolbar icon → <b>Start annotation</b>.</li>
+          <li>Press <kbd>Alt</kbd>+<kbd>M</kbd> on any website, or click the Marko toolbar icon then <b>Start annotation</b>.</li>
           <li>The review toolbar appears top-center; a viewport-size pill (e.g. <code>1440 × 900</code>) appears top-right.</li>
           <li>The <b>Pin</b> tool is selected by default. Press <kbd>?</kbd> anytime for the cheatsheet, <kbd>Esc</kbd> to exit.</li>
         </ul>
@@ -288,21 +288,21 @@
       <div class="fstep">
         <div class="fhead"><span class="n">2</span><h3>Pin a comment to an element</h3></div>
         <ul>
-          <li>Hover — the element under your cursor gets a green outline with a chip showing its tag, class, and size.</li>
-          <li>Click — a compact comment box opens with three tabs: <b>Note</b>, <b>Suggestion</b>, <b>Guideline</b> (<kbd>Tab</kbd> cycles them).</li>
+          <li>Hover: the element under your cursor gets a green outline with a chip showing its tag, class, and size.</li>
+          <li>Click: a compact comment box opens with three tabs: <b>Note</b>, <b>Suggestion</b>, <b>Guideline</b> (<kbd>Tab</kbd> cycles them).</li>
           <li>Nothing is saved yet: <b>Submit</b> stays disabled until you write something. <kbd>Enter</kbd> submits, <kbd>Esc</kbd> or <b>Cancel</b> discards, clicking elsewhere replaces the draft.</li>
-          <li>On submit the pin becomes a numbered dot <em>anchored to that element</em> — it stays attached through scrolling, window resizing, page changes, and reloads.</li>
+          <li>On submit the pin becomes a numbered dot <em>anchored to that element</em>. It stays attached through scrolling, window resizing, page changes, and reloads.</li>
         </ul>
       </div>
 
       <div class="fstep">
         <div class="fhead"><span class="n">3</span><h3>Manage the pin</h3></div>
         <ul>
-          <li>Click a numbered dot — a sidebar docks to the left with the pin's author and time.</li>
-          <li>Set <b>severity</b> (Neutral → Critical), <b>assignee</b> (autocompletes from your team list), and <b>due date</b>.</li>
+          <li>Click a numbered dot: a sidebar docks to the left with the pin's author and time.</li>
+          <li>Set <b>severity</b> (Neutral to Critical), <b>assignee</b> (autocompletes from your team list), and <b>due date</b>.</li>
           <li>Tag a <b>guideline</b>: Nielsen's 10 usability heuristics plus any custom ones you define in Settings.</li>
-          <li>Discuss in the <b>comment thread</b> — @mentions, emoji, and image attachments. Tick the checkbox to mark the pin <b>resolved</b> (its dot turns green ✓).</li>
-          <li>Navigate pins with <b>‹ N/M ›</b>. Delete via the sidebar or by clicking the dot with the eraser tool.</li>
+          <li>Discuss in the <b>comment thread</b> with @mentions, emoji, and image attachments. Tick the checkbox to mark the pin <b>resolved</b> (its dot turns green ✓).</li>
+          <li>Navigate pins with <b>‹ N/M ›</b>. Delete via the sidebar, or by clicking the dot with the eraser tool.</li>
         </ul>
       </div>
 
@@ -319,29 +319,29 @@
       <div class="fstep">
         <div class="fhead"><span class="n">5</span><h3>Save a report</h3></div>
         <ul>
-          <li>Click <b>+ Report</b> — Marko captures the visible page with your annotations baked into the screenshot.</li>
+          <li>Click <b>+ Report</b>: Marko captures the visible page with your annotations baked into the screenshot.</li>
           <li>A dialog collects title, note, suggestion, severity, and active/resolved state. The <b>project</b> is auto-detected from the site (override or create a new one inline).</li>
-          <li>Saved locally with metadata: OS, browser, viewport size, pixel ratio, URL, timestamp — plus every pin's full detail.</li>
+          <li>Saved locally with metadata: OS, browser, viewport size, pixel ratio, URL, timestamp, plus every pin's full detail.</li>
         </ul>
       </div>
 
       <div class="fstep">
         <div class="fhead"><span class="n">6</span><h3>Triage in the dashboard</h3></div>
         <ul>
-          <li>Toolbar icon → <b>Reports</b>. Projects live in a sidebar (Active/Archived, search, rename, archive).</li>
-          <li>Switch <b>grid ⇄ kanban</b>; drag cards between severity columns to re-triage. Tick a card's checkbox to resolve the whole report.</li>
-          <li>Filter by status, severity, device (mobile/tablet/desktop), assignee, due date, created date range — or free-text search.</li>
-          <li>Open a report for tabs: <b>Description · Pins · Comments · Activity · Meta</b>. Every edit autosaves; every event lands in the activity feed.</li>
+          <li>Toolbar icon, then <b>Reports</b>. Projects live in a sidebar (Active/Archived, search, rename, archive).</li>
+          <li>Switch <b>grid ⇄ kanban</b>: drag cards between severity columns to re-triage. Tick a card's checkbox to resolve the whole report.</li>
+          <li>Filter by status, severity, device (mobile/tablet/desktop), assignee, due date, or created date range, or free-text search.</li>
+          <li>Open a report for tabs: <b>Description · Pins · Comments · Activity · Meta</b>. Every edit autosaves, and every event lands in the activity feed.</li>
         </ul>
       </div>
 
       <div class="fstep">
         <div class="fhead"><span class="n">7</span><h3>Share it</h3></div>
         <ul>
-          <li><b>Standalone HTML</b> — one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
-          <li><b>Share link</b> — the report travels compressed inside the URL (works for other Marko users), or through <em>your own</em> backend for short team links (reference server included, optional per-link passwords).</li>
+          <li><b>Standalone HTML</b>: one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
+          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your own</em> backend for short team links (reference server included, optional per-link passwords).</li>
           <li><b>Per-pin deep links</b> that scroll straight to a pin, whole-<b>project exports</b>, <b>PDF</b> via print, <b>CSV</b> of reports or pins, and <b>JSON</b> backup/restore.</li>
-          <li>Invite teammates from the project sidebar — Marko drafts the email with the link or file attached.</li>
+          <li>Invite teammates from the project sidebar. Marko drafts the email with the link or file attached.</li>
         </ul>
       </div>
     </div>
@@ -356,7 +356,7 @@
     <div class="features">
       <div class="feature"><span class="ico">📌</span><h3>Element-anchored pins</h3><p>Pins lock onto page elements and stay put through scrolling, resizing, and reloads.</p></div>
       <div class="feature"><span class="ico">💬</span><h3>Threads &amp; mentions</h3><p>Comment threads with @mentions, emoji, image attachments, and resolve states.</p></div>
-      <div class="feature"><span class="ico">📸</span><h3>Annotated screenshots</h3><p>Arrows, boxes, pen, text, and a px ruler — captured with OS, browser, and viewport metadata.</p></div>
+      <div class="feature"><span class="ico">📸</span><h3>Annotated screenshots</h3><p>Arrows, boxes, pen, text, and a px ruler, captured with OS, browser, and viewport metadata.</p></div>
       <div class="feature"><span class="ico">🗂</span><h3>Kanban triage</h3><p>Drag reports between severity columns. Filter by status, device, assignee, and due date.</p></div>
       <div class="feature"><span class="ico">🔍</span><h3>Design inspectors</h3><p>Element, typography, and color inspectors with one-click copy CSS and selector.</p></div>
       <div class="feature"><span class="ico">🔒</span><h3>Private by default</h3><p>Everything lives in your browser. Optional self-hosted backend for team links.</p></div>
@@ -371,7 +371,7 @@
     <p class="section-sub">Marko ships as an open-source package while the Chrome Web Store listing is in review.</p>
     <div class="install-steps">
       <div class="istep"><span class="n">1</span><div><p><a href="https://github.com/strativ-dev/marko-site/releases/latest">Download the latest release zip</a> and unzip it.</p></div></div>
-      <div class="istep"><span class="n">2</span><div><p>Open <code>chrome://extensions</code> in Chrome.</p><p class="hint">Paste it into the address bar — Chrome blocks direct links to it.</p></div></div>
+      <div class="istep"><span class="n">2</span><div><p>Open <code>chrome://extensions</code> in Chrome.</p><p class="hint">Paste it into the address bar. Chrome blocks direct links to it.</p></div></div>
       <div class="istep"><span class="n">3</span><div><p>Turn on <b>Developer mode</b> (top-right toggle).</p></div></div>
       <div class="istep"><span class="n">4</span><div><p>Click <b>Load unpacked</b> and select the unzipped folder.</p></div></div>
       <div class="istep"><span class="n">5</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd>. Done.</p></div></div>
@@ -382,7 +382,7 @@
 <section style="padding-top:0">
   <div class="privacy-band">
     <h2>Your data never <span class="serif">leaves your machine.</span></h2>
-    <p class="section-sub">Marko is local-first by design — sharing is always an explicit action you take.</p>
+    <p class="section-sub">Marko is local-first by design. Sharing is always an explicit action you take.</p>
     <div class="privacy-grid">
       <div class="pcard"><span class="big">🚫</span><h3>No accounts</h3><p>Install and start reviewing. No signup wall, ever.</p></div>
       <div class="pcard"><span class="big">📡</span><h3>No telemetry</h3><p>Zero analytics, zero tracking, zero external requests by default.</p></div>
@@ -400,19 +400,19 @@
     <div class="faq">
       <details open>
         <summary>Is Marko really free?</summary>
-        <p>Yes — free forever, for everyone. No trial, no pro tier, no seat licenses. It's MIT-licensed open source.</p>
+        <p>Yes. Free forever, for everyone. No trial, no pro tier, no seat licenses. It's MIT-licensed open source.</p>
       </details>
       <details>
         <summary>How do I share reports if everything is local?</summary>
-        <p>Four ways: a self-contained HTML file that opens in any browser (no extension needed), a compressed share link for other Marko users, PDF/CSV exports, or — for teams that want real short links — point Marko at your own tiny backend (a reference server ships in the repo).</p>
+        <p>Four ways: a self-contained HTML file that opens in any browser (no extension needed), a compressed share link for other Marko users, PDF/CSV exports, or, for teams that want real short links, point Marko at your own tiny backend (a reference server ships in the repo).</p>
       </details>
       <details>
         <summary>Do report recipients need Marko installed?</summary>
-        <p>No. The standalone HTML export and PDF contain everything — screenshot, pins, comments, and metadata.</p>
+        <p>No. The standalone HTML export and PDF contain everything: screenshot, pins, comments, and metadata.</p>
       </details>
       <details>
         <summary>What data does Marko collect?</summary>
-        <p>None. There is no server to send it to. Read the <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/PRIVACY.md">privacy policy</a> — it's one page.</p>
+        <p>None. There is no server to send it to. Read the <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/PRIVACY.md">privacy policy</a>, it's one page.</p>
       </details>
       <details>
         <summary>Which browsers are supported?</summary>
@@ -420,7 +420,7 @@
       </details>
       <details>
         <summary>Can my team collaborate?</summary>
-        <p>Yes — share project links or files, assign pins to teammates, @mention them in comments, and track resolve states. For always-live team links, self-host the optional backend (one Node file, one dependency).</p>
+        <p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states. For always-live team links, self-host the optional backend (one Node file, one dependency).</p>
       </details>
     </div>
   </div>
@@ -429,7 +429,7 @@
 <section class="final" style="padding-top:0">
   <div class="wrap">
     <h2>Cut review time <span class="serif">today.</span></h2>
-    <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">⬇&nbsp; Download Marko — free forever</a>
+    <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">⬇&nbsp; Download Marko, free forever</a>
   </div>
 </section>
 
