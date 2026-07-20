@@ -13,14 +13,15 @@
     :root {
       --blue-deep: #1e3fd8;
       --blue-mid: #2f6ae8;
-      --blue-light: #5a9df8;
+      --blue-soft: #6aa4fa;
+      --blue-wash: #dceafe;
       --ink: #0b0b0f;
       --text: #16181d;
+      --sub: #4a4f5c;
       --muted: #7a8090;
-      --line: #e8eaf0;
-      --card: #f5f6f9;
+      --line: #ececf1;
+      --card: #f4f5f8;
       --white: #ffffff;
-      --radius-xl: 28px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -29,197 +30,118 @@
       color: var(--text);
       font: 16px/1.6 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
     a { color: inherit; text-decoration: none; }
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
-
-    /* ── Floating notch nav ─────────────────────────── */
-    .navbar {
-      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-      z-index: 100;
-      width: min(600px, calc(100% - 32px));
-      background: var(--ink);
-      border-radius: 0 0 22px 22px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 11px 18px;
-      color: #fff;
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .serif {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-style: italic; font-weight: 400;
     }
-    .navbar .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16.5px; }
-    .logo-chip { width: 28px; height: 28px; border-radius: 7px; display: block; }
-    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13.5px; }
-    .nav-links a { color: rgba(255,255,255,.75); }
-    .nav-links a:hover { color: #fff; }
 
-    /* ── Hero (blue gradient) ───────────────────────── */
-    .hero {
-      background: linear-gradient(180deg, #2242e0 0%, #2f63ec 34%, #4e8df5 68%, #8fc0fb 92%, #dceafe 100%);
+    /* ── Nav ─────────────────────────────────────────── */
+    .navbar {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      z-index: 100;
+      width: min(720px, calc(100% - 32px));
+      background: var(--ink);
+      border-radius: 999px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 8px 8px 16px;
+      color: #fff;
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+    }
+    .navbar .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 15.5px; }
+    .logo-chip { width: 26px; height: 26px; border-radius: 7px; display: block; }
+    .nav-mid { display: flex; align-items: center; gap: 20px; font-size: 13.5px; }
+    .nav-mid a { color: rgba(255,255,255,.72); }
+    .nav-mid a:hover { color: #fff; }
+    .nav-cta {
+      background: #fff; color: var(--ink);
+      padding: 8px 16px 8px 12px; border-radius: 999px;
+      font-size: 13.5px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .nav-cta:hover { background: #f3f4f6; }
+    .nav-cta svg { width: 14px; height: 14px; }
+
+    /* ── Hero (blue gradient, smoothly fades into body) ── */
+    .hero-wrap {
+      background:
+        linear-gradient(180deg,
+          #2242e0 0%,
+          #2f63ec 24%,
+          #4e8df5 48%,
+          #8fc0fb 72%,
+          #dceafe 88%,
+          #ffffff 100%);
       color: #fff;
       text-align: center;
-      padding: 118px 24px 72px;
+      padding: 118px 24px 140px;
     }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
-      font-weight: 600; font-size: 15.5px; margin-bottom: 26px;
+      font-weight: 600; font-size: 14.5px; margin-bottom: 24px;
+      color: rgba(255,255,255,.95);
     }
-    .eyebrow img { width: 22px; height: 22px; border-radius: 6px; }
-    .hero h1 {
+    .eyebrow .apple {
+      width: 16px; height: 16px; fill: currentColor;
+    }
+    h1 {
       font-family: "Inter", sans-serif;
       font-weight: 800;
-      font-size: clamp(38px, 6.6vw, 64px);
+      font-size: clamp(40px, 6.6vw, 66px);
       line-height: 1.05;
-      letter-spacing: -1.8px;
+      letter-spacing: -1.9px;
     }
-    .hero h1 .serif {
-      display: block;
-      font-family: "Instrument Serif", Georgia, serif;
-      font-style: italic;
-      font-weight: 400;
-      letter-spacing: -1px;
+    h1 .serif {
+      display: block; letter-spacing: -1px;
+      font-size: clamp(46px, 7.2vw, 74px);
+      line-height: 1.02;
     }
-    .hero .sub {
-      max-width: 620px; margin: 24px auto 0;
-      font-size: clamp(15px, 2vw, 18px); line-height: 1.6;
-      color: rgba(255,255,255,.95);
+    .hero-sub {
+      max-width: 640px; margin: 22px auto 0;
+      font-size: clamp(15px, 1.8vw, 17.5px); line-height: 1.6;
+      color: rgba(255,255,255,.96);
     }
     .cta-big {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      min-width: min(440px, 100%);
-      margin: 34px auto 0;
+      min-width: min(420px, 100%);
+      margin: 32px auto 0;
       background: var(--ink); color: #fff;
       border-radius: 999px;
-      padding: 16px 32px;
-      font-size: clamp(15px, 2vw, 18px); font-weight: 600;
+      padding: 15px 28px;
+      font-size: 16px; font-weight: 600;
       transition: transform .15s, box-shadow .15s;
       box-shadow: 0 14px 40px rgba(0,0,0,.25);
     }
     .cta-big:hover { transform: translateY(-2px); box-shadow: 0 20px 50px rgba(0,0,0,.32); }
+    .cta-big svg { width: 16px; height: 16px; }
     .trust {
       display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
-      margin-top: 20px;
-      color: rgba(255,255,255,.75); font-size: 13.5px;
-    }
-    /* HTML product mock: browser window + pin + comment box */
-    .mock {
-      margin: 52px auto 0; max-width: 780px;
-      background: #fff; border-radius: 22px; overflow: hidden;
-      box-shadow: 0 50px 140px rgba(10, 30, 90, .35);
-      text-align: left;
-      color: var(--text);
-    }
-    .mock-bar {
-      display: flex; align-items: center; gap: 8px;
-      background: #f0f2f7; padding: 13px 18px;
-      border-bottom: 1px solid var(--line);
-    }
-    .mock-bar .dot { width: 11px; height: 11px; border-radius: 50%; }
-    .mock-bar .dot:nth-child(1) { background: #ff5f57; }
-    .mock-bar .dot:nth-child(2) { background: #febc2e; }
-    .mock-bar .dot:nth-child(3) { background: #28c840; }
-    .mock-bar .url {
-      flex: 1; max-width: 380px; margin: 0 auto;
-      background: #fff; border: 1px solid var(--line);
-      border-radius: 999px; padding: 5px 16px;
-      font-size: 12.5px; color: var(--muted); text-align: center;
-    }
-    .mock-body {
-      position: relative;
-      padding: 34px 38px 42px;
-      min-height: 320px;
-      background: #fff;
-    }
-    .sk { background: #edf0f6; border-radius: 8px; }
-    .sk-title { width: 46%; height: 26px; margin-bottom: 14px; }
-    .sk-line { height: 12px; margin-bottom: 10px; }
-    .sk-btn {
-      width: 148px; height: 40px; border-radius: 999px;
-      background: var(--blue-mid); margin-top: 18px;
-      position: relative;
-    }
-    .mock-pin {
-      position: absolute; top: 208px; left: 128px;
-      width: 30px; height: 30px; border-radius: 50%;
-      background: var(--blue-mid); color: #fff;
-      font-weight: 700; font-size: 14px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 0 3px #fff, 0 8px 20px rgba(20,50,150,.35);
-    }
-    .mock-outline {
-      position: absolute; top: 196px; left: 34px;
-      width: 176px; height: 54px;
-      border: 2.5px solid #28c840; border-radius: 10px;
-      background: rgba(40, 200, 64, .07);
-    }
-    .mock-card {
-      position: absolute; top: 150px; right: 46px;
-      width: min(330px, 46%);
-      background: #fff; border-radius: 16px;
-      box-shadow: 0 24px 70px rgba(15, 25, 70, .22), 0 0 0 1px rgba(15,25,70,.06);
-      padding: 18px 20px;
-    }
-    .mock-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
-    .mock-tab { font-size: 13.5px; color: var(--muted); padding: 6px 10px; }
-    .mock-tab.on {
-      color: var(--blue-mid); font-weight: 600;
-      border-bottom: 2px solid var(--blue-mid); margin-bottom: -1px;
-    }
-    .mock-input { color: var(--muted); font-size: 14px; padding: 6px 2px 26px; }
-    .mock-input b { color: var(--text); font-weight: 500; }
-    .caret {
-      display: inline-block; width: 2px; height: 16px;
-      background: var(--blue-mid); vertical-align: middle; margin-left: 1px;
-      animation: blink 1.1s steps(1) infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-    .mock-actions { display: flex; gap: 10px; }
-    .mock-cancel {
-      flex: 1; text-align: center; font-size: 14px; color: var(--text);
-      border: 1px solid var(--line); border-radius: 10px; padding: 9px 0;
-    }
-    .mock-submit {
-      flex: 1.5; text-align: center; font-size: 14px; font-weight: 600; color: #fff;
-      background: var(--blue-mid); border-radius: 10px; padding: 9px 0;
-    }
-    @media (max-width: 700px) {
-      .mock-card { position: static; width: 100%; margin-top: 26px; }
-      .mock-body { padding: 26px 22px 30px; }
-      .mock-outline { top: 168px; }
-      .mock-pin { top: 180px; }
+      margin-top: 18px;
+      color: rgba(255,255,255,.72); font-size: 13.5px;
     }
 
-    /* ── Sections (white) ───────────────────────────── */
-    section { padding: 76px 0; }
+    /* ── Sections (white) ─────────────────────────────── */
+    section { padding: 88px 0; }
     .kicker {
       text-align: center; font-weight: 600; color: var(--blue-mid);
-      font-size: 12.5px; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 12px;
+      font-size: 12.5px; letter-spacing: .8px; text-transform: uppercase;
+      margin-bottom: 12px;
     }
     h2 {
       text-align: center;
-      font-size: clamp(27px, 4.2vw, 40px);
-      font-weight: 800; letter-spacing: -1px; line-height: 1.12;
+      font-size: clamp(30px, 4.6vw, 44px);
+      font-weight: 800; letter-spacing: -1.2px; line-height: 1.1;
       margin-bottom: 12px;
     }
-    h2 .serif {
-      font-family: "Instrument Serif", Georgia, serif;
-      font-style: italic; font-weight: 400;
+    .section-sub {
+      text-align: center; color: var(--muted);
+      max-width: 560px; margin: 0 auto 48px; font-size: 15.5px;
     }
-    .section-sub { text-align: center; color: var(--muted); max-width: 560px; margin: 0 auto 44px; font-size: 15.5px; }
 
-    /* Feature blocks */
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .feature {
-      background: var(--card); border-radius: 22px;
-      padding: 26px 24px;
-    }
-    .feature .ico {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: linear-gradient(180deg, #eaf2fe, #d8e6fc);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; margin-bottom: 14px;
-    }
-    .feature h3 { font-size: 16.5px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 7px; }
-    .feature p { color: var(--muted); font-size: 14px; }
-
-    /* Detailed flow */
+    /* ── Flow (How it works) ──────────────────────────── */
     .flow { display: flex; flex-direction: column; gap: 14px; max-width: 720px; margin: 0 auto; }
     .fstep { background: var(--card); border-radius: 20px; padding: 24px 26px; }
     .fhead { display: flex; align-items: center; gap: 13px; margin-bottom: 11px; }
@@ -230,23 +152,44 @@
     }
     .fhead h3 { font-size: 17.5px; font-weight: 700; letter-spacing: -0.3px; }
     .fstep ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-    .fstep li { color: #4a4f5c; font-size: 14px; padding-left: 18px; position: relative; }
-    .fstep li::before { content: "•"; color: var(--blue-mid); position: absolute; left: 4px; }
+    .fstep li { color: var(--sub); font-size: 14px; padding-left: 18px; position: relative; }
+    .fstep li::before { content: ""; position: absolute; left: 4px; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--blue-mid); }
     .fstep b { color: var(--text); }
-    .fstep em { font-style: normal; color: var(--text); border-bottom: 2px solid var(--blue-light); }
+    .fstep em { font-style: normal; color: var(--text); border-bottom: 2px solid var(--blue-soft); }
     kbd {
-      background: #fff; border: 1px solid var(--line); border-bottom-width: 3px;
-      border-radius: 6px; padding: 1px 8px;
-      font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text);
+      background: #fff; border: 1px solid var(--line); border-bottom-width: 2px;
+      border-radius: 5px; padding: 1px 7px;
+      font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text);
     }
     .fstep code {
       background: #fff; border: 1px solid var(--line);
-      padding: 1px 8px; border-radius: 6px;
-      font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue-deep);
+      padding: 1px 7px; border-radius: 5px;
+      font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue-deep);
     }
 
-    /* Install */
-    .install-steps { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    /* ── Features (card grid) ─────────────────────────── */
+    .features {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+      max-width: 1080px; margin: 0 auto;
+    }
+    @media (max-width: 820px) { .features { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
+    .feature {
+      background: var(--card); border-radius: 22px;
+      padding: 30px 26px; min-height: 240px;
+    }
+    .ico-chip {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #fff; box-shadow: inset 0 0 0 1px var(--line);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px;
+    }
+    .ico-chip svg { width: 20px; height: 20px; stroke: var(--text); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .feature h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 10px; }
+    .feature p { color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+
+    /* ── Install steps ───────────────────────────────── */
+    .install-steps { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
     .istep {
       display: flex; gap: 15px; align-items: flex-start;
       background: var(--card); border-radius: 16px; padding: 17px 20px;
@@ -262,54 +205,116 @@
     .istep code {
       background: #fff; border: 1px solid var(--line);
       padding: 2px 8px; border-radius: 6px;
-      font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue-deep);
+      font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue-deep);
     }
 
-    /* Privacy band (blue) */
-    .privacy-band {
-      background: linear-gradient(180deg, #2f63ec, #5a95f6);
-      border-radius: 30px;
-      color: #fff;
-      padding: 54px 36px;
-      max-width: 1000px; margin: 0 auto;
+    /* ── Data (radial-gradient hero) ─────────────────── */
+    .data-band {
+      position: relative;
+      padding: 130px 24px 140px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 55%,
+          #dbe5ff 0%,
+          #a9c1ff 24%,
+          #6aa4fa 46%,
+          #2f63ec 70%,
+          #1a2fbe 88%,
+          #0b0b0f 100%);
     }
-    .privacy-band h2 { color: #fff; }
-    .privacy-band .section-sub { color: rgba(255,255,255,.82); }
-    .privacy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
-    .pcard { text-align: center; padding: 8px; }
-    .pcard .big { font-size: 28px; display: block; margin-bottom: 10px; }
-    .pcard h3 { font-size: 15px; margin-bottom: 5px; font-weight: 700; }
-    .pcard p { color: rgba(255,255,255,.8); font-size: 13px; }
+    .data-band h2 { color: var(--ink); }
+    .data-band .section-sub { color: rgba(20,25,40,.72); max-width: 620px; }
+    .data-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+      max-width: 940px; margin: 40px auto 0;
+    }
+    @media (max-width: 820px) { .data-grid { grid-template-columns: 1fr 1fr; } }
+    .dcard {
+      background: rgba(255,255,255,.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.6);
+      border-radius: 18px;
+      padding: 22px 20px;
+      text-align: left;
+      color: var(--ink);
+    }
+    .dcard .ico-chip { width: 34px; height: 34px; margin-bottom: 14px; background: #fff; }
+    .dcard .ico-chip svg { width: 16px; height: 16px; }
+    .dcard h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 6px; }
+    .dcard p { color: rgba(20,25,40,.7); font-size: 13px; line-height: 1.5; }
 
-    /* FAQ */
-    .faq { max-width: 720px; margin: 0 auto; }
-    details { background: var(--card); border-radius: 16px; padding: 18px 22px; margin-bottom: 10px; }
-    summary { cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; position: relative; padding-right: 28px; letter-spacing: -0.2px; }
+    /* ── FAQ (2 columns, pill rows) ──────────────────── */
+    .faq-head { text-align: center; }
+    .faq {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      max-width: 940px; margin: 40px auto 0;
+    }
+    @media (max-width: 720px) { .faq { grid-template-columns: 1fr; } }
+    details {
+      background: var(--card); border-radius: 16px;
+      padding: 16px 20px;
+      transition: background .15s;
+    }
+    details:hover { background: #eeeff3; }
+    summary {
+      cursor: pointer; font-weight: 600; font-size: 14.5px;
+      list-style: none; position: relative; padding-right: 30px;
+      letter-spacing: -0.1px; display: flex; align-items: center; gap: 12px;
+    }
     summary::-webkit-details-marker { display: none; }
-    summary::after { content: "+"; position: absolute; right: 0; top: -2px; color: var(--muted); font-size: 21px; font-weight: 400; }
-    details[open] summary::after { content: "–"; }
-    details p { color: var(--muted); font-size: 14px; margin-top: 10px; }
+    summary::before {
+      content: "+"; position: absolute; right: 4px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 20px; font-weight: 300; line-height: 1;
+    }
+    details[open] summary::before { content: "–"; }
+    details p { color: var(--sub); font-size: 14px; margin-top: 12px; line-height: 1.6; }
     details a { color: var(--blue-deep); font-weight: 600; }
 
-    /* Final CTA */
-    .final { text-align: center; padding-bottom: 90px; }
+    /* ── Final CTA ───────────────────────────────────── */
+    .final { text-align: center; padding: 88px 24px 120px; }
     .final .cta-big { min-width: min(440px, 100%); }
 
+    /* ── Footer (black) ──────────────────────────────── */
     footer {
-      border-top: 1px solid var(--line);
-      padding: 38px 0 46px; color: var(--muted); font-size: 14px;
+      background: var(--ink);
+      color: rgba(255,255,255,.7);
+      padding: 60px 0 40px;
+      border-radius: 40px 40px 0 0;
     }
-    .foot-inner {
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 14px;
-      max-width: 1040px; margin: 0 auto; padding: 0 24px;
+    .foot-grid {
+      display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 32px;
+      max-width: 1080px; margin: 0 auto; padding: 0 24px;
     }
-    .foot-links { display: flex; gap: 22px; }
-    .foot-links a:hover { color: var(--text); }
+    @media (max-width: 820px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .foot-grid { grid-template-columns: 1fr; } }
+    .foot-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; font-size: 17px; margin-bottom: 14px; }
+    .foot-brand img { width: 28px; height: 28px; }
+    .foot-brand span.tag { color: rgba(255,255,255,.5); font-weight: 400; font-size: 13px; }
+    .foot-tag { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-size: 22px; color: #fff; margin-bottom: 16px; line-height: 1.15; }
+    .foot-blurb { color: rgba(255,255,255,.55); font-size: 13.5px; line-height: 1.55; margin-bottom: 20px; }
+    .foot-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; color: var(--ink);
+      padding: 8px 16px; border-radius: 999px;
+      font-size: 13.5px; font-weight: 600;
+    }
+    .foot-btn:hover { background: #f3f4f6; }
+    .foot-btn svg { width: 13px; height: 13px; }
+    .foot-col h4 { color: rgba(255,255,255,.5); font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px; }
+    .foot-col a { display: block; color: rgba(255,255,255,.78); font-size: 14px; margin-bottom: 10px; }
+    .foot-col a:hover { color: #fff; }
+    .foot-bottom {
+      max-width: 1080px; margin: 40px auto 0;
+      padding: 20px 24px 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      color: rgba(255,255,255,.4); font-size: 12.5px;
+    }
 
     @media (max-width: 640px) {
-      .nav-links a:not(:last-child) { display: none; }
-      .hero { padding-top: 120px; }
+      .nav-mid a { display: none; }
     }
   </style>
 </head>
@@ -317,61 +322,42 @@
 
 <nav class="navbar">
   <a class="brand" href="#"><img class="logo-chip" src="marko-128.png" alt="" />Marko</a>
-  <div class="nav-links">
+  <div class="nav-mid">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
     <a href="#faq">FAQ</a>
   </div>
+  <a class="nav-cta" href="#install">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+    Download
+  </a>
 </nav>
 
-<header class="hero">
-  <div class="eyebrow"><img src="marko-128.png" alt="" /> Website reviews</div>
+<header class="hero-wrap">
+  <div class="eyebrow">
+    <svg class="apple" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
+    Website reviews
+  </div>
   <h1>
     Spot it. Pin it.
     <span class="serif">Shipped by Friday.</span>
   </h1>
-  <p class="sub">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with annotated screenshots, severities, and comments, so your team can find, fix, and close anything in minutes.</p>
-  <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">⬇&nbsp; Download for Chrome</a>
+  <p class="hero-sub">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with annotated screenshots, severities, and comments, so your team can find, fix, and close anything in minutes.</p>
+  <a class="cta-big" href="#install">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+    Download for Chrome
+  </a>
   <div class="trust">
     <span>Free forever</span>
-    <span>Fully offline &amp; private</span>
+    <span>Local by default</span>
     <span>Open source · MIT</span>
-  </div>
-  <div class="mock" aria-hidden="true">
-    <div class="mock-bar">
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="url">yourwebsite.com/checkout</span>
-    </div>
-    <div class="mock-body">
-      <div class="sk sk-title"></div>
-      <div class="sk sk-line" style="width: 82%"></div>
-      <div class="sk sk-line" style="width: 74%"></div>
-      <div class="sk sk-line" style="width: 66%"></div>
-      <div class="mock-outline"></div>
-      <div class="sk-btn"></div>
-      <span class="mock-pin">1</span>
-      <div class="mock-card">
-        <div class="mock-tabs">
-          <span class="mock-tab on">Note</span>
-          <span class="mock-tab">Suggestion</span>
-          <span class="mock-tab">Guideline</span>
-        </div>
-        <div class="mock-input"><b>Button label is unclear here</b><span class="caret"></span></div>
-        <div class="mock-actions">
-          <span class="mock-cancel">Cancel</span>
-          <span class="mock-submit">Submit</span>
-        </div>
-      </div>
-    </div>
   </div>
 </header>
 
 <!-- ============================================================
      HOW IT WORKS: keep in sync with the extension!
-     This section documents the EXACT current workflow. Any change
-     to the annotation / report / share flow in marko-ux-tool MUST
-     update this section in the same commit. CI mirrors docs/ to the
-     public marko-site repo on push (see .github/workflows/).
+     Any change to the annotation / report / share flow in
+     marko-ux-tool MUST update this section in the same commit.
      Documents behavior as of: v1.1.0
      ============================================================ -->
 <section id="how">
@@ -406,7 +392,7 @@
           <li>Click a numbered dot: a sidebar docks to the left with the pin's author and time.</li>
           <li>Set <b>severity</b> (Neutral to Critical), <b>assignee</b> (autocompletes from your team list), and <b>due date</b>.</li>
           <li>Tag a <b>guideline</b>: Nielsen's 10 usability heuristics plus any custom ones you define in Settings.</li>
-          <li>Discuss in the <b>comment thread</b> with @mentions, emoji, and image attachments. Tick the checkbox to mark the pin <b>resolved</b> (its dot turns green ✓).</li>
+          <li>Discuss in the <b>comment thread</b> with @mentions and image attachments. Tick the checkbox to mark the pin <b>resolved</b>.</li>
           <li>Navigate pins with <b>‹ N/M ›</b>. Delete via the sidebar, or by clicking the dot with the eraser tool.</li>
         </ul>
       </div>
@@ -444,32 +430,67 @@
         <div class="fhead"><span class="n">7</span><h3>Share it</h3></div>
         <ul>
           <li><b>Standalone HTML</b>: one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
-          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your own</em> backend for short team links. A one-file Cloudflare Worker ships in the repo; uploads are authenticated with <b>Sign in with Google</b> only.</li>
+          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your</em> Cloudflare Worker for short team links. Uploads are authenticated with <b>Sign in with Google</b> only.</li>
           <li><b>Per-pin deep links</b> that scroll straight to a pin, whole-<b>project exports</b>, <b>PDF</b> via print, <b>CSV</b> of reports or pins, and <b>JSON</b> backup/restore.</li>
-          <li>Invite teammates from the project sidebar. Marko drafts the email with the link or file attached.</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<section id="features" style="padding-top:0">
+<section id="features">
   <div class="wrap">
     <div class="kicker">Built in</div>
     <h2>Everything a review needs, <span class="serif">nothing you don't.</span></h2>
     <p class="section-sub">One extension replaces screenshot tools, spreadsheets, and endless email threads.</p>
     <div class="features">
-      <div class="feature"><span class="ico">📌</span><h3>Element-anchored pins</h3><p>Pins lock onto page elements and stay put through scrolling, resizing, and reloads.</p></div>
-      <div class="feature"><span class="ico">💬</span><h3>Threads &amp; mentions</h3><p>Comment threads with @mentions, emoji, image attachments, and resolve states.</p></div>
-      <div class="feature"><span class="ico">📸</span><h3>Annotated screenshots</h3><p>Arrows, boxes, pen, text, and a px ruler, captured with OS, browser, and viewport metadata.</p></div>
-      <div class="feature"><span class="ico">🗂</span><h3>Kanban triage</h3><p>Drag reports between severity columns. Filter by status, device, assignee, and due date.</p></div>
-      <div class="feature"><span class="ico">🔍</span><h3>Design inspectors</h3><p>Element, typography, and color inspectors with one-click copy CSS and selector.</p></div>
-      <div class="feature"><span class="ico">🔒</span><h3>Private by default</h3><p>Everything lives in your browser. Optional self-hosted backend for team links.</p></div>
+      <div class="feature">
+        <div class="ico-chip">
+          <svg viewBox="0 0 24 24"><path d="M12 22s-7-6.5-7-12a7 7 0 1 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        </div>
+        <h3>Element-anchored pins</h3>
+        <p>Pins lock onto page elements and stay put through scrolling, resizing, and reloads.</p>
+      </div>
+      <div class="feature">
+        <div class="ico-chip">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16v10H8l-4 4V6z"/></svg>
+        </div>
+        <h3>Threads &amp; mentions</h3>
+        <p>Comment threads with @mentions, image attachments, and resolve states.</p>
+      </div>
+      <div class="feature">
+        <div class="ico-chip">
+          <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6l2-3h4l2 3"/></svg>
+        </div>
+        <h3>Annotated screenshots</h3>
+        <p>Arrows, boxes, pen, text, and a px ruler, captured with OS, browser, and viewport metadata.</p>
+      </div>
+      <div class="feature">
+        <div class="ico-chip">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="10" y="4" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="8" rx="1"/></svg>
+        </div>
+        <h3>Kanban triage</h3>
+        <p>Drag reports between severity columns. Filter by status, device, assignee, and due date.</p>
+      </div>
+      <div class="feature">
+        <div class="ico-chip">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M8 11h6"/><path d="M11 8v6"/></svg>
+        </div>
+        <h3>Design inspectors</h3>
+        <p>Element, typography, and color inspectors with one-click copy CSS and selector.</p>
+      </div>
+      <div class="feature">
+        <div class="ico-chip">
+          <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+        <h3>Private by default</h3>
+        <p>Reports live in your browser. Optional Cloudflare Worker for team links, when you want them.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="install" style="padding-top:0">
+<section id="install">
   <div class="wrap">
     <div class="kicker">Get started</div>
     <h2>Installed in <span class="serif">two minutes.</span></h2>
@@ -484,68 +505,99 @@
   </div>
 </section>
 
-<section style="padding-top:0">
-  <div class="privacy-band">
-    <h2>Your data never <span class="serif">leaves your machine.</span></h2>
-    <p class="section-sub">Marko is local-first by design. Sharing is always an explicit action you take.</p>
-    <div class="privacy-grid">
-      <div class="pcard"><span class="big">🚫</span><h3>No accounts</h3><p>Install and start reviewing. No signup wall, ever.</p></div>
-      <div class="pcard"><span class="big">📡</span><h3>No telemetry</h3><p>Zero analytics, zero tracking, zero external requests by default.</p></div>
-      <div class="pcard"><span class="big">💾</span><h3>Local storage</h3><p>Reports and screenshots live in Chrome's storage on your device.</p></div>
-      <div class="pcard"><span class="big">🔓</span><h3>Open source</h3><p>MIT license. Audit every line on GitHub.</p></div>
+<section class="data-band">
+  <div class="kicker">Your data</div>
+  <h2>Local by default. <span class="serif">Cloud when you want it.</span></h2>
+  <p class="section-sub">Marko keeps every report in your browser. Turn on team sharing by pointing it at a Cloudflare Worker you deploy yourself, no third-party service in between.</p>
+  <div class="data-grid">
+    <div class="dcard">
+      <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="m15 4 6 6"/><path d="m21 4-6 6"/></svg></div>
+      <h3>No forced accounts</h3>
+      <p>Install and start reviewing. Sign in only when you want cloud sharing.</p>
+    </div>
+    <div class="dcard">
+      <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16"/><path d="M8 12a4 4 0 0 1 4-4"/><path d="M4 12a8 8 0 0 1 8-8"/><path d="M12 20v-4"/></svg></div>
+      <h3>No telemetry</h3>
+      <p>Zero analytics or tracking. Nothing leaves your device unless you share.</p>
+    </div>
+    <div class="dcard">
+      <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10"/><path d="M7 13h6"/></svg></div>
+      <h3>Local storage</h3>
+      <p>Reports and screenshots stay in Chrome's local storage on your machine.</p>
+    </div>
+    <div class="dcard">
+      <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 12"/><path d="M20 12a5 5 0 0 1 0 10H7"/></svg></div>
+      <h3>Your cloud, not ours</h3>
+      <p>Team links run on your Cloudflare Worker with your KV store. Google sign-in only.</p>
     </div>
   </div>
 </section>
 
-<section id="faq" style="padding-top:0">
+<section id="faq" style="padding-top:96px">
   <div class="wrap">
-    <div class="kicker">Questions</div>
-    <h2>Frequently asked, <span class="serif">honestly answered.</span></h2>
-    <p class="section-sub"></p>
+    <div class="kicker faq-head">Questions</div>
+    <h2 class="faq-head">Frequently asked, <span class="serif">honestly answered.</span></h2>
+    <p class="section-sub">Everything you need to know before installing, from privacy to how sharing actually works.</p>
     <div class="faq">
-      <details open>
-        <summary>Is Marko really free?</summary>
-        <p>Yes. Free forever, for everyone. No trial, no pro tier, no seat licenses. It's MIT-licensed open source.</p>
-      </details>
-      <details>
-        <summary>How do I share reports if everything is local?</summary>
-        <p>Four ways: a self-contained HTML file that opens in any browser (no extension needed), a compressed share link for other Marko users, PDF/CSV exports, or, for teams that want real short links, point Marko at your own tiny backend (a reference server ships in the repo).</p>
-      </details>
-      <details>
-        <summary>Do report recipients need Marko installed?</summary>
-        <p>No. The standalone HTML export and PDF contain everything: screenshot, pins, comments, and metadata.</p>
-      </details>
-      <details>
-        <summary>What data does Marko collect?</summary>
-        <p>None. There is no server to send it to. Read the <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/PRIVACY.md">privacy policy</a>, it's one page.</p>
-      </details>
-      <details>
-        <summary>Which browsers are supported?</summary>
-        <p>Chrome and Chromium-based browsers (Edge, Brave, Arc, Opera) with Manifest V3 support.</p>
-      </details>
-      <details>
-        <summary>Can my team collaborate?</summary>
-        <p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states. For always-live team links, self-host the optional backend (one Node file, one dependency).</p>
-      </details>
+      <details><summary>Is Marko really free?</summary><p>Yes. Free forever, for everyone. No trial, no pro tier, no seat licenses. MIT-licensed open source.</p></details>
+      <details><summary>Where is my data stored?</summary><p>In Chrome's local storage on your device. Nothing is uploaded anywhere unless you explicitly share a report through your own Cloudflare Worker.</p></details>
+      <details><summary>How does sharing work?</summary><p>Four ways: a self-contained HTML file that opens in any browser, a compressed share link for other Marko users, PDF/CSV exports, or your own Cloudflare Worker for short team links.</p></details>
+      <details><summary>Do recipients need Marko installed?</summary><p>No. Standalone HTML and PDF exports contain everything: screenshot, pins, comments, and metadata. They open in any browser.</p></details>
+      <details><summary>How is team sharing authenticated?</summary><p>Sign in with Google, only. The Cloudflare Worker verifies the Google ID token against the client ID you configure. No custom passwords, no third-party auth vendors.</p></details>
+      <details><summary>Which browsers are supported?</summary><p>Chrome and Chromium-based browsers with Manifest V3 support: Edge, Brave, Arc, Opera, and Vivaldi.</p></details>
+      <details><summary>Can my team collaborate?</summary><p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states across a shared workspace.</p></details>
+      <details><summary>Is my Cloudflare account required?</summary><p>Only if you want team share links. Everything else works fully offline. See the <code>cloudflare-worker</code> folder in the source repo for a 10-minute deploy guide.</p></details>
     </div>
   </div>
 </section>
 
-<section class="final" style="padding-top:0">
+<section class="final">
   <div class="wrap">
     <h2>Cut review time <span class="serif">today.</span></h2>
-    <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">⬇&nbsp; Download Marko, free forever</a>
+    <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+      Download for Chrome
+    </a>
   </div>
 </section>
 
 <footer>
-  <div class="foot-inner">
-    <span>© 2026 Marko · MIT License · docs describe v1.1.0 behavior</span>
-    <div class="foot-links">
-      <a href="https://github.com/strativ-dev/marko-ux-tool">GitHub</a>
-      <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/PRIVACY.md">Privacy</a>
-      <a href="https://github.com/strativ-dev/marko-ux-tool/issues">Report an issue</a>
+  <div class="foot-grid">
+    <div class="foot-col">
+      <div class="foot-brand">
+        <img src="marko-128.png" alt="" />
+        Marko <span class="tag">Chrome extension</span>
+      </div>
+      <div class="foot-tag">Spot it. Pin it.<br/><span class="serif">Shipped by Friday.</span></div>
+      <p class="foot-blurb">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with annotated screenshots, severities, and comments.</p>
+      <a class="foot-btn" href="https://github.com/strativ-dev/marko-site/releases/latest">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+        Download for Chrome
+      </a>
     </div>
+    <div class="foot-col">
+      <h4>Menu</h4>
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="foot-col">
+      <h4>Resources</h4>
+      <a href="https://github.com/strativ-dev/marko-site/releases/latest">Releases</a>
+      <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/PRIVACY.md">Privacy policy</a>
+      <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/UI_COMPARISON.md">Docs</a>
+    </div>
+    <div class="foot-col">
+      <h4>Community</h4>
+      <a href="https://github.com/strativ-dev/marko-ux-tool">Source on GitHub</a>
+      <a href="https://github.com/strativ-dev/marko-ux-tool/issues">Report an issue</a>
+      <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/cloudflare-worker/README.md">Self-host guide</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Marko · MIT License</span>
+    <span>Docs describe v1.1.0 behavior</span>
   </div>
 </footer>
 
