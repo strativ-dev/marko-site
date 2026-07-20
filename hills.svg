@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 720" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c1e28d"/>
+      <stop offset=".55" stop-color="#8fc862"/>
+      <stop offset="1" stop-color="#4f8a3a"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9d777"/>
+      <stop offset=".55" stop-color="#6eb04b"/>
+      <stop offset="1" stop-color="#37742a"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#84c257"/>
+      <stop offset=".5" stop-color="#4f9c34"/>
+      <stop offset="1" stop-color="#1f5a1a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="82%" cy="4%" r="55%">
+      <stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/>
+      <stop offset=".35" stop-color="#fff3c8" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#fff3c8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="shade" cx="18%" cy="120%" r="90%">
+      <stop offset="0" stop-color="#000" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Back ridge -->
+  <path d="M0 300
+           C 240 240, 480 330, 720 280
+           C 960 230, 1200 320, 1440 260
+           C 1680 210, 1920 300, 2160 250
+           C 2280 226, 2340 240, 2400 236
+           L 2400 720 L 0 720 Z"
+        fill="url(#g1)"/>
+
+  <!-- Middle ridge -->
+  <path d="M0 430
+           C 260 380, 520 460, 780 400
+           C 1040 340, 1300 470, 1560 410
+           C 1820 350, 2080 450, 2340 390
+           L 2400 386 L 2400 720 L 0 720 Z"
+        fill="url(#g2)"/>
+
+  <!-- Front ridge (with a couple of gentle bumps) -->
+  <path d="M0 550
+           C 200 500, 420 590, 640 540
+           C 860 490, 1080 610, 1300 560
+           C 1520 510, 1740 620, 1960 560
+           C 2140 510, 2280 570, 2400 540
+           L 2400 720 L 0 720 Z"
+        fill="url(#g3)"/>
+
+  <!-- Warm sunlight glow from top-right, over everything -->
+  <rect width="2400" height="720" fill="url(#sun)"/>
+  <!-- Soft shadow into bottom-left corner -->
+  <rect width="2400" height="720" fill="url(#shade)"/>
+</svg>

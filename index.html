@@ -65,20 +65,29 @@
     .nav-cta:hover { background: #f3f4f6; }
     .nav-cta svg { width: 14px; height: 14px; }
 
-    /* ── Hero (blue gradient, smoothly fades into body) ── */
+    /* ── Hero (blue gradient, grounded on meadow) ─────── */
     .hero-wrap {
+      position: relative;
       background:
         linear-gradient(180deg,
           #2242e0 0%,
-          #2f63ec 24%,
-          #4e8df5 48%,
+          #2f63ec 22%,
+          #4e8df5 46%,
           #8fc0fb 72%,
-          #dceafe 88%,
+          #cfe2fc 92%,
           #ffffff 100%);
       color: #fff;
       text-align: center;
-      padding: 118px 24px 140px;
+      padding: 118px 24px 260px;
+      overflow: hidden;
     }
+    .hero-hills {
+      position: absolute; left: 0; right: 0; bottom: -1px;
+      width: 100%; height: auto;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-wrap > *:not(.hero-hills) { position: relative; z-index: 2; }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
       font-weight: 600; font-size: 14.5px; margin-bottom: 24px;
@@ -352,6 +361,7 @@
     <span>Local by default</span>
     <span>Open source · MIT</span>
   </div>
+  <img class="hero-hills" src="hills.svg" alt="" />
 </header>
 
 <!-- ============================================================
@@ -430,7 +440,7 @@
         <div class="fhead"><span class="n">7</span><h3>Share it</h3></div>
         <ul>
           <li><b>Standalone HTML</b>: one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
-          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your</em> Cloudflare Worker for short team links. Uploads are authenticated with <b>Sign in with Google</b> only.</li>
+          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your</em> Cloudflare Worker for short team links. Uploads are authenticated by <b>Google Sign-In</b> or an <b>email magic link</b>, whichever you configure.</li>
           <li><b>Per-pin deep links</b> that scroll straight to a pin, whole-<b>project exports</b>, <b>PDF</b> via print, <b>CSV</b> of reports or pins, and <b>JSON</b> backup/restore.</li>
         </ul>
       </div>
@@ -543,7 +553,7 @@
       <details><summary>Where is my data stored?</summary><p>In Chrome's local storage on your device. Nothing is uploaded anywhere unless you explicitly share a report through your own Cloudflare Worker.</p></details>
       <details><summary>How does sharing work?</summary><p>Four ways: a self-contained HTML file that opens in any browser, a compressed share link for other Marko users, PDF/CSV exports, or your own Cloudflare Worker for short team links.</p></details>
       <details><summary>Do recipients need Marko installed?</summary><p>No. Standalone HTML and PDF exports contain everything: screenshot, pins, comments, and metadata. They open in any browser.</p></details>
-      <details><summary>How is team sharing authenticated?</summary><p>Sign in with Google, only. The Cloudflare Worker verifies the Google ID token against the client ID you configure. No custom passwords, no third-party auth vendors.</p></details>
+      <details><summary>How is team sharing authenticated?</summary><p>Two options, pick one per team. <b>Google Sign-In</b>: the Cloudflare Worker verifies the Google ID token against a client ID you configure. <b>Email magic link</b>: enter your email, the Worker sends a one-time link via Resend, the browser page hands you a session key to paste back into Marko. No custom passwords either way.</p></details>
       <details><summary>Which browsers are supported?</summary><p>Chrome and Chromium-based browsers with Manifest V3 support: Edge, Brave, Arc, Opera, and Vivaldi.</p></details>
       <details><summary>Can my team collaborate?</summary><p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states across a shared workspace.</p></details>
       <details><summary>Is my Cloudflare account required?</summary><p>Only if you want team share links. Everything else works fully offline. See the <code>cloudflare-worker</code> folder in the source repo for a 10-minute deploy guide.</p></details>
@@ -597,7 +607,7 @@
   </div>
   <div class="foot-bottom">
     <span>© 2026 Marko · MIT License</span>
-    <span>Docs describe v1.1.0 behavior</span>
+    <span>Docs describe v1.2.0 behavior</span>
   </div>
 </footer>
 
