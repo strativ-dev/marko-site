@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Marko: Free bug report &amp; UX check extension</title>
   <meta name="description" content="Marko is a free, local-first Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. No signup." />
-  <link rel="icon" href="marko-128.png" />
+  <link rel="icon" href="marko-128.png?v=1.2.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
@@ -223,16 +223,16 @@
       padding: 130px 24px 140px;
       text-align: center;
       background:
-        radial-gradient(ellipse 70% 55% at 50% 55%,
-          #dbe5ff 0%,
-          #a9c1ff 24%,
-          #6aa4fa 46%,
-          #2f63ec 70%,
-          #1a2fbe 88%,
-          #0b0b0f 100%);
+        radial-gradient(ellipse 90% 90% at 50% 55%,
+          #eef3ff 0%,
+          #c6d8ff 22%,
+          #97b6fb 42%,
+          #6ea1f7 60%,
+          rgba(110, 161, 247, .45) 76%,
+          rgba(255,255,255,0) 92%);
     }
-    .data-band h2 { color: var(--ink); }
-    .data-band .section-sub { color: rgba(20,25,40,.72); max-width: 620px; }
+    .data-band h2, .data-band h2 .serif { color: var(--ink); }
+    .data-band .section-sub { color: rgba(20,25,40,.7); max-width: 620px; }
     .data-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
       max-width: 940px; margin: 40px auto 0;
@@ -330,7 +330,7 @@
 <body>
 
 <nav class="navbar">
-  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png" alt="" />Marko</a>
+  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png?v=1.2.0" alt="" />Marko</a>
   <div class="nav-mid">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
@@ -575,7 +575,7 @@
   <div class="foot-grid">
     <div class="foot-col">
       <div class="foot-brand">
-        <img src="marko-128.png" alt="" />
+        <img src="marko-128.png?v=1.2.0" alt="" />
         Marko <span class="tag">Chrome extension</span>
       </div>
       <div class="foot-tag">Spot it. Pin it.<br/><span class="serif">Shipped by Friday.</span></div>
