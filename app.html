@@ -295,7 +295,11 @@ async function api(path, opts = {}) {
   let data = {};
   try { data = await res.json(); } catch {}
   if (res.status === 401) { logout(); throw new Error("unauthorized"); }
-  if (!res.ok) throw new Error(data.error || ("http_" + res.status));
+  if (!res.ok) {
+    const err = new Error(data.error || ("http_" + res.status));
+    err.data = data;
+    throw err;
+  }
   return data;
 }
 
@@ -576,7 +580,19 @@ function openCreateModal() {
       ov.remove();
       location.hash = "#/p/" + project.id;
       renderSidebar();
-    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+    } catch (e) {
+      if (e.message === "project_exists" && e.data?.project) {
+        st.textContent = "You already have a project for this site. Opening it…";
+        st.className = "status ok";
+        setTimeout(() => {
+          ov.remove();
+          location.hash = "#/p/" + e.data.project.id;
+        }, 900);
+        return;
+      }
+      st.textContent = "Failed: " + e.message;
+      st.className = "status err";
+    }
   });
   setTimeout(() => ov.querySelector("#cp-name").focus(), 40);
 }
