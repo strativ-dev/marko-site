@@ -570,7 +570,8 @@ function openCreateModal() {
   ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
   ov.querySelector("#cp-go").addEventListener("click", async () => {
     const name = ov.querySelector("#cp-name").value.trim();
-    const url = ov.querySelector("#cp-url").value.trim();
+    let url = ov.querySelector("#cp-url").value.trim();
+    if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
     const st = ov.querySelector("#cp-status");
     if (!name) { st.textContent = "Name required."; st.className = "status err"; return; }
     st.textContent = "Creating…"; st.className = "status";

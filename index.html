@@ -809,8 +809,18 @@
     }
   });
 
+  function hasValidSession() {
+    try {
+      const s = JSON.parse(localStorage.getItem("marko:web:session") || "null");
+      return !!(s && s.token && (s.exp || 0) > Date.now() + 30_000);
+    } catch { return false; }
+  }
   function checkHash() {
-    if (location.hash === "#sign-in") open(); else if (!overlay.hidden) close();
+    if (location.hash === "#sign-in") {
+      // Already signed in: skip the form, go straight to the app.
+      if (hasValidSession()) { window.location.href = "app.html"; return; }
+      open();
+    } else if (!overlay.hidden) close();
   }
   window.addEventListener("hashchange", checkHash);
   checkHash();
