@@ -378,70 +378,56 @@
 
     <div class="flow">
       <div class="fstep">
-        <div class="fhead"><span class="n">1</span><h3>Start a review</h3></div>
+        <div class="fhead"><span class="n">1</span><h3>Sign up once</h3></div>
         <ul>
-          <li>Press <kbd>Alt</kbd>+<kbd>M</kbd> on any website, or click the Marko toolbar icon then <b>Start annotation</b>.</li>
-          <li>The review toolbar appears top-center; a viewport-size pill (e.g. <code>1440 × 900</code>) appears top-right.</li>
-          <li>The <b>Pin</b> tool is selected by default. Press <kbd>?</kbd> anytime for the cheatsheet, <kbd>Esc</kbd> to exit.</li>
+          <li>Install the extension, click the toolbar icon, hit <b>Get started</b>.</li>
+          <li>Sign up on the web with email and password. The extension picks up your session automatically; no copy-pasting tokens.</li>
+          <li>From then on the extension and the web app share one account.</li>
         </ul>
       </div>
 
       <div class="fstep">
-        <div class="fhead"><span class="n">2</span><h3>Pin a comment to an element</h3></div>
+        <div class="fhead"><span class="n">2</span><h3>Create a project for a site</h3></div>
         <ul>
-          <li>Hover: the element under your cursor gets a green outline with a chip showing its tag, class, and size.</li>
-          <li>Click: a compact comment box opens with three tabs: <b>Note</b>, <b>Suggestion</b>, <b>Guideline</b> (<kbd>Tab</kbd> cycles them).</li>
-          <li>Nothing is saved yet: <b>Submit</b> stays disabled until you write something. <kbd>Enter</kbd> submits, <kbd>Esc</kbd> or <b>Cancel</b> discards, clicking elsewhere replaces the draft.</li>
-          <li>On submit the pin becomes a numbered dot <em>anchored to that element</em>. It stays attached through scrolling, window resizing, page changes, and reloads.</li>
+          <li>Open the site you're reviewing, click the Marko icon.</li>
+          <li>If a project already exists for this site, Marko shows it with its active and resolved counts.</li>
+          <li>Otherwise one click on <b>Create project for this page</b> starts one and drops you straight into review mode.</li>
         </ul>
       </div>
 
       <div class="fstep">
-        <div class="fhead"><span class="n">3</span><h3>Manage the pin</h3></div>
+        <div class="fhead"><span class="n">3</span><h3>Pin comments on the live page</h3></div>
         <ul>
-          <li>Click a numbered dot: a sidebar docks to the left with the pin's author and time.</li>
-          <li>Set <b>severity</b> (Neutral to Critical), <b>assignee</b> (autocompletes from your team list), and <b>due date</b>.</li>
-          <li>Tag a <b>guideline</b>: Nielsen's 10 usability heuristics plus any custom ones you define in Settings.</li>
-          <li>Discuss in the <b>comment thread</b> with @mentions and image attachments. Tick the checkbox to mark the pin <b>resolved</b>.</li>
-          <li>Navigate pins with <b>‹ N/M ›</b>. Delete via the sidebar, or by clicking the dot with the eraser tool.</li>
+          <li>In <b>comment mode</b> (bottom-center toggle) click any element: a composer opens right there.</li>
+          <li>Write the comment, set a <b>severity</b> from Neutral to Critical, mention teammates with <b>@</b>.</li>
+          <li>The pin anchors to the element and survives scrolling and window resizing. Flip the toggle to browse the site normally.</li>
         </ul>
       </div>
 
       <div class="fstep">
-        <div class="fhead"><span class="n">4</span><h3>Annotate visually (optional)</h3></div>
+        <div class="fhead"><span class="n">4</span><h3>Discuss and resolve in place</h3></div>
         <ul>
-          <li>Draw with <b>arrow, box, pen, text</b>, and a <b>ruler</b> that live-measures px and angle.</li>
-          <li><b>Select</b> tool moves any shape and resizes via endpoint handles. <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> undo/redo.</li>
-          <li>Inspect tools: element inspector (box model, typography, colors, copy CSS/selector), font inspector, and a native eyedropper.</li>
-          <li>Everything autosaves per URL and restores when you come back.</li>
+          <li>Click a pin to open its <b>thread</b>: reply, change severity, tick resolve.</li>
+          <li>The panel (bottom-left bubble) lists every heurio in <b>Active</b> and <b>Resolved</b> tabs; clicking one scrolls the page to its pin, navigating to the right URL if needed.</li>
+          <li>The top-right pill resizes your window to any device preset: 4K down to iPhone SE, so you can review every breakpoint.</li>
         </ul>
       </div>
 
       <div class="fstep">
-        <div class="fhead"><span class="n">5</span><h3>Save a report</h3></div>
+        <div class="fhead"><span class="n">5</span><h3>Track everything in the web app</h3></div>
         <ul>
-          <li>Click <b>+ Report</b>: Marko captures the visible page with your annotations baked into the screenshot.</li>
-          <li>A dialog collects title, note, suggestion, severity, and active/resolved state. The <b>project</b> is auto-detected from the site (override or create a new one inline).</li>
-          <li>Saved locally with metadata: OS, browser, viewport size, pixel ratio, URL, timestamp, plus every pin's full detail.</li>
+          <li><b>Open in Marko app</b> takes you to the project dashboard at <code>app.html</code>.</li>
+          <li>Projects live in a sidebar; each project is a <b>kanban board</b> with a column per severity.</li>
+          <li>Filter by status, assignee, or free text. Open any card for the full thread, assignee, and due date. Resolve with one checkbox.</li>
         </ul>
       </div>
 
       <div class="fstep">
-        <div class="fhead"><span class="n">6</span><h3>Triage in the dashboard</h3></div>
+        <div class="fhead"><span class="n">6</span><h3>Bring the team</h3></div>
         <ul>
-          <li>Toolbar icon, then <b>Reports</b>. Projects live in a sidebar (Active/Archived, search, rename, archive).</li>
-          <li>Switch <b>grid ⇄ kanban</b>: drag cards between severity columns to re-triage. Tick a card's checkbox to resolve the whole report.</li>
-          <li>Filter by status, severity, device (mobile/tablet/desktop), assignee, due date, or created date range, or free-text search.</li>
-          <li>Open a report for tabs: <b>Description · Pins · Comments · Activity · Meta</b>. Every edit autosaves, and every event lands in the activity feed.</li>
-        </ul>
-      </div>
-
-      <div class="fstep">
-        <div class="fhead"><span class="n">7</span><h3>Share it</h3></div>
-        <ul>
-          <li><b>Standalone HTML</b>: one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
-          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your</em> Cloudflare Worker for short team links. Uploads are authenticated with an <b>email and password</b> account on your worker, hashed with PBKDF2 and stored in your Workers KV.</li>
-          <li><b>Per-pin deep links</b> that scroll straight to a pin, whole-<b>project exports</b>, <b>PDF</b> via print, <b>CSV</b> of reports or pins, and <b>JSON</b> backup/restore.</li>
+          <li><b>Share</b> (in the dock or the web app) invites teammates by email; they sign up with their own account and see the same board.</li>
+          <li><b>Copy link</b> puts the project URL on your clipboard for chat or tickets.</li>
+          <li>Everything is stored in the project backend, a tiny Cloudflare Worker. Use ours, or deploy your own from the source repo and point Marko at it in Settings.</li>
         </ul>
       </div>
     </div>
@@ -532,8 +518,8 @@
     </div>
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10"/><path d="M7 13h6"/></svg></div>
-      <h3>Local storage</h3>
-      <p>Reports and screenshots stay in Chrome's local storage on your machine.</p>
+      <h3>Team projects</h3>
+      <p>Pins, threads, and kanban state sync through the project backend so your whole team sees one board.</p>
     </div>
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 12"/><path d="M20 12a5 5 0 0 1 0 10H7"/></svg></div>
@@ -550,10 +536,10 @@
     <p class="section-sub">Everything you need to know before installing, from privacy to how sharing actually works.</p>
     <div class="faq">
       <details><summary>Is Marko really free?</summary><p>Yes. Free forever, for everyone. No trial, no pro tier, no seat licenses. MIT-licensed open source.</p></details>
-      <details><summary>Where is my data stored?</summary><p>In Chrome's local storage on your device. Nothing is uploaded anywhere unless you explicitly share a report through your own Cloudflare Worker.</p></details>
-      <details><summary>How does sharing work?</summary><p>Four ways: a self-contained HTML file that opens in any browser, a compressed share link for other Marko users, PDF/CSV exports, or your own Cloudflare Worker for short team links.</p></details>
+      <details><summary>Where is my data stored?</summary><p>Projects and their comments live in the Marko backend, a small Cloudflare Worker with a KV store. Use the hosted one that ships with the extension, or deploy your own and own every byte. Draft annotations stay in Chrome's local storage on your device.</p></details>
+      <details><summary>How does sharing work?</summary><p>Invite teammates by email from the in-page dock or the web app; they sign up and see the same project board. Or copy the project link and drop it in chat. Standalone HTML, PDF, and CSV exports still exist for people outside the team.</p></details>
       <details><summary>Do recipients need Marko installed?</summary><p>No. Standalone HTML and PDF exports contain everything: screenshot, pins, comments, and metadata. They open in any browser.</p></details>
-      <details><summary>How is team sharing authenticated?</summary><p>Email and password against your own Cloudflare Worker. Passwords are hashed on the worker with PBKDF2-SHA256 (200,000 iterations, per-user salt) and only the hash lives in your Workers KV. Sessions are 30-day HMAC tokens signed by a secret you set with <code>wrangler secret put SIGNING_SECRET</code>. No third-party identity provider, no plaintext passwords in storage, no shared team credentials.</p></details>
+      <details><summary>How is team sharing authenticated?</summary><p>Email and password against the Marko backend, a Cloudflare Worker you can also self-host. Passwords are hashed on the worker with PBKDF2-SHA256 (100,000 iterations, per-user salt) and only the hash lives in your Workers KV. Sessions are 30-day HMAC tokens signed by a secret you set with <code>wrangler secret put SIGNING_SECRET</code>. No third-party identity provider, no plaintext passwords in storage, no shared team credentials.</p></details>
       <details><summary>Which browsers are supported?</summary><p>Chrome and Chromium-based browsers with Manifest V3 support: Edge, Brave, Arc, Opera, and Vivaldi.</p></details>
       <details><summary>Can my team collaborate?</summary><p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states across a shared workspace.</p></details>
       <details><summary>Do I need my own Cloudflare account?</summary><p>No. Marko ships with a hosted worker so you can sign up and start reporting straight away. If you'd rather run the backend yourself, deploy the worker in the <code>cloudflare-worker</code> folder of the source repo (5-minute guide) and paste the resulting URL into Marko Settings.</p></details>
@@ -607,7 +593,7 @@
   </div>
   <div class="foot-bottom">
     <span>© 2026 Marko · MIT License</span>
-    <span>Docs describe v1.4.0 behavior</span>
+    <span>Docs describe v1.5.0 behavior</span>
   </div>
 </footer>
 
