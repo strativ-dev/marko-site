@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Marko: Free bug report &amp; UX check extension</title>
   <meta name="description" content="Marko is a free Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. Sign up with email and password and start reporting." />
-  <link rel="icon" href="marko-128.png?v=1.3.2" />
+  <link rel="icon" href="marko-128.png?v=1.4.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
@@ -329,11 +329,12 @@
 <body>
 
 <nav class="navbar">
-  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png?v=1.3.2" alt="" />Marko</a>
+  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png?v=1.4.0" alt="" />Marko</a>
   <div class="nav-mid">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
     <a href="#faq">FAQ</a>
+    <a href="#sign-in">Sign in</a>
   </div>
   <a class="nav-cta" href="#install">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
@@ -574,7 +575,7 @@
   <div class="foot-grid">
     <div class="foot-col">
       <div class="foot-brand">
-        <img src="marko-128.png?v=1.3.2" alt="" />
+        <img src="marko-128.png?v=1.4.0" alt="" />
         Marko <span class="tag">Chrome extension</span>
       </div>
       <div class="foot-tag">Spot it. Pin it.<br/><span class="serif">Shipped by Friday.</span></div>
@@ -606,9 +607,216 @@
   </div>
   <div class="foot-bottom">
     <span>© 2026 Marko · MIT License</span>
-    <span>Docs describe v1.2.0 behavior</span>
+    <span>Docs describe v1.4.0 behavior</span>
   </div>
 </footer>
+
+<!-- ── Sign-in overlay ─────────────────────────────── -->
+<div id="signin-overlay" hidden>
+  <style>
+    #signin-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(9, 12, 20, .58);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .si-card {
+      width: min(420px, 100%);
+      background: #fff; border-radius: 22px;
+      padding: 28px 26px; position: relative;
+      box-shadow: 0 30px 70px rgba(10, 14, 30, .35);
+      font: 15px/1.55 "Inter", -apple-system, sans-serif; color: var(--text);
+    }
+    .si-close {
+      position: absolute; top: 14px; right: 14px;
+      background: transparent; border: 0; cursor: pointer;
+      color: var(--muted); padding: 6px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .si-close:hover { background: var(--card); color: var(--text); }
+    .si-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .si-brand .chip {
+      width: 34px; height: 34px; border-radius: 9px; background: var(--blue-mid);
+      color: #fff; font-family: "Arial Black", Impact, sans-serif; font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .si-brand b { font-weight: 700; font-size: 16px; }
+    .si-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--card); padding: 4px; border-radius: 10px; }
+    .si-tab {
+      flex: 1; padding: 8px 12px; border: 0; background: transparent;
+      border-radius: 7px; font: 600 13.5px "Inter", sans-serif; color: var(--sub);
+      cursor: pointer; transition: background .12s, color .12s;
+    }
+    .si-tab.active { background: #fff; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+    .si-h2 { font-size: 20px; font-weight: 700; margin: 4px 0 4px; letter-spacing: -.3px; }
+    .si-sub { color: var(--muted); font-size: 13.5px; margin-bottom: 18px; }
+    .si-field { display: block; margin-bottom: 12px; }
+    .si-field span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
+    .si-field input {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--line);
+      border-radius: 10px; font: 15px "Inter", sans-serif; color: var(--text);
+      background: #fff; transition: border-color .12s, box-shadow .12s;
+    }
+    .si-field input:focus { outline: 0; border-color: var(--blue-mid); box-shadow: 0 0 0 3px rgba(47,106,232,.18); }
+    .si-submit {
+      width: 100%; padding: 13px 18px; margin-top: 6px;
+      background: var(--ink); color: #fff; border: 0; border-radius: 999px;
+      font: 600 15px "Inter", sans-serif; cursor: pointer;
+      transition: transform .12s, box-shadow .12s, opacity .12s;
+    }
+    .si-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
+    .si-submit:disabled { opacity: .55; cursor: default; }
+    .si-status { min-height: 20px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+    .si-status.err { color: #e5484d; }
+    .si-status.ok { color: #22c55e; }
+    .si-foot { color: var(--muted); font-size: 12px; margin-top: 14px; line-height: 1.5; }
+    .si-foot a { color: var(--blue-mid); }
+  </style>
+
+  <div class="si-card" role="dialog" aria-modal="true" aria-labelledby="si-title">
+    <button class="si-close" id="si-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="si-brand"><div class="chip">M</div><b>Marko</b></div>
+    <div class="si-tabs" role="tablist">
+      <button class="si-tab active" data-mode="signup" role="tab">Create account</button>
+      <button class="si-tab" data-mode="login" role="tab">Sign in</button>
+    </div>
+    <h2 class="si-h2" id="si-title">Create your account</h2>
+    <p class="si-sub" id="si-sub">Free forever. Nothing to install on your server.</p>
+    <label class="si-field"><span>Email</span><input id="si-email" type="email" autocomplete="email" /></label>
+    <label class="si-field"><span id="si-pw-label">Password (8+ characters)</span><input id="si-password" type="password" autocomplete="new-password" /></label>
+    <button class="si-submit" id="si-submit">Create account</button>
+    <p class="si-status" id="si-status"></p>
+    <p class="si-foot">
+      Sign-in opens Marko in your Chrome extension. Don't have it yet?
+      <a href="#install">Install Marko first.</a>
+    </p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const EXT_ID = "jhnnkjnpggliikhiiceijlkclhlblgjf";
+  const BACKEND = "https://marko-share.strativ.workers.dev";
+  const CALLBACK = "chrome-extension://" + EXT_ID + "/auth/callback.html";
+
+  const $ = (s) => document.querySelector(s);
+  const overlay = $("#signin-overlay");
+  const email = $("#si-email");
+  const pw = $("#si-password");
+  const submit = $("#si-submit");
+  const status = $("#si-status");
+  const title = $("#si-title");
+  const sub = $("#si-sub");
+  const pwLabel = $("#si-pw-label");
+  let mode = "signup";
+
+  function setMode(next) {
+    mode = next;
+    document.querySelectorAll(".si-tab").forEach((t) =>
+      t.classList.toggle("active", t.dataset.mode === mode)
+    );
+    if (mode === "signup") {
+      title.textContent = "Create your account";
+      sub.textContent = "Free forever. Nothing to install on your server.";
+      pwLabel.textContent = "Password (8+ characters)";
+      pw.setAttribute("autocomplete", "new-password");
+      submit.textContent = "Create account";
+    } else {
+      title.textContent = "Welcome back";
+      sub.textContent = "Sign in and Marko opens signed in.";
+      pwLabel.textContent = "Password";
+      pw.setAttribute("autocomplete", "current-password");
+      submit.textContent = "Sign in";
+    }
+    setStatus("", "");
+  }
+  function setStatus(msg, cls) {
+    status.textContent = msg;
+    status.className = "si-status" + (cls ? " " + cls : "");
+  }
+  function open() {
+    overlay.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    setTimeout(() => email.focus(), 40);
+  }
+  function close() {
+    overlay.hidden = true;
+    document.documentElement.style.overflow = "";
+    if (location.hash === "#sign-in") history.replaceState(null, "", location.pathname + location.search);
+  }
+  function parseExp(token) {
+    try {
+      const [body] = String(token || "").split(".");
+      const b = body.replace(/-/g, "+").replace(/_/g, "/");
+      const pad = b.length % 4 ? "=".repeat(4 - (b.length % 4)) : "";
+      const p = JSON.parse(atob(b + pad));
+      return (Number(p.exp) || 0) * 1000;
+    } catch { return 0; }
+  }
+  function friendly(code) {
+    return ({
+      bad_email: "That doesn't look like a valid email.",
+      password_too_short: "Password must be at least 8 characters.",
+      already_registered: "An account with that email already exists.",
+      invalid_credentials: "Wrong email or password.",
+      worker_not_configured: "Backend is missing its signing key.",
+    })[code] || code || "Something went wrong.";
+  }
+  async function callAuth(path, body) {
+    const res = await fetch(BACKEND + path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    let data = {};
+    try { data = await res.json(); } catch {}
+    if (!res.ok) throw new Error(data.error || ("http_" + res.status));
+    return data;
+  }
+
+  document.querySelectorAll(".si-tab").forEach((t) =>
+    t.addEventListener("click", () => setMode(t.dataset.mode))
+  );
+  $("#si-close").addEventListener("click", close);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  document.addEventListener("keydown", (e) => { if (!overlay.hidden && e.key === "Escape") close(); });
+  [email, pw].forEach((el) =>
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") submit.click(); })
+  );
+
+  submit.addEventListener("click", async () => {
+    const e = email.value.trim().toLowerCase();
+    const p = pw.value;
+    if (!e || !p) { setStatus("Enter email and password.", "err"); return; }
+    submit.disabled = true;
+    setStatus(mode === "signup" ? "Creating account…" : "Signing in…", "");
+    try {
+      const data = await callAuth(mode === "signup" ? "/auth/signup" : "/auth/login", { email: e, password: p });
+      const exp = parseExp(data.token);
+      const name = (data.user && data.user.name) || e.split("@")[0] || "";
+      const url = CALLBACK + "#" +
+        "token=" + encodeURIComponent(data.token) +
+        "&exp=" + encodeURIComponent(String(exp)) +
+        "&email=" + encodeURIComponent(data.user.email) +
+        "&name=" + encodeURIComponent(name);
+      setStatus("Signed in. Returning to Marko…", "ok");
+      setTimeout(() => { window.location.replace(url); }, 500);
+    } catch (err) {
+      setStatus(friendly(err.message), "err");
+      submit.disabled = false;
+    }
+  });
+
+  function checkHash() {
+    if (location.hash === "#sign-in") open(); else if (!overlay.hidden) close();
+  }
+  window.addEventListener("hashchange", checkHash);
+  checkHash();
+})();
+</script>
 
 </body>
 </html>
