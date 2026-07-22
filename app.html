@@ -132,10 +132,12 @@
     .col .cards { flex: 1; overflow-y: auto; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 8px; }
     .hcard {
       background: #fff; border-radius: 11px; padding: 12px 12px 10px;
-      box-shadow: 0 1px 3px rgba(10,14,30,.07); cursor: pointer;
+      box-shadow: 0 1px 3px rgba(10,14,30,.07); cursor: grab;
       border: 1px solid transparent;
     }
     .hcard:hover { border-color: #d9e3fb; }
+    .hcard.dragging { opacity: .45; cursor: grabbing; }
+    .col.dragover { outline: 2px dashed var(--blue); outline-offset: -4px; background: var(--blue-wash); }
     .hcard .txt { font-size: 13px; color: var(--text); margin-bottom: 10px; word-wrap: break-word; }
     .hcard .meta { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11.5px; }
     .hcard .n { background: var(--card); border-radius: 6px; padding: 1px 7px; font-weight: 600; }
@@ -397,12 +399,12 @@ function renderBoard() {
   const filtered = applyFilters(current.heurios);
   $("#board").innerHTML = SEVERITIES.map((sev) => {
     const items = filtered.filter((h) => severityOf(h) === sev.id);
-    return `<div class="col">
+    return `<div class="col" data-sev="${sev.id}">
       <div class="col-bar" style="background:${sev.color}"></div>
       <header>${sev.label} (${items.length})</header>
       <div class="cards">
         ${items.map((h) => `
-          <div class="hcard" data-hid="${h.id}">
+          <div class="hcard" draggable="true" data-hid="${h.id}">
             <div class="txt">${esc(h.comment)}</div>
             <div class="meta">
               <span class="n">${1 + (h.comments || []).length}</span>
@@ -433,6 +435,39 @@ function renderBoard() {
       catch { if (h) h.status = status === "resolved" ? "active" : "resolved"; renderBoard(); }
     })
   );
+
+  // drag a card to another severity column
+  document.querySelectorAll(".hcard").forEach((el) => {
+    el.addEventListener("dragstart", (e) => {
+      el.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", el.dataset.hid);
+      e.dataTransfer.effectAllowed = "move";
+    });
+    el.addEventListener("dragend", () => el.classList.remove("dragging"));
+  });
+  document.querySelectorAll(".col").forEach((col) => {
+    col.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      col.classList.add("dragover");
+    });
+    col.addEventListener("dragleave", (e) => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove("dragover");
+    });
+    col.addEventListener("drop", async (e) => {
+      e.preventDefault();
+      col.classList.remove("dragover");
+      const hid = e.dataTransfer.getData("text/plain");
+      const severity = col.dataset.sev;
+      const h = current.heurios.find((x) => x.id === hid);
+      if (!h || !severity || severityOf(h) === severity) return;
+      const prev = h.severity;
+      h.severity = severity;
+      renderBoard();
+      try { await api(`/projects/${current.project.id}/heurios/${hid}`, { method: "PATCH", body: JSON.stringify({ severity }) }); }
+      catch { h.severity = prev; renderBoard(); }
+    });
+  });
 }
 
 /* ── heurio drawer ── */
