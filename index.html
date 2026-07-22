@@ -797,13 +797,26 @@
       const data = await callAuth(mode === "signup" ? "/auth/signup" : "/auth/login", { email: e, password: p });
       const exp = parseExp(data.token);
       const name = (data.user && data.user.name) || e.split("@")[0] || "";
-      const url = CALLBACK + "#" +
+
+      // 1. web app session
+      localStorage.setItem("marko:web:session", JSON.stringify({
+        token: data.token, exp, email: data.user.email, name,
+      }));
+
+      // 2. bridge the session into the extension via its (web-accessible)
+      //    callback page in a hidden iframe. If the extension isn't
+      //    installed the iframe just fails silently.
+      const frame = document.createElement("iframe");
+      frame.style.display = "none";
+      frame.src = CALLBACK + "#" +
         "token=" + encodeURIComponent(data.token) +
         "&exp=" + encodeURIComponent(String(exp)) +
         "&email=" + encodeURIComponent(data.user.email) +
         "&name=" + encodeURIComponent(name);
-      setStatus("Signed in. Returning to Marko…", "ok");
-      setTimeout(() => { window.location.replace(url); }, 500);
+      document.body.appendChild(frame);
+
+      setStatus("Signed in. Opening your projects…", "ok");
+      setTimeout(() => { window.location.href = "app.html"; }, 900);
     } catch (err) {
       setStatus(friendly(err.message), "err");
       submit.disabled = false;

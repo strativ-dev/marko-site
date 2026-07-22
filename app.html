@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marko — Projects</title>
+  <link rel="icon" href="marko-128.png?v=1.4.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue: #2f6ae8; --blue-deep: #1e3fd8; --blue-wash: #eaf1fe;
+      --ink: #0b0b0f; --text: #16181d; --sub: #4a4f5c; --muted: #7a8090;
+      --line: #ececf1; --card: #f4f5f8; --white: #fff;
+      --sev-neutral: #2f6ae8; --sev-low: #22c55e; --sev-medium: #eab308;
+      --sev-high: #f97316; --sev-critical: #e5484d;
+      --sidebar: #10141d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font: 14px/1.5 "Inter", -apple-system, sans-serif; color: var(--text);
+      background: var(--white); height: 100vh; display: flex; overflow: hidden;
+    }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    input, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── sidebar ── */
+    aside {
+      width: 264px; flex-shrink: 0; background: var(--sidebar); color: #dfe3ee;
+      display: flex; flex-direction: column; padding: 18px 14px;
+    }
+    .sb-brand { display: flex; align-items: center; gap: 10px; padding: 2px 6px 16px; }
+    .sb-brand .chip {
+      width: 30px; height: 30px; border-radius: 8px; background: var(--blue);
+      color: #fff; font-family: "Arial Black", Impact, sans-serif; font-size: 17px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sb-brand b { font-size: 16px; color: #fff; }
+    .sb-create {
+      background: var(--blue); color: #fff; border-radius: 10px;
+      padding: 11px 14px; font-weight: 600; text-align: center; margin-bottom: 12px;
+      transition: background .12s;
+    }
+    .sb-create:hover { background: var(--blue-deep); }
+    .sb-search { position: relative; margin-bottom: 14px; }
+    .sb-search input {
+      width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 9px; padding: 9px 12px; color: #fff; outline: 0;
+    }
+    .sb-search input::placeholder { color: #8a90a3; }
+    .sb-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+    .sb-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+      border-radius: 9px; color: #c3c8d6; text-align: left; width: 100%;
+    }
+    .sb-item:hover { background: rgba(255,255,255,.06); }
+    .sb-item.active { background: rgba(47,106,232,.25); color: #fff; }
+    .sb-item .dot {
+      width: 26px; height: 26px; border-radius: 7px; background: rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px; color: #fff; flex-shrink: 0;
+    }
+    .sb-item .meta { min-width: 0; }
+    .sb-item .meta b { display: block; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sb-item .meta span { font-size: 11.5px; color: #8a90a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+    .sb-item .cnt { margin-left: auto; font-size: 11px; background: rgba(255,255,255,.12); border-radius: 99px; padding: 2px 8px; }
+    .sb-foot { border-top: 1px solid rgba(255,255,255,.1); padding-top: 12px; margin-top: 12px; position: relative; }
+    .sb-account { display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px; border-radius: 9px; }
+    .sb-account:hover { background: rgba(255,255,255,.06); }
+    .sb-account .av {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--blue);
+      color: #fff; font-weight: 700; font-size: 13px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .sb-account .who { min-width: 0; text-align: left; }
+    .sb-account .who b { display: block; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sb-account .who span { font-size: 11px; color: #8a90a3; }
+    .acct-menu {
+      position: absolute; bottom: 54px; left: 6px; right: 6px;
+      background: #1b2130; border: 1px solid rgba(255,255,255,.1); border-radius: 12px;
+      padding: 6px; box-shadow: 0 18px 50px rgba(0,0,0,.5); z-index: 20;
+    }
+    .acct-menu button { display: block; width: 100%; text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 13px; color: #dfe3ee; }
+    .acct-menu button:hover { background: rgba(255,255,255,.07); }
+    .acct-menu .danger { color: #ff8589; }
+
+    /* ── main ── */
+    main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 24px; border-bottom: 1px solid var(--line);
+    }
+    .topbar .title { min-width: 0; }
+    .topbar h1 { font-size: 19px; font-weight: 700; letter-spacing: -.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar .url { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar .spacer { flex: 1; }
+    .btn {
+      border-radius: 9px; padding: 9px 16px; font-weight: 600; font-size: 13.5px;
+      display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+    }
+    .btn.blue { background: var(--blue); color: #fff; }
+    .btn.blue:hover { background: var(--blue-deep); }
+    .btn.ghost { border: 1px solid var(--line); color: var(--sub); background: #fff; }
+    .btn.ghost:hover { border-color: #d6d9e0; color: var(--text); }
+    .kebab { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--muted); border: 1px solid var(--line); }
+    .kebab:hover { background: var(--card); }
+
+    .filters {
+      display: flex; align-items: center; gap: 10px; padding: 14px 24px 10px; flex-wrap: wrap;
+    }
+    .filters input[type="search"] {
+      border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; width: 200px; outline: 0;
+    }
+    .filters input[type="search"]:focus { border-color: var(--blue); }
+    .filters select {
+      border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px;
+      background: #fff; color: var(--sub); outline: 0;
+    }
+
+    .board {
+      flex: 1; overflow-x: auto; overflow-y: hidden;
+      display: flex; gap: 14px; padding: 10px 24px 24px; align-items: stretch;
+    }
+    .col {
+      width: 250px; flex-shrink: 0; background: var(--card); border-radius: 14px;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .col .col-bar { height: 4px; }
+    .col header { padding: 12px 14px 8px; font-weight: 700; font-size: 13.5px; }
+    .col .cards { flex: 1; overflow-y: auto; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+    .hcard {
+      background: #fff; border-radius: 11px; padding: 12px 12px 10px;
+      box-shadow: 0 1px 3px rgba(10,14,30,.07); cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .hcard:hover { border-color: #d9e3fb; }
+    .hcard .txt { font-size: 13px; color: var(--text); margin-bottom: 10px; word-wrap: break-word; }
+    .hcard .meta { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11.5px; }
+    .hcard .n { background: var(--card); border-radius: 6px; padding: 1px 7px; font-weight: 600; }
+    .hcard .av {
+      width: 20px; height: 20px; border-radius: 50%; background: var(--blue); color: #fff;
+      font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .hcard .done { margin-left: auto; }
+    .hcard input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
+    .col .add { padding: 10px 14px; color: var(--muted); font-size: 13px; text-align: left; }
+    .col .add:hover { color: var(--blue); }
+
+    /* ── empty / loading states ── */
+    .state {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; color: var(--muted); padding: 40px; text-align: center;
+    }
+    .state .big { font-size: 17px; font-weight: 700; color: var(--text); }
+
+    /* ── modal ── */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(9,12,20,.55); z-index: 100;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      backdrop-filter: blur(6px);
+    }
+    .modal {
+      width: min(440px, 100%); background: #fff; border-radius: 18px; padding: 24px;
+      box-shadow: 0 30px 70px rgba(10,14,30,.35);
+    }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .modal .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+    .modal label { display: block; margin-bottom: 12px; }
+    .modal label span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
+    .modal input, .modal textarea, .modal select {
+      width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0;
+    }
+    .modal input:focus, .modal textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47,106,232,.15); }
+    .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+    .modal .status { font-size: 13px; min-height: 18px; margin-top: 10px; color: var(--muted); }
+    .modal .status.err { color: #e5484d; }
+    .modal .status.ok { color: #16a34a; }
+
+    /* ── heurio detail drawer ── */
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+      background: #fff; box-shadow: -18px 0 50px rgba(10,14,30,.18); z-index: 90;
+      display: flex; flex-direction: column;
+    }
+    .drawer header {
+      padding: 16px 20px; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .drawer header .sev { width: 10px; height: 10px; border-radius: 50%; }
+    .drawer header b { font-size: 14px; flex: 1; }
+    .drawer .body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+    .drawer .first { font-size: 14px; margin-bottom: 6px; }
+    .drawer .whenwho { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+    .drawer .props { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .drawer .props label span { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
+    .drawer .props select, .drawer .props input {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: 0; background: #fff;
+    }
+    .cmt { display: flex; gap: 10px; margin-bottom: 14px; }
+    .cmt .av { width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cmt .bubble { background: var(--card); border-radius: 10px; padding: 8px 12px; font-size: 13px; flex: 1; }
+    .cmt .bubble .by { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+    .cmt .bubble .at { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .drawer footer { border-top: 1px solid var(--line); padding: 14px 20px; display: flex; gap: 10px; }
+    .drawer footer input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; outline: 0; }
+    .drawer footer input:focus { border-color: var(--blue); }
+
+    .menu {
+      position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: 0 18px 50px rgba(10,14,30,.18); padding: 6px; z-index: 110; min-width: 200px;
+    }
+    .menu button { display: block; width: 100%; text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 13.5px; }
+    .menu button:hover { background: var(--card); }
+    .menu .danger { color: #e5484d; }
+    .menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
+
+    @media (max-width: 760px) {
+      aside { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<aside>
+  <div class="sb-brand"><div class="chip">M</div><b>marko</b></div>
+  <button class="sb-create" id="btn-create">+ Create project</button>
+  <div class="sb-search"><input id="sb-search" placeholder="Search" /></div>
+  <div class="sb-list" id="sb-list"></div>
+  <div class="sb-foot">
+    <div class="acct-menu" id="acct-menu" hidden>
+      <button id="mi-password">Change password</button>
+      <button id="mi-landing">Open landing page</button>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,.1);margin:6px 0" />
+      <button class="danger" id="mi-logout">Log out</button>
+    </div>
+    <button class="sb-account" id="btn-account">
+      <span class="av" id="acct-av">?</span>
+      <span class="who"><b id="acct-name">…</b><span id="acct-email"></span></span>
+    </button>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="state" id="loading"><div class="big">Loading…</div></div>
+</main>
+
+<script>
+"use strict";
+const BACKEND = "https://marko-share.strativ.workers.dev";
+const LS_KEY = "marko:web:session";
+const SEVERITIES = [
+  { id: "neutral",  label: "Neutral",  color: "var(--sev-neutral)" },
+  { id: "low",      label: "Low",      color: "var(--sev-low)" },
+  { id: "medium",   label: "Medium",   color: "var(--sev-medium)" },
+  { id: "high",     label: "High",     color: "var(--sev-high)" },
+  { id: "critical", label: "Critical", color: "var(--sev-critical)" },
+];
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const initials = (s) => (String(s || "?").trim()[0] || "?").toUpperCase();
+const fmtDate = (t) => t ? new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+
+let session = null;   // { token, exp, email, name }
+let projects = [];
+let current = null;   // { project, heurios }
+let filters = { q: "", status: "active", assignee: "", severityView: true };
+let drawerHeurio = null;
+
+function loadSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (s && s.token && (s.exp || 0) > Date.now() + 30_000) return s;
+  } catch {}
+  return null;
+}
+function logout() {
+  localStorage.removeItem(LS_KEY);
+  location.href = "index.html#sign-in";
+}
+
+async function api(path, opts = {}) {
+  const res = await fetch(BACKEND + path, {
+    ...opts,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + session.token,
+      ...(opts.headers || {}),
+    },
+  });
+  let data = {};
+  try { data = await res.json(); } catch {}
+  if (res.status === 401) { logout(); throw new Error("unauthorized"); }
+  if (!res.ok) throw new Error(data.error || ("http_" + res.status));
+  return data;
+}
+
+/* ── sidebar ── */
+function renderSidebar() {
+  $("#acct-av").textContent = initials(session.name || session.email);
+  $("#acct-name").textContent = session.name || session.email.split("@")[0];
+  $("#acct-email").textContent = session.email;
+  const q = ($("#sb-search").value || "").toLowerCase();
+  const pid = currentPid();
+  $("#sb-list").innerHTML = projects
+    .filter((p) => !q || p.name.toLowerCase().includes(q) || (p.url || "").toLowerCase().includes(q))
+    .map((p) => {
+      let host = "";
+      try { host = new URL(p.url).host; } catch {}
+      const active = p.counts ? p.counts.active : 0;
+      return `<button class="sb-item ${p.id === pid ? "active" : ""}" data-pid="${p.id}">
+        <span class="dot">${esc(initials(p.name))}</span>
+        <span class="meta"><b>${esc(p.name)}</b><span>${esc(host)}</span></span>
+        ${active ? `<span class="cnt">${active}</span>` : ""}
+      </button>`;
+    }).join("") || `<p style="color:#8a90a3;font-size:12.5px;padding:8px 10px">No projects yet.</p>`;
+  document.querySelectorAll(".sb-item").forEach((el) =>
+    el.addEventListener("click", () => { location.hash = "#/p/" + el.dataset.pid; })
+  );
+}
+
+function currentPid() {
+  const m = location.hash.match(/^#\/p\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+/* ── main views ── */
+function severityOf(h) { return SEVERITIES.some((s) => s.id === h.severity) ? h.severity : "neutral"; }
+
+function renderEmptyHome() {
+  $("#main").innerHTML = `<div class="state">
+    <div class="big">${projects.length ? "Pick a project" : "Create your first project"}</div>
+    <p>${projects.length ? "Select a project from the sidebar to see its heurios." : "A project collects every comment your team pins on a site."}</p>
+    <button class="btn blue" id="empty-create">+ Create project</button>
+  </div>`;
+  $("#empty-create").addEventListener("click", openCreateModal);
+}
+
+function applyFilters(heurios) {
+  return heurios.filter((h) => {
+    if (filters.status === "active" && h.status === "resolved") return false;
+    if (filters.status === "resolved" && h.status !== "resolved") return false;
+    if (filters.assignee && (h.assignee || "") !== filters.assignee) return false;
+    if (filters.q) {
+      const q = filters.q.toLowerCase();
+      const inComment = (h.comment || "").toLowerCase().includes(q);
+      const inThread = (h.comments || []).some((c) => (c.text || "").toLowerCase().includes(q));
+      if (!inComment && !inThread) return false;
+    }
+    return true;
+  });
+}
+
+function renderProject() {
+  const { project, heurios } = current;
+  const assignees = [...new Set(heurios.map((h) => h.assignee).filter(Boolean))];
+  let host = ""; try { host = new URL(project.url).host; } catch {}
+
+  $("#main").innerHTML = `
+    <div class="topbar">
+      <div class="title">
+        <h1>${esc(project.name)}</h1>
+        <div class="url">${esc(host || project.url || "")}</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn blue" id="btn-share">Share</button>
+      <button class="kebab" id="btn-kebab" aria-label="Project menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      </button>
+    </div>
+    <div class="filters">
+      <input type="search" id="f-q" placeholder="Search" value="${esc(filters.q)}" />
+      <select id="f-status">
+        <option value="active" ${filters.status === "active" ? "selected" : ""}>Active</option>
+        <option value="resolved" ${filters.status === "resolved" ? "selected" : ""}>Resolved</option>
+        <option value="all" ${filters.status === "all" ? "selected" : ""}>All</option>
+      </select>
+      <select id="f-assignee">
+        <option value="">Assigned to</option>
+        ${assignees.map((a) => `<option ${filters.assignee === a ? "selected" : ""} value="${esc(a)}">${esc(a)}</option>`).join("")}
+      </select>
+    </div>
+    <div class="board" id="board"></div>`;
+
+  $("#f-q").addEventListener("input", (e) => { filters.q = e.target.value; renderBoard(); });
+  $("#f-status").addEventListener("change", (e) => { filters.status = e.target.value; renderBoard(); });
+  $("#f-assignee").addEventListener("change", (e) => { filters.assignee = e.target.value; renderBoard(); });
+  $("#btn-share").addEventListener("click", openShareModal);
+  $("#btn-kebab").addEventListener("click", openKebab);
+
+  renderBoard();
+}
+
+function renderBoard() {
+  const filtered = applyFilters(current.heurios);
+  $("#board").innerHTML = SEVERITIES.map((sev) => {
+    const items = filtered.filter((h) => severityOf(h) === sev.id);
+    return `<div class="col">
+      <div class="col-bar" style="background:${sev.color}"></div>
+      <header>${sev.label} (${items.length})</header>
+      <div class="cards">
+        ${items.map((h) => `
+          <div class="hcard" data-hid="${h.id}">
+            <div class="txt">${esc(h.comment)}</div>
+            <div class="meta">
+              <span class="n">${1 + (h.comments || []).length}</span>
+              <span class="av" title="${esc(h.createdBy)}">${esc(initials(h.createdBy))}</span>
+              ${h.assignee ? `<span title="assignee">→ ${esc(h.assignee.split("@")[0])}</span>` : ""}
+              ${h.due ? `<span>${fmtDate(h.due)}</span>` : ""}
+              <span class="done"><input type="checkbox" ${h.status === "resolved" ? "checked" : ""} data-resolve="${h.id}" title="Resolve" /></span>
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>`;
+  }).join("");
+
+  document.querySelectorAll(".hcard").forEach((el) =>
+    el.addEventListener("click", (e) => {
+      if (e.target.matches("input[type=checkbox]")) return;
+      openDrawer(el.dataset.hid);
+    })
+  );
+  document.querySelectorAll("input[data-resolve]").forEach((el) =>
+    el.addEventListener("change", async () => {
+      const hid = el.dataset.resolve;
+      const status = el.checked ? "resolved" : "active";
+      const h = current.heurios.find((x) => x.id === hid);
+      if (h) h.status = status;
+      renderBoard();
+      try { await api(`/projects/${current.project.id}/heurios/${hid}`, { method: "PATCH", body: JSON.stringify({ status }) }); }
+      catch { if (h) h.status = status === "resolved" ? "active" : "resolved"; renderBoard(); }
+    })
+  );
+}
+
+/* ── heurio drawer ── */
+function openDrawer(hid) {
+  const h = current.heurios.find((x) => x.id === hid);
+  if (!h) return;
+  drawerHeurio = h;
+  closeDrawer();
+  const sev = SEVERITIES.find((s) => s.id === severityOf(h));
+  const el = document.createElement("div");
+  el.className = "drawer";
+  el.id = "drawer";
+  el.innerHTML = `
+    <header>
+      <span class="sev" style="background:${sev.color}"></span>
+      <b>Heurio</b>
+      <button class="kebab" id="drawer-close" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+    <div class="body">
+      <p class="first">${esc(h.comment)}</p>
+      <p class="whenwho">${esc(h.createdBy)} · ${new Date(h.createdAt).toLocaleString()}${h.pageUrl ? ` · <a href="${esc(h.pageUrl)}" target="_blank" rel="noopener" style="color:var(--blue)">open page</a>` : ""}</p>
+      <div class="props">
+        <label><span>Severity</span>
+          <select id="d-severity">${SEVERITIES.map((s) => `<option value="${s.id}" ${s.id === severityOf(h) ? "selected" : ""}>${s.label}</option>`).join("")}</select>
+        </label>
+        <label><span>Status</span>
+          <select id="d-status"><option value="active" ${h.status !== "resolved" ? "selected" : ""}>Active</option><option value="resolved" ${h.status === "resolved" ? "selected" : ""}>Resolved</option></select>
+        </label>
+        <label><span>Assignee</span><input id="d-assignee" value="${esc(h.assignee || "")}" placeholder="email or name" /></label>
+        <label><span>Due</span><input id="d-due" type="date" value="${h.due ? new Date(h.due).toISOString().slice(0, 10) : ""}" /></label>
+      </div>
+      <div id="d-comments">${(h.comments || []).map(renderComment).join("")}</div>
+    </div>
+    <footer>
+      <input id="d-new-comment" placeholder="Add a comment…" />
+      <button class="btn blue" id="d-send">Send</button>
+    </footer>`;
+  document.body.appendChild(el);
+
+  $("#drawer-close").addEventListener("click", closeDrawer);
+  const patch = async (body) => {
+    Object.assign(h, body);
+    renderBoard();
+    try { await api(`/projects/${current.project.id}/heurios/${h.id}`, { method: "PATCH", body: JSON.stringify(body) }); } catch {}
+  };
+  $("#d-severity").addEventListener("change", (e) => patch({ severity: e.target.value }));
+  $("#d-status").addEventListener("change", (e) => patch({ status: e.target.value }));
+  $("#d-assignee").addEventListener("change", (e) => patch({ assignee: e.target.value.trim() }));
+  $("#d-due").addEventListener("change", (e) => patch({ due: e.target.value ? new Date(e.target.value).getTime() : null }));
+  const send = async () => {
+    const text = $("#d-new-comment").value.trim();
+    if (!text) return;
+    $("#d-new-comment").value = "";
+    try {
+      const { comment } = await api(`/projects/${current.project.id}/heurios/${h.id}/comments`, { method: "POST", body: JSON.stringify({ text }) });
+      h.comments = h.comments || [];
+      h.comments.push(comment);
+      $("#d-comments").insertAdjacentHTML("beforeend", renderComment(comment));
+      renderBoard();
+    } catch {}
+  };
+  $("#d-send").addEventListener("click", send);
+  $("#d-new-comment").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+}
+function renderComment(c) {
+  return `<div class="cmt">
+    <span class="av">${esc(initials(c.byName || c.by))}</span>
+    <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${esc(c.text)}<div class="at">${new Date(c.at).toLocaleString()}</div></div>
+  </div>`;
+}
+function closeDrawer() { const d = $("#drawer"); if (d) d.remove(); }
+
+/* ── modals ── */
+function modal(html) {
+  const ov = document.createElement("div");
+  ov.className = "overlay";
+  ov.innerHTML = `<div class="modal">${html}</div>`;
+  ov.addEventListener("click", (e) => { if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+  return ov;
+}
+
+function openCreateModal() {
+  const ov = modal(`
+    <h2>Create project</h2>
+    <p class="sub">A project collects every heurio your team pins on one site.</p>
+    <label><span>Project name</span><input id="cp-name" placeholder="e.g. Marketing site review" /></label>
+    <label><span>Site URL</span><input id="cp-url" type="url" placeholder="https://example.com" /></label>
+    <p class="status" id="cp-status"></p>
+    <div class="row">
+      <button class="btn ghost" data-close>Cancel</button>
+      <button class="btn blue" id="cp-go">Create</button>
+    </div>`);
+  ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
+  ov.querySelector("#cp-go").addEventListener("click", async () => {
+    const name = ov.querySelector("#cp-name").value.trim();
+    const url = ov.querySelector("#cp-url").value.trim();
+    const st = ov.querySelector("#cp-status");
+    if (!name) { st.textContent = "Name required."; st.className = "status err"; return; }
+    st.textContent = "Creating…"; st.className = "status";
+    try {
+      const { project } = await api("/projects", { method: "POST", body: JSON.stringify({ name, url }) });
+      projects.unshift({ ...project, counts: { active: 0, resolved: 0 } });
+      ov.remove();
+      location.hash = "#/p/" + project.id;
+      renderSidebar();
+    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+  });
+  setTimeout(() => ov.querySelector("#cp-name").focus(), 40);
+}
+
+function openShareModal() {
+  const p = current.project;
+  const shareUrl = location.origin + location.pathname + "#/p/" + p.id;
+  const ov = modal(`
+    <h2>Share "${esc(p.name)}"</h2>
+    <p class="sub">Teammates get access to every heurio in this project. They sign in with their own account.</p>
+    <label><span>Invite by email (comma separated)</span><input id="sh-emails" placeholder="anna@team.com, erik@team.com" /></label>
+    <p class="status" id="sh-status"></p>
+    <div class="row">
+      <button class="btn ghost" id="sh-copy">Copy project link</button>
+      <button class="btn blue" id="sh-send">Invite</button>
+    </div>
+    <p class="sub" style="margin:14px 0 0">Members: <span id="sh-members">${esc([p.owner, ...(p.members || [])].join(", "))}</span></p>`);
+  ov.querySelector("#sh-copy").addEventListener("click", async () => {
+    await navigator.clipboard.writeText(shareUrl);
+    const st = ov.querySelector("#sh-status");
+    st.textContent = "Link copied."; st.className = "status ok";
+  });
+  ov.querySelector("#sh-send").addEventListener("click", async () => {
+    const emails = ov.querySelector("#sh-emails").value.split(",").map((s) => s.trim()).filter(Boolean);
+    const st = ov.querySelector("#sh-status");
+    if (!emails.length) { st.textContent = "Enter at least one email."; st.className = "status err"; return; }
+    st.textContent = "Inviting…"; st.className = "status";
+    try {
+      const { members, added } = await api(`/projects/${p.id}/invites`, { method: "POST", body: JSON.stringify({ emails }) });
+      p.members = members;
+      ov.querySelector("#sh-members").textContent = [p.owner, ...members].join(", ");
+      st.textContent = added.length ? `Invited ${added.join(", ")}.` : "Already members.";
+      st.className = "status ok";
+    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+  });
+}
+
+function openKebab(e) {
+  const old = $("#kebab-menu"); if (old) { old.remove(); return; }
+  const p = current.project;
+  const menu = document.createElement("div");
+  menu.className = "menu"; menu.id = "kebab-menu";
+  const r = e.currentTarget.getBoundingClientRect();
+  menu.style.top = r.bottom + 6 + "px";
+  menu.style.right = (window.innerWidth - r.right) + "px";
+  menu.innerHTML = `
+    <button id="k-rename">Rename project</button>
+    <button id="k-copy">Copy project link</button>
+    <button id="k-archive">${p.archived ? "Unarchive" : "Archive"} project</button>
+    <hr />
+    <button class="danger" id="k-delete">Delete project</button>`;
+  document.body.appendChild(menu);
+  const dismiss = (ev) => { if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener("click", dismiss, true); } };
+  setTimeout(() => document.addEventListener("click", dismiss, true), 0);
+
+  $("#k-rename").addEventListener("click", async () => {
+    menu.remove();
+    const name = prompt("Project name:", p.name);
+    if (!name || !name.trim()) return;
+    const { project } = await api("/projects/" + p.id, { method: "PATCH", body: JSON.stringify({ name: name.trim() }) });
+    Object.assign(p, project);
+    const sp = projects.find((x) => x.id === p.id); if (sp) sp.name = project.name;
+    renderProject(); renderSidebar();
+  });
+  $("#k-copy").addEventListener("click", async () => {
+    menu.remove();
+    await navigator.clipboard.writeText(location.origin + location.pathname + "#/p/" + p.id);
+  });
+  $("#k-archive").addEventListener("click", async () => {
+    menu.remove();
+    const { project } = await api("/projects/" + p.id, { method: "PATCH", body: JSON.stringify({ archived: !p.archived }) });
+    Object.assign(p, project);
+    renderProject();
+  });
+  $("#k-delete").addEventListener("click", async () => {
+    menu.remove();
+    if (!confirm(`Delete "${p.name}" and every heurio in it? Cannot be undone.`)) return;
+    await api("/projects/" + p.id, { method: "DELETE" });
+    projects = projects.filter((x) => x.id !== p.id);
+    location.hash = "";
+    renderSidebar(); renderEmptyHome();
+  });
+}
+
+function openPasswordModal() {
+  const ov = modal(`
+    <h2>Change password</h2>
+    <label><span>Current password</span><input id="pw-old" type="password" autocomplete="current-password" /></label>
+    <label><span>New password (8+ characters)</span><input id="pw-new" type="password" autocomplete="new-password" /></label>
+    <p class="status" id="pw-status"></p>
+    <div class="row">
+      <button class="btn ghost" data-close>Cancel</button>
+      <button class="btn blue" id="pw-go">Update</button>
+    </div>`);
+  ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
+  ov.querySelector("#pw-go").addEventListener("click", async () => {
+    const st = ov.querySelector("#pw-status");
+    const oldPassword = ov.querySelector("#pw-old").value;
+    const newPassword = ov.querySelector("#pw-new").value;
+    if (newPassword.length < 8) { st.textContent = "New password too short."; st.className = "status err"; return; }
+    st.textContent = "Updating…"; st.className = "status";
+    try {
+      await api("/auth/change-password", { method: "POST", body: JSON.stringify({ oldPassword, newPassword }) });
+      st.textContent = "Password updated."; st.className = "status ok";
+      setTimeout(() => ov.remove(), 900);
+    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+  });
+}
+
+/* ── routing + boot ── */
+async function openProject(pid) {
+  closeDrawer();
+  $("#main").innerHTML = `<div class="state"><div class="big">Loading…</div></div>`;
+  try {
+    current = await api("/projects/" + pid);
+    filters = { q: "", status: "active", assignee: "" };
+    renderProject();
+  } catch {
+    renderEmptyHome();
+  }
+  renderSidebar();
+}
+
+async function route() {
+  const pid = currentPid();
+  if (pid) await openProject(pid);
+  else { current = null; renderEmptyHome(); renderSidebar(); }
+}
+
+async function boot() {
+  session = loadSession();
+  if (!session) { location.href = "index.html#sign-in"; return; }
+  $("#btn-create").addEventListener("click", openCreateModal);
+  $("#sb-search").addEventListener("input", renderSidebar);
+  $("#btn-account").addEventListener("click", () => { $("#acct-menu").hidden = !$("#acct-menu").hidden; });
+  $("#mi-logout").addEventListener("click", logout);
+  $("#mi-password").addEventListener("click", () => { $("#acct-menu").hidden = true; openPasswordModal(); });
+  $("#mi-landing").addEventListener("click", () => { location.href = "index.html"; });
+  window.addEventListener("hashchange", route);
+  try {
+    const data = await api("/projects");
+    projects = data.projects;
+  } catch (e) {
+    if (e.message !== "unauthorized") $("#main").innerHTML = `<div class="state"><div class="big">Can't reach the backend</div><p>${esc(e.message)}</p></div>`;
+    return;
+  }
+  await route();
+}
+boot();
+</script>
+
+</body>
+</html>
