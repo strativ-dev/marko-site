@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Marko: Free bug report &amp; UX check extension</title>
-  <meta name="description" content="Marko is a free, local-first Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. Deploy your own tiny backend for team share links." />
+  <meta name="description" content="Marko is a free Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. Sign up with email and password and start reporting." />
   <link rel="icon" href="marko-128.png?v=1.2.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -517,7 +517,7 @@
 <section class="data-band">
   <div class="kicker">Your data</div>
   <h2>Local by default. <span class="serif">Cloud when you want it.</span></h2>
-  <p class="section-sub">Marko keeps every report in your browser. Turn on team sharing by pointing it at a Cloudflare Worker you deploy yourself, no third-party service in between.</p>
+  <p class="section-sub">Marko ships with a hosted backend so you can sign up in one click. Prefer to self-host? Deploy your own Cloudflare Worker and point Marko at it in Settings.</p>
   <div class="data-grid">
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="m15 4 6 6"/><path d="m21 4-6 6"/></svg></div>
@@ -555,7 +555,7 @@
       <details><summary>How is team sharing authenticated?</summary><p>Email and password against your own Cloudflare Worker. Passwords are hashed on the worker with PBKDF2-SHA256 (200,000 iterations, per-user salt) and only the hash lives in your Workers KV. Sessions are 30-day HMAC tokens signed by a secret you set with <code>wrangler secret put SIGNING_SECRET</code>. No third-party identity provider, no plaintext passwords in storage, no shared team credentials.</p></details>
       <details><summary>Which browsers are supported?</summary><p>Chrome and Chromium-based browsers with Manifest V3 support: Edge, Brave, Arc, Opera, and Vivaldi.</p></details>
       <details><summary>Can my team collaborate?</summary><p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states across a shared workspace.</p></details>
-      <details><summary>Is my Cloudflare account required?</summary><p>Only if you want team share links. Everything else works fully offline. See the <code>cloudflare-worker</code> folder in the source repo for a 10-minute deploy guide.</p></details>
+      <details><summary>Do I need my own Cloudflare account?</summary><p>No. Marko ships with a hosted worker so you can sign up and start reporting straight away. If you'd rather run the backend yourself, deploy the worker in the <code>cloudflare-worker</code> folder of the source repo (5-minute guide) and paste the resulting URL into Marko Settings.</p></details>
     </div>
   </div>
 </section>
