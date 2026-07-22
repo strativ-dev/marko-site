@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Marko: Free bug report &amp; UX check extension</title>
-  <meta name="description" content="Marko is a free, local-first Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. No signup." />
+  <meta name="description" content="Marko is a free, local-first Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. Deploy your own tiny backend for team share links." />
   <link rel="icon" href="marko-128.png?v=1.2.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -439,7 +439,7 @@
         <div class="fhead"><span class="n">7</span><h3>Share it</h3></div>
         <ul>
           <li><b>Standalone HTML</b>: one self-contained file with screenshot, pins, and comments. Opens in any browser; recipients need nothing installed.</li>
-          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your</em> Cloudflare Worker for short team links. Uploads are authenticated by <b>Google Sign-In</b> or an <b>email magic link</b>, whichever you configure.</li>
+          <li><b>Share link</b>: the report travels compressed inside the URL (works for other Marko users), or through <em>your</em> Cloudflare Worker for short team links. Uploads are authenticated with an <b>email and password</b> account on your worker, hashed with PBKDF2 and stored in your Workers KV.</li>
           <li><b>Per-pin deep links</b> that scroll straight to a pin, whole-<b>project exports</b>, <b>PDF</b> via print, <b>CSV</b> of reports or pins, and <b>JSON</b> backup/restore.</li>
         </ul>
       </div>
@@ -521,8 +521,8 @@
   <div class="data-grid">
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="m15 4 6 6"/><path d="m21 4-6 6"/></svg></div>
-      <h3>No forced accounts</h3>
-      <p>Install and start reviewing. Sign in only when you want cloud sharing.</p>
+      <h3>Your own account</h3>
+      <p>Sign up with email and password on the worker you deploy. No third-party identity provider in the loop.</p>
     </div>
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16"/><path d="M8 12a4 4 0 0 1 4-4"/><path d="M4 12a8 8 0 0 1 8-8"/><path d="M12 20v-4"/></svg></div>
@@ -537,7 +537,7 @@
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 12"/><path d="M20 12a5 5 0 0 1 0 10H7"/></svg></div>
       <h3>Your cloud, not ours</h3>
-      <p>Team links run on your Cloudflare Worker with your KV store. Google sign-in only.</p>
+      <p>Team links run on your Cloudflare Worker with your KV store. You own the users, the reports, and the secret key.</p>
     </div>
   </div>
 </section>
@@ -552,7 +552,7 @@
       <details><summary>Where is my data stored?</summary><p>In Chrome's local storage on your device. Nothing is uploaded anywhere unless you explicitly share a report through your own Cloudflare Worker.</p></details>
       <details><summary>How does sharing work?</summary><p>Four ways: a self-contained HTML file that opens in any browser, a compressed share link for other Marko users, PDF/CSV exports, or your own Cloudflare Worker for short team links.</p></details>
       <details><summary>Do recipients need Marko installed?</summary><p>No. Standalone HTML and PDF exports contain everything: screenshot, pins, comments, and metadata. They open in any browser.</p></details>
-      <details><summary>How is team sharing authenticated?</summary><p>Two options, pick one per team. <b>Google Sign-In</b>: the Cloudflare Worker verifies the Google ID token against a client ID you configure. <b>Email magic link</b>: enter your email, the Worker sends a one-time link via Resend, the browser page hands you a session key to paste back into Marko. No custom passwords either way.</p></details>
+      <details><summary>How is team sharing authenticated?</summary><p>Email and password against your own Cloudflare Worker. Passwords are hashed on the worker with PBKDF2-SHA256 (200,000 iterations, per-user salt) and only the hash lives in your Workers KV. Sessions are 30-day HMAC tokens signed by a secret you set with <code>wrangler secret put SIGNING_SECRET</code>. No third-party identity provider, no plaintext passwords in storage, no shared team credentials.</p></details>
       <details><summary>Which browsers are supported?</summary><p>Chrome and Chromium-based browsers with Manifest V3 support: Edge, Brave, Arc, Opera, and Vivaldi.</p></details>
       <details><summary>Can my team collaborate?</summary><p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states across a shared workspace.</p></details>
       <details><summary>Is my Cloudflare account required?</summary><p>Only if you want team share links. Everything else works fully offline. See the <code>cloudflare-worker</code> folder in the source repo for a 10-minute deploy guide.</p></details>
