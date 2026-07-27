@@ -8,7 +8,7 @@
   <link rel="icon" href="marko-128.png?v=1.4.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fragment+Mono&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <style>
     :root {
       /* Sky gradient stops, taken from the reference hero. */
@@ -16,7 +16,7 @@
       --sky-2: #0080ff;
       --sky-3: #78d2ff;
 
-      --blue-deep: #0000ee;   /* accent */
+      --blue-deep: #0099ff;   /* accent */
       --blue-mid: #0080ff;
       --blue-soft: #78d2ff;
       --blue-wash: #e6f2ff;
@@ -29,16 +29,20 @@
       --white: #ffffff;
 
       --display: "Inter Tight", "Inter Display", "Inter", -apple-system, sans-serif;
-      --radius-md: 12px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
       --radius-lg: 20px;
       --radius-xl: 30px;
+      --radius-pill: 100px;
+      --mono: "Fragment Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --ease: .25s ease;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       background: var(--white);
       color: var(--text);
-      font: 16px/1.6 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font: 16px/1.6em "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
@@ -54,7 +58,8 @@
       position: fixed; top: 0; left: 50%; transform: translateX(-50%);
       z-index: 100;
       width: min(660px, calc(100% - 32px));
-      background: var(--ink);
+      background: rgba(0,0,0,.86);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
       border-radius: 0 0 26px 26px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 9px 8px 10px 16px;
@@ -63,7 +68,7 @@
     .navbar .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
     .logo-chip { width: 24px; height: 24px; border-radius: 7px; display: block; box-shadow: 0 0 0 1px rgba(255,255,255,.18); }
     .nav-mid { display: flex; align-items: center; gap: 17px; font-size: 12.5px; }
-    .nav-mid a { color: rgba(255,255,255,.72); }
+    .nav-mid a { color: rgba(255,255,255,.72); transition: color var(--ease); }
     .nav-mid a:hover { color: #fff; }
     .nav-cta {
       background: #fff; color: var(--ink);
@@ -107,10 +112,10 @@
       font-weight: 700;
       font-size: clamp(44px, 7.4vw, 80px);
       line-height: 1.0;
-      letter-spacing: -4px;
+      letter-spacing: -0.05em;
     }
     h1 .serif {
-      display: block; letter-spacing: -3px;
+      display: block; letter-spacing: -0.05em;
       font-size: clamp(46px, 7.6vw, 80px);
       line-height: 1.0;
     }
@@ -127,7 +132,7 @@
       border-radius: 999px;
       padding: 15px 28px;
       font-size: 16px; font-weight: 600;
-      transition: transform .25s;
+      transition: transform .3s ease-out;
     }
     .cta-big:hover { transform: translateY(-2px); }
     .cta-big svg { width: 16px; height: 16px; }
@@ -148,7 +153,7 @@
       text-align: center;
       font-family: var(--display);
       font-size: clamp(32px, 5.2vw, 60px);
-      font-weight: 700; letter-spacing: -3px; line-height: 1.02;
+      font-weight: 700; letter-spacing: -0.05em; line-height: 1em;
       margin-bottom: 12px;
     }
     .section-sub {
@@ -176,7 +181,7 @@
       background: var(--ink); color: #fff; font-weight: 700; font-size: 13.5px;
       display: flex; align-items: center; justify-content: center;
     }
-    .fhead h3 { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -1.1px; }
+    .fhead h3 { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
     .fstep ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
     .fstep li { color: var(--muted); font-size: 14.5px; line-height: 1.6; padding-left: 18px; position: relative; }
     .fstep li::before { content: ""; position: absolute; left: 3px; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--blue-mid); }
@@ -185,12 +190,12 @@
     kbd {
       background: #fff; border: 1px solid var(--line); border-bottom-width: 2px;
       border-radius: 5px; padding: 1px 7px;
-      font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text);
+      font: 12.5px var(--mono); color: var(--text);
     }
     .fstep code {
       background: #fff; border: 1px solid var(--line);
       padding: 1px 7px; border-radius: 5px;
-      font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue-deep);
+      font: 12.5px var(--mono); color: var(--accent, #0099ff);
     }
 
     /* Little UI mockups that sit beside each step. */
@@ -252,7 +257,7 @@
     }
     .feature h3 {
       font-family: var(--display);
-      font-size: 21px; font-weight: 700; letter-spacing: -.5px;
+      font-size: 21px; font-weight: 700; letter-spacing: -0.02em;
       margin-bottom: 12px;
     }
     .feature p { color: var(--muted); font-size: 14.5px; line-height: 1.65; }
@@ -319,7 +324,7 @@
     .dcard {
       background: #fff;
       border: 1px solid rgba(255,255,255,.9);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-xl);
       padding: 32px 26px 34px;
       text-align: left;
       color: var(--text);
@@ -330,7 +335,7 @@
       color: var(--blue-deep);
     }
     .dcard .ico-chip svg { width: 18px; height: 18px; }
-    .dcard h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); letter-spacing: -.3px; }
+    .dcard h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); letter-spacing: -0.02em; }
     .dcard p { color: var(--muted); font-size: 13.5px; line-height: 1.6; }
 
     /* ── FAQ (2 columns, pill rows) ──────────────────── */
@@ -388,7 +393,7 @@
     .foot-brand span.tag { color: rgba(255,255,255,.45); font-weight: 400; font-size: 12.5px; }
     .foot-tag {
       font-family: var(--display); font-weight: 700;
-      font-size: 26px; line-height: 1.1; letter-spacing: -1.1px;
+      font-size: 26px; line-height: 1.1; letter-spacing: -0.02em;
       color: #fff; margin-bottom: 16px;
     }
     .foot-tag .serif {
@@ -401,7 +406,7 @@
       background: #fff; color: #000;
       padding: 9px 17px; border-radius: 999px;
       font-size: 13px; font-weight: 600;
-      transition: transform .25s;
+      transition: transform .3s ease-out;
     }
     .foot-col a.foot-btn:hover, .foot-btn:hover { transform: translateY(-1px); color: #000; }
     .foot-btn svg { width: 13px; height: 13px; }
@@ -410,7 +415,7 @@
     .foot-built a { color: rgba(255,255,255,.8); }
     .foot-built a:hover { color: #fff; }
     .foot-col h4 { color: rgba(255,255,255,.42); font-size: 12.5px; font-weight: 500; margin-bottom: 16px; }
-    .foot-col a { display: block; color: rgba(255,255,255,.82); font-size: 13.5px; margin-bottom: 12px; transition: color .25s; }
+    .foot-col a { display: block; color: rgba(255,255,255,.82); font-size: 13.5px; margin-bottom: 12px; transition: color var(--ease); }
     .foot-col a:hover { color: #fff; }
     /* Oversized wordmark bleeding off the bottom, as in the reference. */
     .foot-mark {
@@ -568,7 +573,7 @@
         </div>
         <div class="fstep-art" aria-hidden="true">
         <div class="m-cols" style="margin-bottom:12px">
-          <div class="m-col"><span style="background:#2f6ae8"></span><div class="m-mini"></div><div class="m-mini"></div></div>
+          <div class="m-col"><span style="background:#0099ff"></span><div class="m-mini"></div><div class="m-mini"></div></div>
           <div class="m-col"><span style="background:#22c55e"></span><div class="m-mini"></div></div>
           <div class="m-col"><span style="background:#eab308"></span><div class="m-mini"></div><div class="m-mini"></div></div>
           <div class="m-col"><span style="background:#e5484d"></span><div class="m-mini"></div></div>
@@ -669,12 +674,12 @@
   <div class="data-glow" aria-hidden="true"></div>
   <div class="kicker">Your data</div>
   <h2>Local by default. <span class="serif">Cloud when you want it.</span></h2>
-  <p class="section-sub">Marko ships with a hosted backend so you can sign up in one click. Prefer to self-host? Deploy your own Cloudflare Worker and point Marko at it in Settings.</p>
+  <p class="section-sub">Marko ships with a hosted backend, so you sign up and start reviewing. No account with any cloud provider required. Self-hosting is there if you need it, not a prerequisite.</p>
   <div class="data-grid">
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="m15 4 6 6"/><path d="m21 4-6 6"/></svg></div>
       <h3>Your own account</h3>
-      <p>Sign up with email and password on the worker you deploy. No third-party identity provider in the loop.</p>
+      <p>Sign up with an email and password. No Google or third-party identity provider in the loop.</p>
     </div>
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16"/><path d="M8 12a4 4 0 0 1 4-4"/><path d="M4 12a8 8 0 0 1 8-8"/><path d="M12 20v-4"/></svg></div>
@@ -688,8 +693,8 @@
     </div>
     <div class="dcard">
       <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 12"/><path d="M20 12a5 5 0 0 1 0 10H7"/></svg></div>
-      <h3>Your cloud, not ours</h3>
-      <p>Team links run on your Cloudflare Worker with your KV store. You own the users, the reports, and the secret key.</p>
+      <h3>Self-host if you want</h3>
+      <p>Nothing to set up by default. If your policy needs the data on your own infrastructure, deploy the worker yourself and point Marko at it.</p>
     </div>
   </div>
 </section>
@@ -797,7 +802,7 @@
       cursor: pointer; transition: background .12s, color .12s;
     }
     .si-tab.active { background: #fff; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,.06); }
-    .si-h2 { font-size: 20px; font-weight: 700; margin: 4px 0 4px; letter-spacing: -.3px; }
+    .si-h2 { font-size: 20px; font-weight: 700; margin: 4px 0 4px; letter-spacing: -0.02em; }
     .si-sub { color: var(--muted); font-size: 13.5px; margin-bottom: 18px; }
     .si-field { display: block; margin-bottom: 12px; }
     .si-field span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
