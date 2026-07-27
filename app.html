@@ -7,13 +7,13 @@
   <link rel="icon" href="marko-128.png?v=1.4.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --blue: #2f6ae8; --blue-deep: #1e3fd8; --blue-wash: #eaf1fe;
-      --ink: #0b0b0f; --text: #16181d; --sub: #4a4f5c; --muted: #7a8090;
-      --line: #ececf1; --card: #f4f5f8; --white: #fff;
-      --sev-neutral: #2f6ae8; --sev-low: #22c55e; --sev-medium: #eab308;
+      --blue: #0099ff; --blue-deep: #0070f3; --blue-wash: #eaf1fe;
+      --ink: #000000; --text: #000000; --sub: #4b5563; --muted: #7b828e;
+      --line: #e3e3e3; --card: #f7f7f7; --white: #fff;
+      --sev-neutral: #0099ff; --sev-low: #22c55e; --sev-medium: #eab308;
       --sev-high: #f97316; --sev-critical: #e5484d;
       --sidebar: #10141d;
     }
@@ -22,7 +22,7 @@
        later rule sets display. */
     [hidden] { display: none !important; }
     body {
-      font: 14px/1.5 "Inter", -apple-system, sans-serif; color: var(--text);
+      font: 14px/1.6em "Inter", -apple-system, sans-serif; letter-spacing: -0.01em; color: var(--text);
       background: var(--white); height: 100vh; display: flex; overflow: hidden;
     }
     button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
@@ -44,7 +44,7 @@
     .sb-create {
       background: var(--blue); color: #fff; border-radius: 10px;
       padding: 11px 14px; font-weight: 600; text-align: center; margin-bottom: 12px;
-      transition: background .12s;
+      transition: background .25s ease;
     }
     .sb-create:hover { background: var(--blue-deep); }
     .sb-mentions {
@@ -231,14 +231,14 @@
       display: flex; gap: 14px; padding: 10px 24px 24px; align-items: stretch;
     }
     .col {
-      width: 250px; flex-shrink: 0; background: var(--card); border-radius: 14px;
+      width: 250px; flex-shrink: 0; background: var(--card); border-radius: 20px;
       display: flex; flex-direction: column; overflow: hidden;
     }
     .col .col-bar { height: 4px; }
     .col header { padding: 12px 14px 8px; font-weight: 700; font-size: 13.5px; }
     .col .cards { flex: 1; overflow-y: auto; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 8px; }
     .hcard {
-      background: #fff; border-radius: 11px; padding: 12px 12px 10px;
+      background: #fff; border-radius: 16px; padding: 12px 12px 10px;
       box-shadow: 0 1px 3px rgba(10,14,30,.07); cursor: grab;
       border: 1px solid transparent;
     }
@@ -313,7 +313,7 @@
       backdrop-filter: blur(6px);
     }
     .modal {
-      width: min(440px, 100%); background: #fff; border-radius: 18px; padding: 24px;
+      width: min(440px, 100%); background: #fff; border-radius: 30px; padding: 26px;
       box-shadow: 0 30px 70px rgba(10,14,30,.35);
     }
     .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
