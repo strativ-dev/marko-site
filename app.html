@@ -78,6 +78,19 @@
     .mention-item .who span { color: var(--muted); }
     .mention-item .txt { font-size: 13.5px; color: var(--sub); margin-bottom: 5px; }
     .mention-item .when { font-size: 11.5px; color: var(--muted); }
+    .sb-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+    .sb-tab {
+      flex: 1; padding: 8px 6px; border-radius: 10px;
+      font-size: 12.5px; font-weight: 500; color: #8a90a3;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background .25s ease, color .25s ease;
+    }
+    .sb-tab:hover { color: #fff; }
+    .sb-tab.on { background: rgba(255,255,255,.08); color: #fff; }
+    .sb-tab span {
+      background: rgba(255,255,255,.12); border-radius: 999px;
+      padding: 1px 7px; font-size: 10.5px; font-weight: 700;
+    }
     .sb-search { position: relative; margin-bottom: 14px; }
     .sb-search input {
       width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
@@ -180,8 +193,9 @@
     .btn.ghost:hover { border-color: #d6d9e0; color: var(--text); }
     .people { display: flex; align-items: center; gap: 4px; margin-right: 4px; }
     .person {
-      position: relative; padding: 2px 4px 8px; border-radius: 8px;
+      position: relative; padding: 4px 6px 10px; border-radius: 12px;
       display: flex; flex-direction: column; align-items: center;
+      transition: background .25s ease;
     }
     .person:hover { background: var(--card); }
     .person.on { background: var(--blue-wash); }
@@ -189,7 +203,7 @@
       width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: #fff;
       font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
     }
-    .person.on .p-av { box-shadow: 0 0 0 2px var(--blue), 0 0 0 4px #fff inset; }
+    .person.on .p-av { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue); }
     .person .p-n {
       position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
       background: #fff; border: 1px solid var(--line); border-radius: 999px;
@@ -197,16 +211,26 @@
     }
     .person.on .p-n { border-color: var(--blue); color: var(--blue); }
 
+    .archived-banner {
+      display: inline-flex; align-items: center; gap: 12px;
+      align-self: flex-start;
+      margin: 12px 0 0 24px; padding: 8px 10px 8px 16px;
+      background: #fff6e6; color: #7a4b00; border-radius: 100px; font-size: 13px;
+    }
+    .archived-banner .ab-btn { background: #7a4b00; color: #fff; border-radius: 100px; }
+    .archived-banner .ab-btn:hover { background: #5c3800; }
+
     .author-banner {
       display: flex; align-items: center; gap: 12px;
       margin: 12px 24px 0; padding: 10px 14px;
       background: var(--ink); color: #fff; border-radius: 10px; font-size: 13.5px;
     }
     .author-banner[hidden] { display: none; }
-    .author-banner span { flex: 1; }
+
     .ab-btn {
-      background: rgba(255,255,255,.16); color: #fff; border-radius: 7px;
-      padding: 5px 12px; font-size: 12.5px; font-weight: 600;
+      background: rgba(255,255,255,.16); color: #fff; border-radius: 100px;
+      padding: 5px 13px; font-size: 12.5px; font-weight: 600;
+      transition: background .25s ease;
     }
     .ab-btn:hover { background: rgba(255,255,255,.26); }
     .ab-link { color: #7cb8f8; font-size: 12.5px; font-weight: 600; }
@@ -231,8 +255,9 @@
       display: flex; gap: 14px; padding: 10px 24px 24px; align-items: stretch;
     }
     .col {
-      width: 250px; flex-shrink: 0; background: var(--card); border-radius: 20px;
+      width: 260px; flex-shrink: 0; background: var(--card); border-radius: 20px;
       display: flex; flex-direction: column; overflow: hidden;
+      min-height: 100%;
     }
     .col .col-bar { height: 4px; }
     .col header { padding: 12px 14px 8px; font-weight: 700; font-size: 13.5px; }
@@ -325,6 +350,27 @@
     }
     .modal input:focus, .modal textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47,106,232,.15); }
     .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+    .btn.danger { background: #e5484d; color: #fff; }
+    .btn.danger:hover:not(:disabled) { background: #c93b40; }
+    .btn:disabled { opacity: .45; cursor: default; }
+    .danger-head { display: flex; gap: 14px; margin-bottom: 16px; }
+    .danger-ico {
+      width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+      background: #fdeaea; color: #e5484d;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .danger-ico svg { width: 19px; height: 19px; }
+    .danger-head h2 { margin-bottom: 2px; }
+    .danger-list {
+      list-style: none; background: var(--card); border-radius: 14px;
+      padding: 14px 16px; margin-bottom: 18px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .danger-list li { font-size: 13.5px; color: var(--sub); padding-left: 18px; position: relative; }
+    .danger-list li::before {
+      content: ""; position: absolute; left: 3px; top: 8px;
+      width: 5px; height: 5px; border-radius: 50%; background: #e5484d;
+    }
     .modal .status { font-size: 13px; min-height: 18px; margin-top: 10px; color: var(--muted); }
     .modal .status.err { color: #e5484d; }
     .modal .status.ok { color: #16a34a; }
@@ -427,6 +473,10 @@
     <span>Mentions</span>
     <span class="cnt" id="mentions-badge" hidden></span>
   </button>
+  <div class="sb-tabs">
+    <button class="sb-tab on" data-sbtab="active">Active <span id="sb-n-active">0</span></button>
+    <button class="sb-tab" data-sbtab="archived">Archived <span id="sb-n-archived">0</span></button>
+  </div>
   <div class="sb-search"><input id="sb-search" placeholder="Search" /></div>
   <div class="sb-list" id="sb-list"></div>
   <div class="sb-foot">
@@ -473,6 +523,7 @@ const fmtDate = (t) => t ? new Date(t).toLocaleDateString(undefined, { month: "s
 
 let session = null;   // { token, exp, email, name }
 let projects = [];
+let sbTab = "active";   // which sidebar tab is showing
 let current = null;   // { project, pins }
 let filters = { q: "", status: "active", assignee: "", author: "", severityView: true };
 let drawerPin = null;
@@ -519,18 +570,30 @@ function renderSidebar() {
   $("#acct-email").textContent = session.email;
   const q = ($("#sb-search").value || "").toLowerCase();
   const pid = currentPid();
-  $("#sb-list").innerHTML = projects
+
+  const active = projects.filter((p) => !p.archived);
+  const archived = projects.filter((p) => p.archived);
+  $("#sb-n-active").textContent = active.length;
+  $("#sb-n-archived").textContent = archived.length;
+  document.querySelectorAll(".sb-tab").forEach((t) =>
+    t.classList.toggle("on", t.dataset.sbtab === sbTab)
+  );
+
+  const shown = sbTab === "archived" ? archived : active;
+  $("#sb-list").innerHTML = shown
     .filter((p) => !q || p.name.toLowerCase().includes(q) || (p.url || "").toLowerCase().includes(q))
     .map((p) => {
       let host = "";
       try { host = new URL(p.url).host; } catch {}
       const active = p.counts ? p.counts.active : 0;
-      return `<button class="sb-item ${p.id === pid ? "active" : ""}" data-pid="${p.id}">
+      return `<button class="sb-item ${p.id === pid ? "active" : ""} ${p.archived ? "muted" : ""}" data-pid="${p.id}">
         <span class="dot">${esc(initials(p.name))}</span>
         <span class="meta"><b>${esc(p.name)}</b><span>${esc(host)}</span></span>
         ${active ? `<span class="cnt">${active}</span>` : ""}
       </button>`;
-    }).join("") || `<p style="color:#8a90a3;font-size:12.5px;padding:8px 10px">No projects yet.</p>`;
+    }).join("") || `<p style="color:#8a90a3;font-size:12.5px;padding:8px 10px">${
+      sbTab === "archived" ? "Nothing archived." : q ? "No match." : "No projects yet."
+    }</p>`;
   document.querySelectorAll(".sb-item").forEach((el) =>
     el.addEventListener("click", () => { location.hash = "#/p/" + el.dataset.pid; })
   );
@@ -620,6 +683,10 @@ function renderProject() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
       </button>
     </div>
+    ${project.archived ? `<div class="archived-banner">
+      <span>This project is archived. It stays out of the extension and does not match new pages.</span>
+      <button class="ab-btn" id="unarchive-now">Unarchive</button>
+    </div>` : ""}
     <div class="author-banner" id="author-banner" hidden>
       <span id="author-banner-text"></span>
       <button class="ab-btn" id="ab-showall">Show all</button>
@@ -642,6 +709,18 @@ function renderProject() {
   $("#f-q").addEventListener("input", (e) => { filters.q = e.target.value; renderBoard(); });
   $("#f-status").addEventListener("change", (e) => { filters.status = e.target.value; renderBoard(); });
   $("#f-assignee").addEventListener("change", (e) => { filters.assignee = e.target.value; renderBoard(); });
+  const unarch = $("#unarchive-now");
+  if (unarch) unarch.addEventListener("click", async () => {
+    const { project: up } = await api("/projects/" + project.id, {
+      method: "PATCH", body: JSON.stringify({ archived: false }),
+    });
+    Object.assign(project, up);
+    const sp = projects.find((x) => x.id === project.id);
+    if (sp) sp.archived = false;
+    sbTab = "active";
+    renderProject();
+    renderSidebar();
+  });
   $("#btn-share").addEventListener("click", openShareModal);
   $("#btn-kebab").addEventListener("click", openKebab);
   $("#btn-add").addEventListener("click", () => {
@@ -1018,17 +1097,68 @@ function openKebab(e) {
   });
   $("#k-archive").addEventListener("click", async () => {
     menu.remove();
-    const { project } = await api("/projects/" + p.id, { method: "PATCH", body: JSON.stringify({ archived: !p.archived }) });
+    const { project } = await api("/projects/" + p.id, {
+      method: "PATCH", body: JSON.stringify({ archived: !p.archived }),
+    });
     Object.assign(p, project);
+    // Keep the cached list in step, otherwise the sidebar tabs disagree
+    // with the server until the next full reload.
+    const sp = projects.find((x) => x.id === p.id);
+    if (sp) sp.archived = project.archived;
+    sbTab = project.archived ? "archived" : "active";
     renderProject();
+    renderSidebar();
   });
-  $("#k-delete").addEventListener("click", async () => {
-    menu.remove();
-    if (!confirm(`Delete "${p.name}" and every pin in it? Cannot be undone.`)) return;
-    await api("/projects/" + p.id, { method: "DELETE" });
-    projects = projects.filter((x) => x.id !== p.id);
-    location.hash = "";
-    renderSidebar(); renderEmptyHome();
+
+  $("#k-delete").addEventListener("click", () => { menu.remove(); openDeleteModal(p); });
+}
+
+// Deleting a project is irreversible, so the name has to be typed out.
+// A native confirm() cannot convey what is about to be lost.
+function openDeleteModal(p) {
+  const count = current && current.project.id === p.id ? current.pins.length : null;
+  const ov = modal(`
+    <div class="danger-head">
+      <span class="danger-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </span>
+      <div>
+        <h2>Delete this project</h2>
+        <p class="sub">This cannot be undone.</p>
+      </div>
+    </div>
+    <ul class="danger-list">
+      <li><b>${esc(p.name)}</b> and its settings</li>
+      <li>${count === null ? "Every comment" : `${count} comment${count === 1 ? "" : "s"}`}, including replies and screenshots</li>
+      <li>Access for ${(p.members || []).length + 1} member${(p.members || []).length ? "s" : ""}</li>
+    </ul>
+    <p class="sub" style="margin-bottom:6px">Type <b>${esc(p.name)}</b> to confirm.</p>
+    <input id="del-confirm" placeholder="${esc(p.name)}" autocomplete="off" />
+    <p class="status" id="del-status"></p>
+    <div class="row">
+      <button class="btn ghost" data-close>Keep it</button>
+      <button class="btn danger" id="del-go" disabled>Delete project</button>
+    </div>`);
+  ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
+  const input = ov.querySelector("#del-confirm");
+  const go = ov.querySelector("#del-go");
+  input.addEventListener("input", () => { go.disabled = input.value.trim() !== p.name; });
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !go.disabled) go.click(); });
+  setTimeout(() => input.focus(), 40);
+  go.addEventListener("click", async () => {
+    const st = ov.querySelector("#del-status");
+    go.disabled = true;
+    st.textContent = "Deleting…"; st.className = "status";
+    try {
+      await api("/projects/" + p.id, { method: "DELETE" });
+      projects = projects.filter((x) => x.id !== p.id);
+      ov.remove();
+      location.hash = "";
+      renderSidebar(); renderEmptyHome();
+    } catch (e) {
+      go.disabled = false;
+      st.textContent = "Failed: " + e.message; st.className = "status err";
+    }
   });
 }
 
@@ -1187,11 +1317,13 @@ function paintProfile() {
 }
 
 /* ── export view ── */
-let exportOpts = {
+const EXPORT_DEFAULTS = {
   hideAuthor: false, hideDate: false,
   active: true, resolved: true,
-  people: null,   // null = everyone
+  people: null,      // null means everyone; only set when the user narrows it
 };
+let exportOpts = { ...EXPORT_DEFAULTS };
+let exportOptsFor = null;   // which project the options above belong to
 
 function exportedPins() {
   return current.pins.filter((h) => {
@@ -1208,8 +1340,12 @@ async function renderExport(pid) {
     try { current = await api("/projects/" + pid); }
     catch { renderEmptyHome(); return; }
   }
-  exportOpts.people = exportOpts.people ||
-    [...new Set(current.pins.map((h) => h.createdBy))];
+  // Options are per project; carrying them across would silently hide
+  // everything the moment the author lists differ.
+  if (exportOptsFor !== pid) {
+    exportOpts = { ...EXPORT_DEFAULTS };
+    exportOptsFor = pid;
+  }
   paintExport();
   renderSidebar();
 }
@@ -1280,11 +1416,22 @@ function paintExport() {
             ${h.hasShot ? `<img data-shot="${esc(h.id)}" alt="Screenshot for comment ${i + 1}" />` : `<div class="ex-noshot">No screenshot</div>`}
           </div>
         </section>`).join("")
-      : `<p class="ex-line" style="padding:40px 0">Nothing matches the current filters.</p>`}
+      : `<div class="state" style="padding:60px 0">
+          <div class="big">${current.pins.length ? "Nothing matches the current filters" : "This project has no comments yet"}</div>
+          <p>${current.pins.length
+                ? `${current.pins.length} comment${current.pins.length === 1 ? "" : "s"} in this project are hidden by the filter. Open Filters to widen it.`
+                : "Add a comment on the site and it will appear here."}</p>
+          ${current.pins.length ? `<button class="btn ghost" id="ex-reset">Reset filters</button>` : ""}
+        </div>`}
     </div>`;
 
   $("#ex-back").addEventListener("click", () => { location.hash = "#/p/" + p.id; });
   $("#ex-filters").addEventListener("click", openExportFilters);
+  const reset = $("#ex-reset");
+  if (reset) reset.addEventListener("click", () => {
+    exportOpts = { ...EXPORT_DEFAULTS };
+    paintExport();
+  });
   $("#ex-download").addEventListener("click", openExportModal);
 
   // pull screenshots in so they are present for print/PDF
@@ -1306,15 +1453,16 @@ function openExportFilters() {
     <label class="chk"><input type="checkbox" id="fx-active" ${exportOpts.active ? "checked" : ""} /> Active</label>
     <label class="chk"><input type="checkbox" id="fx-resolved" ${exportOpts.resolved ? "checked" : ""} /> Resolved</label>
     <span class="sub" style="margin-top:14px">Authors (${people.length})</span>
-    ${people.map((m, i) => `<label class="chk"><input type="checkbox" data-person="${esc(m)}" ${(!exportOpts.people || exportOpts.people.includes(m)) ? "checked" : ""} /> ${esc(m)}</label>`).join("")}
+    ${people.map((m) => `<label class="chk"><input type="checkbox" data-person="${esc(m)}" ${(!exportOpts.people || exportOpts.people.includes(m)) ? "checked" : ""} /> ${esc(m)}</label>`).join("")}
     <div class="row"><button class="btn blue" id="fx-done">Done</button></div>`);
   ov.querySelector("#fx-done").addEventListener("click", () => {
     exportOpts.hideAuthor = ov.querySelector("#fx-author").checked;
     exportOpts.hideDate = ov.querySelector("#fx-date").checked;
     exportOpts.active = ov.querySelector("#fx-active").checked;
     exportOpts.resolved = ov.querySelector("#fx-resolved").checked;
-    exportOpts.people = [...ov.querySelectorAll("[data-person]")]
-      .filter((c) => c.checked).map((c) => c.dataset.person);
+    const boxes = [...ov.querySelectorAll("[data-person]")];
+    const picked = boxes.filter((c) => c.checked).map((c) => c.dataset.person);
+    exportOpts.people = picked.length === boxes.length ? null : picked;
     ov.remove();
     paintExport();
   });
@@ -1492,6 +1640,9 @@ async function boot() {
   if (!session) { location.href = "index.html#sign-in"; return; }
   $("#btn-create").addEventListener("click", openCreateModal);
   $("#sb-search").addEventListener("input", renderSidebar);
+  document.querySelectorAll(".sb-tab").forEach((t) =>
+    t.addEventListener("click", () => { sbTab = t.dataset.sbtab; renderSidebar(); })
+  );
   $("#btn-account").addEventListener("click", () => { $("#acct-menu").hidden = !$("#acct-menu").hidden; });
   $("#mi-logout").addEventListener("click", logout);
   $("#mi-password").addEventListener("click", () => { $("#acct-menu").hidden = true; openPasswordModal(); });
