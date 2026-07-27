@@ -344,10 +344,30 @@
     .drawer .body { flex: 1; overflow-y: auto; padding: 18px 20px; }
     .drawer .first { font-size: 14px; margin-bottom: 6px; }
     .drawer .whenwho { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+    .shot-wrap { position: relative; margin-bottom: 16px; }
     .d-shot {
       display: block; width: 100%; border-radius: 10px; border: 1px solid var(--line);
-      margin-bottom: 16px; background: var(--card);
+      background: var(--card); cursor: zoom-in;
     }
+    .shot-hint {
+      position: absolute; right: 8px; bottom: 8px;
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(0,0,0,.62); color: #fff; border-radius: 999px;
+      padding: 4px 10px; font-size: 11px; pointer-events: none;
+    }
+    .shot-hint svg { width: 12px; height: 12px; }
+    .lightbox {
+      position: fixed; inset: 0; z-index: 300; background: rgba(6,9,16,.86);
+      display: flex; align-items: center; justify-content: center; padding: 40px;
+      cursor: zoom-out;
+    }
+    .lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+    .lightbox .lb-close {
+      position: absolute; top: 20px; right: 24px; color: #fff;
+      width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.14);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox .lb-close:hover { background: rgba(255,255,255,.24); }
     .drawer .props { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
     .drawer .props label span { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
     .drawer .props select, .drawer .props input {
@@ -359,6 +379,25 @@
     .cmt .bubble .by { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
     .cmt .bubble .at { color: var(--muted); font-size: 11px; margin-top: 4px; }
     .drawer footer { border-top: 1px solid var(--line); padding: 14px 20px; display: flex; gap: 10px; }
+    .composer { position: relative; flex: 1; }
+    .composer input { width: 100%; }
+    .mentions {
+      position: absolute; left: 0; right: 0; bottom: calc(100% + 6px);
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: 0 -8px 30px rgba(10,14,30,.14); overflow: hidden; z-index: 5;
+    }
+    .mentions button {
+      display: flex; align-items: center; gap: 9px; width: 100%;
+      padding: 8px 12px; text-align: left; font-size: 13px;
+    }
+    .mentions button:hover, .mentions button.on { background: var(--blue-wash); }
+    .mentions .av {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff;
+      font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .mentions .who { min-width: 0; line-height: 1.25; }
+    .mentions .who b { display: block; font-weight: 600; }
+    .mentions .who span { color: var(--muted); font-size: 11.5px; }
     .drawer footer input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; outline: 0; }
     .drawer footer input:focus { border-color: var(--blue); }
 
@@ -719,7 +758,13 @@ function openDrawer(hid) {
     <div class="body">
       <p class="first">${esc(h.comment)}</p>
       <p class="whenwho">${esc(h.createdBy)} · ${new Date(h.createdAt).toLocaleString()}${h.pageUrl ? ` · <a href="${esc(h.pageUrl)}" target="_blank" rel="noopener" style="color:var(--blue)">open page</a>` : ""}</p>
-      ${h.hasShot ? `<img class="d-shot" id="d-shot" alt="Screenshot of the pinned element" />` : ""}
+      ${h.hasShot ? `<div class="shot-wrap" id="shot-wrap">
+        <img class="d-shot" id="d-shot" alt="Screenshot of the commented element" />
+        <span class="shot-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          Click to expand
+        </span>
+      </div>` : ""}
       <div class="props">
         <label><span>Severity</span>
           <select id="d-severity">${SEVERITIES.map((s) => `<option value="${s.id}" ${s.id === severityOf(h) ? "selected" : ""}>${s.label}</option>`).join("")}</select>
@@ -727,13 +772,22 @@ function openDrawer(hid) {
         <label><span>Status</span>
           <select id="d-status"><option value="active" ${h.status !== "resolved" ? "selected" : ""}>Active</option><option value="resolved" ${h.status === "resolved" ? "selected" : ""}>Resolved</option></select>
         </label>
-        <label><span>Assignee</span><input id="d-assignee" value="${esc(h.assignee || "")}" placeholder="email or name" /></label>
+        <label><span>Assignee</span>
+          <select id="d-assignee">
+            <option value="">Unassigned</option>
+            ${memberList().map((m) => `<option value="${esc(m)}" ${h.assignee === m ? "selected" : ""}>${esc(m)}</option>`).join("")}
+            ${h.assignee && !memberList().includes(h.assignee) ? `<option value="${esc(h.assignee)}" selected>${esc(h.assignee)}</option>` : ""}
+          </select>
+        </label>
         <label><span>Due</span><input id="d-due" type="date" value="${h.due ? new Date(h.due).toISOString().slice(0, 10) : ""}" /></label>
       </div>
       <div id="d-comments">${(h.comments || []).map(renderComment).join("")}</div>
     </div>
     <footer>
-      <input id="d-new-comment" placeholder="Add a comment…" />
+      <div class="composer">
+        <input id="d-new-comment" placeholder="Add a comment, use @ to mention…" autocomplete="off" />
+        <div class="mentions" id="d-mentions" hidden></div>
+      </div>
       <button class="btn blue" id="d-send">Send</button>
     </footer>`;
   document.body.appendChild(el);
@@ -742,8 +796,12 @@ function openDrawer(hid) {
   const shotEl = $("#d-shot");
   if (shotEl) {
     api(`/projects/${current.project.id}/pins/${h.id}/shot`)
-      .then((d) => { if (d.shot) shotEl.src = d.shot; else shotEl.remove(); })
-      .catch(() => shotEl.remove());
+      .then((d) => {
+        if (!d.shot) { $("#shot-wrap")?.remove(); return; }
+        shotEl.src = d.shot;
+        shotEl.addEventListener("click", () => openLightbox(d.shot));
+      })
+      .catch(() => $("#shot-wrap")?.remove());
   }
   const patch = async (body) => {
     Object.assign(h, body);
@@ -752,7 +810,7 @@ function openDrawer(hid) {
   };
   $("#d-severity").addEventListener("change", (e) => patch({ severity: e.target.value }));
   $("#d-status").addEventListener("change", (e) => patch({ status: e.target.value }));
-  $("#d-assignee").addEventListener("change", (e) => patch({ assignee: e.target.value.trim() }));
+  $("#d-assignee").addEventListener("change", (e) => patch({ assignee: e.target.value }));
   $("#d-due").addEventListener("change", (e) => patch({ due: e.target.value ? new Date(e.target.value).getTime() : null }));
   const send = async () => {
     const text = $("#d-new-comment").value.trim();
@@ -767,7 +825,15 @@ function openDrawer(hid) {
     } catch {}
   };
   $("#d-send").addEventListener("click", send);
-  $("#d-new-comment").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+  attachMentions($("#d-new-comment"), $("#d-mentions"));
+  $("#d-new-comment").addEventListener("keydown", (e) => {
+    // Enter picks the highlighted name when the list is open, otherwise sends.
+    const box = $("#d-mentions");
+    if (!box.hidden && e.key === "Enter") { e.preventDefault(); box.querySelector(".on")?.click(); return; }
+    if (!box.hidden && (e.key === "ArrowDown" || e.key === "ArrowUp")) { e.preventDefault(); moveMention(box, e.key === "ArrowDown" ? 1 : -1); return; }
+    if (e.key === "Escape" && !box.hidden) { box.hidden = true; return; }
+    if (e.key === "Enter") send();
+  });
 }
 function renderComment(c) {
   return `<div class="cmt">
@@ -776,6 +842,63 @@ function renderComment(c) {
   </div>`;
 }
 function closeDrawer() { const d = $("#drawer"); if (d) d.remove(); }
+
+function openLightbox(src) {
+  const lb = document.createElement("div");
+  lb.className = "lightbox";
+  lb.innerHTML = `
+    <button class="lb-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <img alt="Screenshot of the commented element" />`;
+  lb.querySelector("img").src = src;
+  const close = () => { lb.remove(); document.removeEventListener("keydown", onKey); };
+  const onKey = (e) => { if (e.key === "Escape") close(); };
+  lb.addEventListener("click", close);
+  document.addEventListener("keydown", onKey);
+  document.body.appendChild(lb);
+}
+
+/* ── @mentions ── */
+function memberList() {
+  if (!current || !current.project) return [];
+  return [current.project.owner, ...(current.project.members || [])].filter(Boolean);
+}
+function moveMention(box, dir) {
+  const items = [...box.querySelectorAll("button")];
+  if (!items.length) return;
+  const i = items.findIndex((b) => b.classList.contains("on"));
+  items.forEach((b) => b.classList.remove("on"));
+  items[(i + dir + items.length) % items.length].classList.add("on");
+}
+function attachMentions(input, box) {
+  const close = () => { box.hidden = true; };
+  input.addEventListener("input", () => {
+    const upto = input.value.slice(0, input.selectionStart);
+    const m = upto.match(/@([a-zA-Z0-9._%+-]*)$/);
+    if (!m) return close();
+    const q = m[1].toLowerCase();
+    const hits = memberList().filter((e) => e.toLowerCase().includes(q)).slice(0, 6);
+    if (!hits.length) return close();
+    box.innerHTML = hits.map((e, i) => `
+      <button class="${i === 0 ? "on" : ""}" data-m="${esc(e)}">
+        <span class="av">${esc(initials(e))}</span>
+        <span class="who"><b>${esc(e.split("@")[0])}</b><span>${esc(e)}</span></span>
+      </button>`).join("");
+    box.hidden = false;
+    box.querySelectorAll("button").forEach((b) =>
+      b.addEventListener("mousedown", (ev) => {
+        ev.preventDefault();
+        const pos = input.selectionStart;
+        const before = input.value.slice(0, pos).replace(/@[a-zA-Z0-9._%+-]*$/, "@" + b.dataset.m + " ");
+        input.value = before + input.value.slice(pos);
+        close();
+        input.focus();
+      })
+    );
+  });
+  input.addEventListener("blur", () => setTimeout(close, 150));
+}
 
 /* ── modals ── */
 function modal(html) {

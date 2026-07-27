@@ -157,19 +157,30 @@
     }
 
     /* ── Flow (How it works) ──────────────────────────── */
-    .flow { display: flex; flex-direction: column; gap: 14px; max-width: 720px; margin: 0 auto; }
-    .fstep { background: var(--card); border-radius: 20px; padding: 24px 26px; }
-    .fhead { display: flex; align-items: center; gap: 13px; margin-bottom: 11px; }
+    .flow { display: flex; flex-direction: column; gap: 20px; max-width: 1100px; margin: 0 auto; }
+    .fstep {
+      display: grid; grid-template-columns: 1fr 1.05fr; gap: 44px; align-items: center;
+      background: var(--card); border-radius: var(--radius-xl); padding: 44px 46px;
+    }
+    /* Alternate which side the visual sits on so the column does not feel static. */
+    .fstep:nth-child(even) .fstep-copy { order: 2; }
+    .fstep:nth-child(even) .fstep-art { order: 1; }
+    @media (max-width: 860px) {
+      .fstep { grid-template-columns: 1fr; gap: 28px; padding: 32px 26px; }
+      .fstep:nth-child(even) .fstep-copy { order: 1; }
+      .fstep:nth-child(even) .fstep-art { order: 2; }
+    }
+    .fhead { display: flex; align-items: center; gap: 13px; margin-bottom: 14px; }
     .fhead .n {
-      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
-      background: var(--ink); color: #fff; font-weight: 700; font-size: 14px;
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+      background: var(--ink); color: #fff; font-weight: 700; font-size: 13.5px;
       display: flex; align-items: center; justify-content: center;
     }
-    .fhead h3 { font-family: var(--display); font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
-    .fstep ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-    .fstep li { color: var(--sub); font-size: 14px; padding-left: 18px; position: relative; }
-    .fstep li::before { content: ""; position: absolute; left: 4px; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--blue-mid); }
-    .fstep b { color: var(--text); }
+    .fhead h3 { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -1.1px; }
+    .fstep ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .fstep li { color: var(--muted); font-size: 14.5px; line-height: 1.6; padding-left: 18px; position: relative; }
+    .fstep li::before { content: ""; position: absolute; left: 3px; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--blue-mid); }
+    .fstep b { color: var(--text); font-weight: 600; }
     .fstep em { font-style: normal; color: var(--text); border-bottom: 2px solid var(--blue-soft); }
     kbd {
       background: #fff; border: 1px solid var(--line); border-bottom-width: 2px;
@@ -181,6 +192,52 @@
       padding: 1px 7px; border-radius: 5px;
       font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue-deep);
     }
+
+    /* Little UI mockups that sit beside each step. */
+    .fstep-art {
+      background: #fff; border-radius: var(--radius-lg); padding: 18px;
+      box-shadow: 0 1px 2px rgba(10,14,30,.06), 0 18px 40px rgba(10,14,30,.07);
+    }
+    .m-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+    .m-dot { width: 9px; height: 9px; border-radius: 50%; background: #e3e3e3; }
+    .m-url { flex: 1; height: 20px; border-radius: 999px; background: var(--card); margin-left: 6px; }
+    .m-row { display: flex; align-items: center; gap: 9px; }
+    .m-av {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--blue-mid); color: #fff;
+      font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .m-line { height: 9px; border-radius: 999px; background: var(--card); }
+    .m-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--ink); color: #fff; border-radius: 999px;
+      padding: 9px 16px; font-size: 12.5px; font-weight: 600; width: 100%;
+    }
+    .m-card {
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+      font-size: 12.5px; color: var(--sub);
+    }
+    .m-pin {
+      width: 24px; height: 24px; border-radius: 12px 12px 12px 3px;
+      color: #fff; font-size: 11px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .m-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 4px 10px; font-size: 11.5px; color: var(--sub);
+    }
+    .m-toggle {
+      width: 52px; height: 29px; border-radius: 999px; background: #7cb8f8;
+      position: relative; flex-shrink: 0;
+    }
+    .m-toggle i {
+      position: absolute; top: 2.5px; left: 25px; width: 24px; height: 24px;
+      border-radius: 50%; background: #fff;
+    }
+    .m-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .m-col { background: var(--card); border-radius: 9px; padding: 7px 6px; }
+    .m-col span { display: block; height: 3px; border-radius: 2px; margin-bottom: 7px; }
+    .m-mini { background: #fff; border-radius: 6px; height: 26px; margin-bottom: 5px; box-shadow: 0 1px 2px rgba(10,14,30,.08); }
 
     /* ── Features (card grid) ─────────────────────────── */
     .features {
@@ -423,57 +480,119 @@
 
     <div class="flow">
       <div class="fstep">
-        <div class="fhead"><span class="n">1</span><h3>Sign up once</h3></div>
-        <ul>
-          <li>Install the extension, click the toolbar icon, hit <b>Get started</b>.</li>
-          <li>Sign up on the web with email and password. The extension picks up your session automatically; no copy-pasting tokens.</li>
-          <li>From then on the extension and the web app share one account.</li>
-        </ul>
+        <div class="fstep-copy">
+          <div class="fhead"><span class="n">1</span><h3>Sign up once</h3></div>
+          <ul>
+            <li>Install the extension, click the toolbar icon, hit <b>Get started</b>.</li>
+            <li>Sign up on the web with email and password. The extension picks up your session automatically; no copying tokens.</li>
+            <li>From then on the extension and the web app share one account.</li>
+          </ul>
+        </div>
+        <div class="fstep-art" aria-hidden="true">
+        <div class="m-row" style="flex-direction:column;align-items:stretch;gap:12px">
+          <div class="m-row"><span class="m-av">M</span><div style="flex:1"><div class="m-line" style="width:52%;margin-bottom:5px"></div><div class="m-line" style="width:34%;height:7px"></div></div></div>
+          <div class="m-btn">Get started</div>
+          <div style="font-size:11.5px;color:var(--muted);text-align:center">Opens the web sign-in</div>
+        </div>
+        </div>
       </div>
-
       <div class="fstep">
-        <div class="fhead"><span class="n">2</span><h3>Create a project for a site</h3></div>
-        <ul>
-          <li>Open the site you're reviewing, click the Marko icon.</li>
-          <li>If a project already exists for this site, Marko shows it with its active and resolved counts.</li>
-          <li>Otherwise one click on <b>Create project for this page</b> starts one and drops you straight into review mode.</li>
-        </ul>
+        <div class="fstep-copy">
+          <div class="fhead"><span class="n">2</span><h3>Create a project for a site</h3></div>
+          <ul>
+            <li>Open the site you're reviewing and click the Marko icon.</li>
+            <li>If a project already exists for that site, Marko shows it with its active and resolved counts.</li>
+            <li>Otherwise one click on <b>Create project for this page</b> starts one and drops you straight into review mode.</li>
+          </ul>
+        </div>
+        <div class="fstep-art" aria-hidden="true">
+        <div class="m-bar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span><span class="m-url"></span></div>
+        <div class="m-card" style="margin-bottom:10px">No project for this page yet.</div>
+        <div class="m-card" style="margin-bottom:12px;color:var(--muted)">acme.example</div>
+        <div class="m-btn">Create project for this page</div>
+        </div>
       </div>
-
       <div class="fstep">
-        <div class="fhead"><span class="n">3</span><h3>Pin comments on the live page</h3></div>
-        <ul>
-          <li>In <b>comment mode</b> (bottom-center toggle) click any element: a composer opens right there.</li>
-          <li>Write the comment, set a <b>severity</b> from Neutral to Critical, mention teammates with <b>@</b>.</li>
-          <li>The pin anchors to the element and survives scrolling and window resizing. Flip the toggle to browse the site normally.</li>
-        </ul>
+        <div class="fstep-copy">
+          <div class="fhead"><span class="n">3</span><h3>Pin comments on the live page</h3></div>
+          <ul>
+            <li>In <b>comment mode</b> the element under your cursor is outlined, so you see exactly what a pin will attach to.</li>
+            <li>Click it, write the comment, set a <b>severity</b>, mention teammates with <b>@</b>.</li>
+            <li>Marko captures a cropped screenshot of that element and anchors the pin so it survives scrolling and resizing.</li>
+          </ul>
+        </div>
+        <div class="fstep-art" aria-hidden="true">
+        <div class="m-bar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span><span class="m-url"></span></div>
+        <div style="position:relative;background:var(--card);border-radius:10px;height:96px;margin-bottom:12px">
+          <div style="position:absolute;inset:22px 30px auto 22px;border:2px solid var(--blue-mid);border-radius:6px;height:44px;background:rgba(0,128,255,.09)"></div>
+          <span class="m-pin" style="position:absolute;left:52px;top:8px;background:#f97316">1</span>
+        </div>
+        <div class="m-card">
+          <div style="margin-bottom:8px">CTA contrast fails WCAG AA</div>
+          <div class="m-row" style="gap:6px"><span class="m-chip">High</span><span class="m-chip">@erik</span></div>
+        </div>
+        </div>
       </div>
-
       <div class="fstep">
-        <div class="fhead"><span class="n">4</span><h3>Discuss and resolve in place</h3></div>
-        <ul>
-          <li>Click a pin to open its <b>thread</b>: reply, change severity, tick resolve.</li>
-          <li>The panel (bottom-left bubble) lists every comment in <b>Active</b> and <b>Resolved</b> tabs; clicking one scrolls the page to its pin, navigating to the right URL if needed.</li>
-          <li>The top-right pill resizes your window to any device preset: 4K down to iPhone SE, so you can review every breakpoint.</li>
-        </ul>
+        <div class="fstep-copy">
+          <div class="fhead"><span class="n">4</span><h3>Discuss and resolve in place</h3></div>
+          <ul>
+            <li>Click a pin to open its <b>thread</b>: reply, reassign, change severity, tick resolve.</li>
+            <li>The side panel lists every comment in <b>Active</b> and <b>Resolved</b> tabs and scrolls the page to whichever you pick.</li>
+            <li>The top-right pill resizes your window to any device preset, so you can review every breakpoint.</li>
+          </ul>
+        </div>
+        <div class="fstep-art" aria-hidden="true">
+        <div class="m-row" style="align-items:flex-start;gap:9px;margin-bottom:10px">
+          <span class="m-av">A</span>
+          <div class="m-card" style="flex:1">Padding is inconsistent with the other cards.</div>
+        </div>
+        <div class="m-row" style="align-items:flex-start;gap:9px;margin-bottom:14px">
+          <span class="m-av" style="background:#17b26a">B</span>
+          <div class="m-card" style="flex:1">Agreed, aligning to the 8pt grid.</div>
+        </div>
+        <div class="m-row" style="justify-content:space-between">
+          <span class="m-chip">Resolve</span>
+          <div class="m-row" style="gap:8px"><span style="font-size:11.5px;color:var(--muted)">1512 x 982</span><div class="m-toggle"><i></i></div></div>
+        </div>
+        </div>
       </div>
-
       <div class="fstep">
-        <div class="fhead"><span class="n">5</span><h3>Track everything in the web app</h3></div>
-        <ul>
-          <li><b>Open in Marko app</b> takes you to the project dashboard at <code>app.html</code>.</li>
-          <li>Projects live in a sidebar; each project is a <b>kanban board</b> with a column per severity.</li>
-          <li>Filter by status, assignee, or free text. Open any card for the full thread, assignee, and due date. Resolve with one checkbox.</li>
-        </ul>
+        <div class="fstep-copy">
+          <div class="fhead"><span class="n">5</span><h3>Track it on the board</h3></div>
+          <ul>
+            <li><b>Open in Marko app</b> takes you to the project dashboard.</li>
+            <li>Every project is a <b>kanban board</b> with a column per severity. Drag a card to re-triage it.</li>
+            <li>Filter by status, author, or free text, and export the whole project to <b>PDF</b> or <b>CSV</b>.</li>
+          </ul>
+        </div>
+        <div class="fstep-art" aria-hidden="true">
+        <div class="m-cols" style="margin-bottom:12px">
+          <div class="m-col"><span style="background:#2f6ae8"></span><div class="m-mini"></div><div class="m-mini"></div></div>
+          <div class="m-col"><span style="background:#22c55e"></span><div class="m-mini"></div></div>
+          <div class="m-col"><span style="background:#eab308"></span><div class="m-mini"></div><div class="m-mini"></div></div>
+          <div class="m-col"><span style="background:#e5484d"></span><div class="m-mini"></div></div>
+        </div>
+        <div class="m-row" style="gap:6px"><span class="m-chip">Active</span><span class="m-chip">Assigned to</span><span class="m-chip">Search</span></div>
+        </div>
       </div>
-
       <div class="fstep">
-        <div class="fhead"><span class="n">6</span><h3>Bring the team</h3></div>
-        <ul>
-          <li><b>Share</b> (in the dock or the web app) invites teammates by email; they sign up with their own account and see the same board.</li>
-          <li><b>Copy link</b> puts the project URL on your clipboard for chat or tickets.</li>
-          <li>Everything is stored in the project backend, a tiny Cloudflare Worker. Use ours, or deploy your own from the source repo and point Marko at it in Settings.</li>
-        </ul>
+        <div class="fstep-copy">
+          <div class="fhead"><span class="n">6</span><h3>Bring the team</h3></div>
+          <ul>
+            <li><b>Share</b> invites teammates by email; they sign up and see the same board.</li>
+            <li>Mentions reach people wherever they are: a badge on the toolbar icon, an inbox in the app, and an email.</li>
+            <li>Everything lives in one small Cloudflare Worker. Use the hosted one, or deploy your own and point Marko at it.</li>
+          </ul>
+        </div>
+        <div class="fstep-art" aria-hidden="true">
+        <div class="m-row" style="gap:6px;margin-bottom:14px">
+          <span class="m-av">A</span><span class="m-av" style="background:#17b26a">B</span><span class="m-av" style="background:#7b828e">C</span>
+          <span style="font-size:12px;color:var(--muted);margin-left:4px">3 members</span>
+        </div>
+        <div class="m-card" style="margin-bottom:10px;color:var(--muted)">anna@team.com, erik@team.com</div>
+        <div class="m-row" style="gap:8px"><div class="m-btn" style="flex:1">Invite</div><span class="m-chip">Copy link</span></div>
+        </div>
       </div>
     </div>
   </div>
