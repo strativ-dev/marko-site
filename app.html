@@ -18,6 +18,9 @@
       --sidebar: #10141d;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Any element given the hidden attribute must stay hidden, even when a
+       later rule sets display. */
+    [hidden] { display: none !important; }
     body {
       font: 14px/1.5 "Inter", -apple-system, sans-serif; color: var(--text);
       background: var(--white); height: 100vh; display: flex; overflow: hidden;
