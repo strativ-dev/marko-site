@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Marko: Free bug report &amp; UX check extension</title>
   <meta name="description" content="Marko is a free Chrome extension for bug reports and UX reviews. Pin comments to any element, capture annotated screenshots, share reports. Sign up with email and password and start reporting." />
-  <link rel="icon" href="marko-128.png?v=1.4.0" />
+  <link rel="icon" href="marko-128.png?v=1.14.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fragment+Mono&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -442,7 +442,7 @@
 <body>
 
 <nav class="navbar">
-  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png?v=1.4.0" alt="" />Marko</a>
+  <a class="brand" href="#"><img class="logo-chip" src="marko-128.png?v=1.14.0" alt="" />Marko</a>
   <div class="nav-mid">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
@@ -698,29 +698,7 @@
       <h3>Team projects</h3>
       <p>Pins, threads, and kanban state sync through the project backend so your whole team sees one board.</p>
     </div>
-    <div class="dcard">
-      <div class="ico-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 12"/><path d="M20 12a5 5 0 0 1 0 10H7"/></svg></div>
-      <h3>Self-host if you want</h3>
-      <p>Nothing to set up by default. If your policy needs the data on your own infrastructure, deploy the worker yourself and point Marko at it.</p>
-    </div>
-  </div>
-</section>
 
-<section id="faq" style="padding-top:96px">
-  <div class="wrap">
-    <div class="kicker faq-head">Questions</div>
-    <h2 class="faq-head">Frequently asked, <span class="serif">honestly answered.</span></h2>
-    <p class="section-sub">Everything you need to know before installing, from privacy to how sharing actually works.</p>
-    <div class="faq">
-      <details><summary>Is Marko really free?</summary><p>Yes. Free forever, for everyone. No trial, no pro tier, no seat licenses. MIT-licensed open source.</p></details>
-      <details><summary>Where is my data stored?</summary><p>Projects and their comments live in the Marko backend, a small Cloudflare Worker with a KV store. Use the hosted one that ships with the extension, or deploy your own and own every byte. Draft annotations stay in Chrome's local storage on your device.</p></details>
-      <details><summary>How does sharing work?</summary><p>Invite teammates by email from the in-page dock or the web app; they sign up and see the same project board. Or copy the project link and drop it in chat. Standalone HTML, PDF, and CSV exports still exist for people outside the team.</p></details>
-      <details><summary>Do recipients need Marko installed?</summary><p>No. Standalone HTML and PDF exports contain everything: screenshot, pins, comments, and metadata. They open in any browser.</p></details>
-      <details><summary>How is team sharing authenticated?</summary><p>Email and password against the Marko backend, a Cloudflare Worker you can also self-host. Passwords are hashed on the worker with PBKDF2-SHA256 (100,000 iterations, per-user salt) and only the hash lives in your Workers KV. Sessions are 30-day HMAC tokens signed by a secret you set with <code>wrangler secret put SIGNING_SECRET</code>. No third-party identity provider, no plaintext passwords in storage, no shared team credentials.</p></details>
-      <details><summary>Which browsers are supported?</summary><p>Chrome and Chromium-based browsers with Manifest V3 support: Edge, Brave, Arc, Opera, and Vivaldi.</p></details>
-      <details><summary>Can my team collaborate?</summary><p>Yes. Share project links or files, assign pins to teammates, @mention them in comments, and track resolve states across a shared workspace.</p></details>
-      <details><summary>Do I need my own Cloudflare account?</summary><p>No. Marko ships with a hosted worker so you can sign up and start reporting straight away. If you'd rather run the backend yourself, deploy the worker in the <code>cloudflare-worker</code> folder of the source repo (5-minute guide) and paste the resulting URL into Marko Settings.</p></details>
-    </div>
   </div>
 </section>
 
@@ -738,7 +716,7 @@
   <div class="foot-grid">
     <div class="foot-col foot-lead">
       <div class="foot-brand">
-        <img src="marko-128.png?v=1.4.0" alt="" />
+        <img src="marko-128.png?v=1.14.0" alt="" />
         Marko <span class="tag">Chrome extension</span>
       </div>
       <div class="foot-tag">Spot it. Pin it.<br/><span class="serif">Shipped by Friday.</span></div>
