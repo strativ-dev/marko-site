@@ -296,17 +296,20 @@
       position: relative;
       padding: 150px 24px 200px;
       text-align: center;
-      overflow: hidden;
     }
     /* Blurred gradient sheet: rotated so the deep blue sits low and
        dissolves upward, and pulled past the section sides so the 50px blur
        never shows its own edge. */
     .data-glow {
       position: absolute;
-      left: -60px; right: -60px; top: -80px;
-      height: 720px;
-      background: linear-gradient(#190096 0%, #0080ff 21.0902%, #78d2ff 52.6658%, #fff0 100%);
-      filter: blur(50px);
+      left: -80px; right: -80px; top: 0; height: 560px;
+      background: linear-gradient(180deg,
+        #fff0 0%,
+        #190096 26%,
+        #0080ff 48%,
+        #78d2ff 72%,
+        #fff0 100%);
+      filter: blur(60px);
       z-index: 1;
       pointer-events: none;
     }
