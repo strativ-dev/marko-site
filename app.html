@@ -116,6 +116,46 @@
     .acct-menu button { display: block; width: 100%; text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 13px; color: #dfe3ee; }
     .acct-menu button:hover { background: rgba(255,255,255,.07); }
     .acct-menu .danger { color: #ff8589; }
+    .acct-menu hr { border: 0; border-top: 1px solid rgba(255,255,255,.1); margin: 6px 0; }
+    .acct-ws { display: flex; align-items: center; gap: 9px; padding: 8px 12px; font-size: 13px; color: #fff; }
+    .acct-ws .av {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff;
+      font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .acct-ws span:not(.av) { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* profile view */
+    .prof-tabs { display: flex; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--line); }
+    .prof-tab { padding: 12px 14px; font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .prof-tab.on { color: var(--blue); border-color: var(--blue); }
+    .prof-body { flex: 1; overflow-y: auto; padding: 24px; background: #f6f7fa; }
+    .prof-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; max-width: 620px; padding: 20px 22px; }
+    .prof-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .prof-card .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+    .prof-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0; border-top: 1px solid var(--line); font-size: 14px;
+    }
+    .prof-row:first-of-type { border-top: 0; }
+    .prof-row span { flex: 1; }
+    .prof-head { display: flex; font-size: 11px; font-weight: 700; letter-spacing: .6px; color: var(--muted); text-transform: uppercase; }
+    .prof-head span { flex: 1; }
+    .sw { position: relative; width: 44px; height: 25px; flex-shrink: 0; }
+    .sw input { opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .sw i {
+      position: absolute; inset: 0; border-radius: 999px; background: #ccd2de;
+      transition: background .15s; pointer-events: none;
+    }
+    .sw i::after {
+      content: ""; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px;
+      border-radius: 50%; background: #fff; transition: transform .15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+    .sw input:checked + i { background: #17b26a; }
+    .sw input:checked + i::after { transform: translateX(19px); }
+    .prof-field { display: block; margin-bottom: 14px; }
+    .prof-field span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
+    .prof-field input { width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0; }
 
     /* ── main ── */
     main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -135,6 +175,39 @@
     .btn.blue:hover { background: var(--blue-deep); }
     .btn.ghost { border: 1px solid var(--line); color: var(--sub); background: #fff; }
     .btn.ghost:hover { border-color: #d6d9e0; color: var(--text); }
+    .people { display: flex; align-items: center; gap: 4px; margin-right: 4px; }
+    .person {
+      position: relative; padding: 2px 4px 8px; border-radius: 8px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .person:hover { background: var(--card); }
+    .person.on { background: var(--blue-wash); }
+    .person .p-av {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: #fff;
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .person.on .p-av { box-shadow: 0 0 0 2px var(--blue), 0 0 0 4px #fff inset; }
+    .person .p-n {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      background: #fff; border: 1px solid var(--line); border-radius: 999px;
+      font-size: 10px; font-weight: 700; line-height: 1; padding: 2px 5px; color: var(--sub);
+    }
+    .person.on .p-n { border-color: var(--blue); color: var(--blue); }
+
+    .author-banner {
+      display: flex; align-items: center; gap: 12px;
+      margin: 12px 24px 0; padding: 10px 14px;
+      background: var(--ink); color: #fff; border-radius: 10px; font-size: 13.5px;
+    }
+    .author-banner[hidden] { display: none; }
+    .author-banner span { flex: 1; }
+    .ab-btn {
+      background: rgba(255,255,255,.16); color: #fff; border-radius: 7px;
+      padding: 5px 12px; font-size: 12.5px; font-weight: 600;
+    }
+    .ab-btn:hover { background: rgba(255,255,255,.26); }
+    .ab-link { color: #7cb8f8; font-size: 12.5px; font-weight: 600; }
+
     .kebab { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--muted); border: 1px solid var(--line); }
     .kebab:hover { background: var(--card); }
 
@@ -187,6 +260,48 @@
       gap: 12px; color: var(--muted); padding: 40px; text-align: center;
     }
     .state .big { font-size: 17px; font-weight: 700; color: var(--text); }
+
+    /* ── export document ── */
+    .export-doc { flex: 1; overflow-y: auto; padding: 40px 56px 80px; max-width: 1100px; }
+    .ex-title { font-size: 30px; font-weight: 800; letter-spacing: -.6px; }
+    .ex-host { color: var(--muted); font-size: 14px; margin-top: 2px; }
+    .ex-rule { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
+    .ex-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 26px; margin-bottom: 40px; }
+    .ex-label { display: block; font-size: 12px; font-weight: 700; color: var(--text); margin: 12px 0 5px; }
+    .ex-line { font-size: 13.5px; color: var(--sub); margin-bottom: 3px; word-break: break-word; }
+    .ex-code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+    .ex-person { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+    .ex-person .av, .av.sm {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff;
+      font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .ex-sev { display: flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--sub); text-transform: capitalize; }
+    .ex-sev i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .ex-item {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px;
+      padding: 28px 0; border-top: 1px solid var(--line);
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .ex-item-head { display: flex; align-items: center; gap: 8px; font-size: 13.5px; margin-bottom: 4px; }
+    .ex-num {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--blue); color: #fff;
+      font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .ex-item-shot img { width: 100%; border-radius: 8px; border: 1px solid var(--line); }
+    .ex-noshot {
+      border: 1px dashed var(--line); border-radius: 8px; padding: 40px;
+      text-align: center; color: var(--muted); font-size: 13px;
+    }
+    .chk { display: flex; align-items: center; gap: 9px; font-size: 13.5px; margin-bottom: 9px; cursor: pointer; }
+    .chk input { width: 16px; height: 16px; accent-color: var(--blue); }
+
+    @media print {
+      aside, .topbar, .no-print, .overlay, .drawer { display: none !important; }
+      body { display: block; height: auto; overflow: visible; }
+      main { display: block; }
+      .export-doc { overflow: visible; padding: 0; max-width: none; }
+      .ex-item { grid-template-columns: 1fr 1fr; }
+    }
 
     /* ── modal ── */
     .overlay {
@@ -274,10 +389,17 @@
   <div class="sb-list" id="sb-list"></div>
   <div class="sb-foot">
     <div class="acct-menu" id="acct-menu" hidden>
+      <div class="acct-ws"><span class="av" id="ws-av">?</span><span id="ws-name">workspace</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#4da3f7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <hr />
+      <button id="mi-settings">Settings</button>
       <button id="mi-password">Change password</button>
+      <hr />
+      <button id="mi-install">Install extension</button>
       <button id="mi-landing">Open landing page</button>
-      <hr style="border:0;border-top:1px solid rgba(255,255,255,.1);margin:6px 0" />
-      <button class="danger" id="mi-logout">Log out</button>
+      <hr />
+      <button class="danger" id="mi-logout">Sign out</button>
     </div>
     <button class="sb-account" id="btn-account">
       <span class="av" id="acct-av">?</span>
@@ -310,7 +432,7 @@ const fmtDate = (t) => t ? new Date(t).toLocaleDateString(undefined, { month: "s
 let session = null;   // { token, exp, email, name }
 let projects = [];
 let current = null;   // { project, pins }
-let filters = { q: "", status: "active", assignee: "", severityView: true };
+let filters = { q: "", status: "active", assignee: "", author: "", severityView: true };
 let drawerPin = null;
 
 function loadSession() {
@@ -348,6 +470,9 @@ async function api(path, opts = {}) {
 /* ── sidebar ── */
 function renderSidebar() {
   $("#acct-av").textContent = initials(session.name || session.email);
+  const wsAv = $("#ws-av"), wsName = $("#ws-name");
+  if (wsAv) wsAv.textContent = initials(session.name || session.email);
+  if (wsName) wsName.textContent = (session.name || session.email.split("@")[0]) + "'s workspace";
   $("#acct-name").textContent = session.name || session.email.split("@")[0];
   $("#acct-email").textContent = session.email;
   const q = ($("#sb-search").value || "").toLowerCase();
@@ -386,8 +511,30 @@ function renderEmptyHome() {
   $("#empty-create").addEventListener("click", openCreateModal);
 }
 
+function syncAuthorBanner() {
+  const bar = $("#author-banner");
+  if (!bar) return;
+  if (!filters.author) { bar.hidden = true; return; }
+  bar.hidden = false;
+  $("#author-banner-text").textContent =
+    `Filtered to ${filters.author.split("@")[0]}'s comments.`;
+  $("#ab-showall").onclick = () => { filters.author = ""; renderProject(); };
+  $("#ab-hide").onclick = () => { bar.hidden = true; };
+}
+
+// Non-blocking notice; replaces window.alert so nothing blocks the page.
+function alertBanner(msg) {
+  const bar = $("#author-banner");
+  if (!bar) return;
+  bar.hidden = false;
+  $("#author-banner-text").textContent = msg;
+  $("#ab-showall").style.display = "none";
+  $("#ab-hide").onclick = () => { bar.hidden = true; $("#ab-showall").style.display = ""; };
+}
+
 function applyFilters(pins) {
   return pins.filter((h) => {
+    if (filters.author && h.createdBy !== filters.author) return false;
     if (filters.status === "active" && h.status === "resolved") return false;
     if (filters.status === "resolved" && h.status !== "resolved") return false;
     if (filters.assignee && (h.assignee || "") !== filters.assignee) return false;
@@ -406,6 +553,10 @@ function renderProject() {
   const assignees = [...new Set(pins.map((h) => h.assignee).filter(Boolean))];
   let host = ""; try { host = new URL(project.url).host; } catch {}
 
+  // One avatar per member, badged with how many comments they authored.
+  const roster = [project.owner, ...(project.members || [])].filter(Boolean);
+  const authored = (who) => pins.filter((h) => h.createdBy === who).length;
+
   $("#main").innerHTML = `
     <div class="topbar">
       <div class="title">
@@ -413,10 +564,24 @@ function renderProject() {
         <div class="url">${esc(host || project.url || "")}</div>
       </div>
       <div class="spacer"></div>
+      <div class="people" id="people">
+        ${roster.map((m) => `
+          <button class="person ${filters.author === m ? "on" : ""}" data-who="${esc(m)}"
+                  title="${esc(m)} &mdash; ${authored(m)} comment${authored(m) === 1 ? "" : "s"}">
+            <span class="p-av">${esc(initials(m))}</span>
+            <span class="p-n">${authored(m)}</span>
+          </button>`).join("")}
+      </div>
       <button class="btn blue" id="btn-share">Share</button>
+      <button class="btn ghost" id="btn-add">+ Add a comment</button>
       <button class="kebab" id="btn-kebab" aria-label="Project menu">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
       </button>
+    </div>
+    <div class="author-banner" id="author-banner" hidden>
+      <span id="author-banner-text"></span>
+      <button class="ab-btn" id="ab-showall">Show all</button>
+      <button class="ab-link" id="ab-hide">Hide</button>
     </div>
     <div class="filters">
       <input type="search" id="f-q" placeholder="Search" value="${esc(filters.q)}" />
@@ -437,6 +602,20 @@ function renderProject() {
   $("#f-assignee").addEventListener("change", (e) => { filters.assignee = e.target.value; renderBoard(); });
   $("#btn-share").addEventListener("click", openShareModal);
   $("#btn-kebab").addEventListener("click", openKebab);
+  $("#btn-add").addEventListener("click", () => {
+    // Open the site itself; the extension mounts in comment mode there.
+    const target = project.url || "";
+    if (!target) { alertBanner("This project has no site URL yet. Add one in Project details."); return; }
+    window.open(/^https?:/.test(target) ? target : "https://" + target, "_blank", "noopener");
+  });
+  document.querySelectorAll(".person").forEach((el) =>
+    el.addEventListener("click", () => {
+      const who = el.dataset.who;
+      filters.author = filters.author === who ? "" : who;
+      renderProject();
+    })
+  );
+  syncAuthorBanner();
 
   renderBoard();
 }
@@ -689,8 +868,10 @@ function openKebab(e) {
   menu.style.top = r.bottom + 6 + "px";
   menu.style.right = (window.innerWidth - r.right) + "px";
   menu.innerHTML = `
-    <button id="k-rename">Rename project</button>
+    <button id="k-open">Open website</button>
+    <button id="k-details">Project details</button>
     <button id="k-copy">Copy project link</button>
+    <button id="k-export">Export project</button>
     <button id="k-archive">${p.archived ? "Unarchive" : "Archive"} project</button>
     <hr />
     <button class="danger" id="k-delete">Delete project</button>`;
@@ -698,15 +879,13 @@ function openKebab(e) {
   const dismiss = (ev) => { if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener("click", dismiss, true); } };
   setTimeout(() => document.addEventListener("click", dismiss, true), 0);
 
-  $("#k-rename").addEventListener("click", async () => {
+  $("#k-open").addEventListener("click", () => {
     menu.remove();
-    const name = prompt("Project name:", p.name);
-    if (!name || !name.trim()) return;
-    const { project } = await api("/projects/" + p.id, { method: "PATCH", body: JSON.stringify({ name: name.trim() }) });
-    Object.assign(p, project);
-    const sp = projects.find((x) => x.id === p.id); if (sp) sp.name = project.name;
-    renderProject(); renderSidebar();
+    if (!p.url) { alertBanner("This project has no site URL yet."); return; }
+    window.open(/^https?:/.test(p.url) ? p.url : "https://" + p.url, "_blank", "noopener");
   });
+  $("#k-details").addEventListener("click", () => { menu.remove(); openDetailsModal(); });
+  $("#k-export").addEventListener("click", () => { menu.remove(); location.hash = "#/p/" + p.id + "/export"; });
   $("#k-copy").addEventListener("click", async () => {
     menu.remove();
     await navigator.clipboard.writeText(location.origin + location.pathname + "#/p/" + p.id);
@@ -724,6 +903,46 @@ function openKebab(e) {
     projects = projects.filter((x) => x.id !== p.id);
     location.hash = "";
     renderSidebar(); renderEmptyHome();
+  });
+}
+
+function openDetailsModal() {
+  const p = current.project;
+  const isOwner = p.owner === session.email;
+  const ov = modal(`
+    <h2>Project details</h2>
+    <p class="sub">${isOwner ? "Only the owner can change these." : "Read-only: you are a member, not the owner."}</p>
+    <label><span>Project name</span><input id="pd-name" value="${esc(p.name)}" ${isOwner ? "" : "disabled"} /></label>
+    <label><span>URL</span><input id="pd-url" value="${esc(p.url || "")}" placeholder="https://example.com" ${isOwner ? "" : "disabled"} /></label>
+    <label><span>Description (optional)</span><textarea id="pd-desc" rows="3" placeholder="Description of the project" ${isOwner ? "" : "disabled"}>${esc(p.description || "")}</textarea></label>
+    <p class="sub" style="margin:0">Owner ${esc(p.owner)} &middot; ${(p.members || []).length + 1} member${(p.members || []).length ? "s" : ""} &middot; ${current.pins.length} comment${current.pins.length === 1 ? "" : "s"}</p>
+    <p class="status" id="pd-status"></p>
+    <div class="row">
+      <button class="btn ghost" data-close>${isOwner ? "Cancel" : "Close"}</button>
+      ${isOwner ? `<button class="btn blue" id="pd-save">Save</button>` : ""}
+    </div>`);
+  ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
+  const saveBtn = ov.querySelector("#pd-save");
+  if (saveBtn) saveBtn.addEventListener("click", async () => {
+    const st = ov.querySelector("#pd-status");
+    let url = ov.querySelector("#pd-url").value.trim();
+    if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
+    st.textContent = "Saving…"; st.className = "status";
+    try {
+      const { project } = await api("/projects/" + p.id, {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: ov.querySelector("#pd-name").value.trim(),
+          url,
+          description: ov.querySelector("#pd-desc").value.trim(),
+        }),
+      });
+      Object.assign(p, project);
+      const sp = projects.find((x) => x.id === p.id);
+      if (sp) { sp.name = project.name; sp.url = project.url; }
+      ov.remove();
+      renderProject(); renderSidebar();
+    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
   });
 }
 
@@ -752,13 +971,276 @@ function openPasswordModal() {
   });
 }
 
+/* ── profile ── */
+let profileTab = "personal";
+let prefs = null;
+
+async function renderProfile() {
+  $("#main").innerHTML = `<div class="state"><div class="big">Loading…</div></div>`;
+  try {
+    const me = await api("/me");
+    prefs = me.prefs || {};
+    session.name = me.name || session.name;
+  } catch { prefs = {}; }
+  paintProfile();
+  renderSidebar();
+}
+
+const PREF_ROWS = [
+  ["mention", "Someone mentions me in a comment"],
+  ["newComment", "New reply on a comment I created"],
+  ["invited", "I am invited to a project"],
+];
+
+function paintProfile() {
+  const tabs = [["personal", "Personal"], ["notifications", "Notifications"]];
+  $("#main").innerHTML = `
+    <div class="topbar"><div class="title"><h1>Profile</h1><div class="url">${esc(session.email)}</div></div></div>
+    <div class="prof-tabs">
+      ${tabs.map(([id, label]) => `<button class="prof-tab ${profileTab === id ? "on" : ""}" data-tab="${id}">${label}</button>`).join("")}
+    </div>
+    <div class="prof-body">
+      ${profileTab === "personal" ? `
+        <div class="prof-card">
+          <h3>Personal</h3>
+          <p class="sub">This name shows on your comments and mentions.</p>
+          <label class="prof-field"><span>Display name</span><input id="pf-name" value="${esc(session.name || "")}" /></label>
+          <label class="prof-field"><span>Email</span><input value="${esc(session.email)}" disabled /></label>
+          <div class="row" style="justify-content:flex-start">
+            <button class="btn blue" id="pf-save">Save</button>
+            <span class="status" id="pf-status"></span>
+          </div>
+        </div>`
+      : `
+        <div class="prof-card">
+          <h3>Notifications</h3>
+          <p class="sub">Choose what Marko emails you about. In-app notifications always arrive.</p>
+          <div class="prof-row prof-head"><span>Event</span><span style="flex:0 0 60px;text-align:right">Email</span></div>
+          ${PREF_ROWS.map(([key, label]) => `
+            <div class="prof-row">
+              <span>${label}</span>
+              <label class="sw"><input type="checkbox" data-pref="${key}" ${prefs[key] !== false ? "checked" : ""} /><i></i></label>
+            </div>`).join("")}
+          <p class="status" id="pf-nstatus"></p>
+        </div>`}
+    </div>`;
+
+  document.querySelectorAll(".prof-tab").forEach((t) =>
+    t.addEventListener("click", () => { profileTab = t.dataset.tab; paintProfile(); })
+  );
+
+  const save = $("#pf-save");
+  if (save) save.addEventListener("click", async () => {
+    const st = $("#pf-status");
+    st.textContent = "Saving…"; st.className = "status";
+    try {
+      const me = await api("/me", { method: "PATCH", body: JSON.stringify({ name: $("#pf-name").value.trim() }) });
+      session.name = me.name;
+      localStorage.setItem(LS_KEY, JSON.stringify(session));
+      st.textContent = "Saved."; st.className = "status ok";
+      renderSidebar();
+    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+  });
+
+  document.querySelectorAll("[data-pref]").forEach((el) =>
+    el.addEventListener("change", async () => {
+      const st = $("#pf-nstatus");
+      prefs[el.dataset.pref] = el.checked;
+      st.textContent = "Saving…"; st.className = "status";
+      try {
+        const me = await api("/me", { method: "PATCH", body: JSON.stringify({ prefs }) });
+        prefs = me.prefs || prefs;
+        st.textContent = "Saved."; st.className = "status ok";
+      } catch (e) {
+        el.checked = !el.checked;
+        prefs[el.dataset.pref] = el.checked;
+        st.textContent = "Failed: " + e.message; st.className = "status err";
+      }
+    })
+  );
+}
+
+/* ── export view ── */
+let exportOpts = {
+  hideAuthor: false, hideDate: false,
+  active: true, resolved: true,
+  people: null,   // null = everyone
+};
+
+function exportedPins() {
+  return current.pins.filter((h) => {
+    const isResolved = h.status === "resolved";
+    if (isResolved && !exportOpts.resolved) return false;
+    if (!isResolved && !exportOpts.active) return false;
+    if (exportOpts.people && !exportOpts.people.includes(h.createdBy)) return false;
+    return true;
+  });
+}
+
+async function renderExport(pid) {
+  if (!current || current.project.id !== pid) {
+    try { current = await api("/projects/" + pid); }
+    catch { renderEmptyHome(); return; }
+  }
+  exportOpts.people = exportOpts.people ||
+    [...new Set(current.pins.map((h) => h.createdBy))];
+  paintExport();
+  renderSidebar();
+}
+
+function paintExport() {
+  const p = current.project;
+  const list = exportedPins();
+  let host = ""; try { host = new URL(p.url).host; } catch {}
+  const dates = current.pins.map((h) => h.createdAt).filter(Boolean);
+  const from = dates.length ? new Date(Math.min(...dates)) : null;
+  const to = dates.length ? new Date(Math.max(...dates)) : null;
+  const fmtD = (d) => d ? d.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) : "—";
+
+  $("#main").innerHTML = `
+    <div class="topbar no-print">
+      <button class="btn ghost" id="ex-back">‹ Back to board</button>
+      <div class="spacer"></div>
+      <button class="kebab" id="ex-filters" title="Filters">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      </button>
+      <button class="btn blue" id="ex-download">Export</button>
+    </div>
+    <div class="export-doc" id="export-doc">
+      <h1 class="ex-title">${esc(p.name)}</h1>
+      <p class="ex-host">${esc(host || p.url || "")}</p>
+      <hr class="ex-rule" />
+      <div class="ex-meta">
+        <div>
+          <span class="ex-label">Made by</span>
+          <div class="ex-person"><span class="av">${esc(initials(p.owner))}</span>${esc(p.owner)}</div>
+        </div>
+        <div>
+          <span class="ex-label">Severities</span>
+          ${SEVERITIES.map((sv) => `<div class="ex-sev"><i style="background:${sv.color}"></i>${sv.label}</div>`).join("")}
+        </div>
+        <div>
+          <span class="ex-label">Range of data</span>
+          <div class="ex-line">From ${fmtD(from)}</div>
+          <div class="ex-line">To ${fmtD(to)}</div>
+        </div>
+        <div>
+          <span class="ex-label">Project description</span>
+          <div class="ex-line">${esc(p.description || "No description")}</div>
+        </div>
+      </div>
+      ${list.length ? list.map((h, i) => `
+        <section class="ex-item">
+          <div class="ex-item-body">
+            <div class="ex-item-head">
+              <span class="ex-num">${i + 1}</span>
+              ${exportOpts.hideAuthor ? "" : `<span class="av sm">${esc(initials(h.createdBy))}</span><b>${esc((h.createdBy || "").split("@")[0])}</b>`}
+            </div>
+            <span class="ex-label">Note</span>
+            <p class="ex-line">${esc(h.comment)}</p>
+            <span class="ex-label">Severity</span>
+            <div class="ex-sev"><i style="background:${(SEVERITIES.find((x) => x.id === severityOf(h)) || SEVERITIES[0]).color}"></i>${esc(severityOf(h))}</div>
+            <span class="ex-label">Status</span>
+            <p class="ex-line">${h.status === "resolved" ? "Resolved" : "Active"}</p>
+            ${h.assignee ? `<span class="ex-label">Assigned to</span><p class="ex-line">${esc(h.assignee)}</p>` : ""}
+            ${exportOpts.hideDate ? "" : `<span class="ex-label">Created</span><p class="ex-line">${new Date(h.createdAt).toLocaleString()}</p>`}
+            ${h.device || h.viewport ? `<span class="ex-label">Device</span><p class="ex-line">${esc(h.device || "")} ${esc(h.viewport || "")}</p>` : ""}
+            <span class="ex-label">Element</span>
+            <p class="ex-line ex-code">${esc(h.selector || "—")}</p>
+            ${(h.comments || []).length ? `<span class="ex-label">Replies (${h.comments.length})</span>
+              ${h.comments.map((c) => `<p class="ex-line">${esc(c.byName || c.by)}: ${esc(c.text)}</p>`).join("")}` : ""}
+          </div>
+          <div class="ex-item-shot">
+            ${h.hasShot ? `<img data-shot="${esc(h.id)}" alt="Screenshot for comment ${i + 1}" />` : `<div class="ex-noshot">No screenshot</div>`}
+          </div>
+        </section>`).join("")
+      : `<p class="ex-line" style="padding:40px 0">Nothing matches the current filters.</p>`}
+    </div>`;
+
+  $("#ex-back").addEventListener("click", () => { location.hash = "#/p/" + p.id; });
+  $("#ex-filters").addEventListener("click", openExportFilters);
+  $("#ex-download").addEventListener("click", openExportModal);
+
+  // pull screenshots in so they are present for print/PDF
+  document.querySelectorAll("img[data-shot]").forEach((img) => {
+    api(`/projects/${p.id}/pins/${img.dataset.shot}/shot`)
+      .then((d) => { if (d.shot) img.src = d.shot; else img.closest(".ex-item-shot").innerHTML = '<div class="ex-noshot">No screenshot</div>'; })
+      .catch(() => { img.closest(".ex-item-shot").innerHTML = '<div class="ex-noshot">No screenshot</div>'; });
+  });
+}
+
+function openExportFilters() {
+  const people = [...new Set(current.pins.map((h) => h.createdBy))];
+  const ov = modal(`
+    <h2>Filters</h2>
+    <span class="sub">Export details</span>
+    <label class="chk"><input type="checkbox" id="fx-author" ${exportOpts.hideAuthor ? "checked" : ""} /> Hide the name and avatar of the author</label>
+    <label class="chk"><input type="checkbox" id="fx-date" ${exportOpts.hideDate ? "checked" : ""} /> Hide the creation date</label>
+    <span class="sub" style="margin-top:14px">Comment status</span>
+    <label class="chk"><input type="checkbox" id="fx-active" ${exportOpts.active ? "checked" : ""} /> Active</label>
+    <label class="chk"><input type="checkbox" id="fx-resolved" ${exportOpts.resolved ? "checked" : ""} /> Resolved</label>
+    <span class="sub" style="margin-top:14px">Authors (${people.length})</span>
+    ${people.map((m, i) => `<label class="chk"><input type="checkbox" data-person="${esc(m)}" ${(!exportOpts.people || exportOpts.people.includes(m)) ? "checked" : ""} /> ${esc(m)}</label>`).join("")}
+    <div class="row"><button class="btn blue" id="fx-done">Done</button></div>`);
+  ov.querySelector("#fx-done").addEventListener("click", () => {
+    exportOpts.hideAuthor = ov.querySelector("#fx-author").checked;
+    exportOpts.hideDate = ov.querySelector("#fx-date").checked;
+    exportOpts.active = ov.querySelector("#fx-active").checked;
+    exportOpts.resolved = ov.querySelector("#fx-resolved").checked;
+    exportOpts.people = [...ov.querySelectorAll("[data-person]")]
+      .filter((c) => c.checked).map((c) => c.dataset.person);
+    ov.remove();
+    paintExport();
+  });
+}
+
+function openExportModal() {
+  const ov = modal(`
+    <h2>Export project</h2>
+    <label><span>Format</span>
+      <select id="ex-format">
+        <option value="pdf">PDF</option>
+        <option value="csv">CSV</option>
+      </select>
+    </label>
+    <div class="row">
+      <button class="btn ghost" data-close>Cancel</button>
+      <button class="btn blue" id="ex-go">Export</button>
+    </div>`);
+  ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
+  ov.querySelector("#ex-go").addEventListener("click", () => {
+    const fmt = ov.querySelector("#ex-format").value;
+    ov.remove();
+    if (fmt === "pdf") { window.print(); return; }
+    downloadCsv();
+  });
+}
+
+function downloadCsv() {
+  const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const head = ["#", "comment", "severity", "status", "author", "assignee", "created", "page", "selector", "replies"];
+  const rows = exportedPins().map((h, i) => [
+    i + 1, h.comment, severityOf(h), h.status || "active",
+    exportOpts.hideAuthor ? "" : h.createdBy, h.assignee || "",
+    exportOpts.hideDate ? "" : new Date(h.createdAt).toISOString(),
+    h.pageUrl || "", h.selector || "",
+    (h.comments || []).map((c) => `${c.byName || c.by}: ${c.text}`).join(" | "),
+  ].map(cell).join(","));
+  const blob = new Blob([[head.map(cell).join(","), ...rows].join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${current.project.name.replace(/[^\w.-]+/g, "-")}-comments.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 /* ── routing + boot ── */
 async function openProject(pid) {
   closeDrawer();
   $("#main").innerHTML = `<div class="state"><div class="big">Loading…</div></div>`;
   try {
     current = await api("/projects/" + pid);
-    filters = { q: "", status: "active", assignee: "" };
+    filters = { q: "", status: "active", assignee: "", author: "" };
     renderProject();
     // #/p/<pid>/h/<hid> comes from a mention: open that pin directly.
     const deep = location.hash.match(/^#\/p\/[a-zA-Z0-9_-]+\/h\/([a-zA-Z0-9_-]+)/);
@@ -871,6 +1353,9 @@ async function route() {
     return;
   }
   $("#btn-mentions").classList.remove("active");
+  if (location.hash === "#/profile") { current = null; await renderProfile(); return; }
+  const ex = location.hash.match(/^#\/p\/([a-zA-Z0-9_-]+)\/export/);
+  if (ex) { await renderExport(ex[1]); return; }
   const pid = currentPid();
   if (pid) await openProject(pid);
   else { current = null; renderEmptyHome(); renderSidebar(); }
@@ -885,6 +1370,15 @@ async function boot() {
   $("#mi-logout").addEventListener("click", logout);
   $("#mi-password").addEventListener("click", () => { $("#acct-menu").hidden = true; openPasswordModal(); });
   $("#mi-landing").addEventListener("click", () => { location.href = "index.html"; });
+  $("#mi-settings").addEventListener("click", () => {
+    $("#acct-menu").hidden = true;
+    profileTab = "personal";
+    location.hash = "#/profile";
+  });
+  $("#mi-install").addEventListener("click", () => {
+    $("#acct-menu").hidden = true;
+    window.open("https://github.com/strativ-dev/marko-site/releases/latest", "_blank", "noopener");
+  });
   $("#btn-mentions").addEventListener("click", () => { location.hash = "#/mentions"; });
   refreshMentionBadge();
   window.addEventListener("hashchange", route);
