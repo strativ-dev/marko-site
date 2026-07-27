@@ -294,7 +294,7 @@
     /* ── Data (radial-gradient hero) ─────────────────── */
     .data-band {
       position: relative;
-      padding: 140px 24px 220px;
+      padding: 150px 24px 200px;
       text-align: center;
       overflow: hidden;
     }
@@ -303,19 +303,18 @@
        never shows its own edge. */
     .data-glow {
       position: absolute;
-      left: -60px; right: -60px; bottom: 40px;
-      height: 560px;
+      left: -60px; right: -60px; top: -80px;
+      height: 720px;
       background: linear-gradient(#190096 0%, #0080ff 21.0902%, #78d2ff 52.6658%, #fff0 100%);
-      transform: rotate(180deg);
       filter: blur(50px);
       z-index: 1;
       pointer-events: none;
     }
     .data-band > *:not(.data-glow) { position: relative; z-index: 2; }
 
-    .data-band h2, .data-band h2 .serif { color: var(--ink); }
-    .data-band .kicker { color: var(--blue-deep); }
-    .data-band .section-sub { color: var(--sub); max-width: 620px; }
+    .data-band h2, .data-band h2 .serif { color: #fff; }
+    .data-band .kicker { color: rgba(255,255,255,.8); }
+    .data-band .section-sub { color: rgba(255,255,255,.92); max-width: 620px; }
     .data-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
       max-width: 940px; margin: 40px auto 0;
