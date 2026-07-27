@@ -343,32 +343,37 @@
     /* ── FAQ (2 columns, pill rows) ──────────────────── */
     .faq-head { text-align: center; }
     .faq {
-      column-count: 2; column-gap: 14px;
-      max-width: 960px; margin: 40px auto 0;
+      column-count: 2; column-gap: 18px;
+      max-width: 980px; margin: 40px auto 0;
     }
     @media (max-width: 720px) { .faq { column-count: 1; } }
-    .faq details { break-inside: avoid; -webkit-column-break-inside: avoid; }
-    @media (max-width: 720px) { .faq { grid-template-columns: 1fr; } }
+    .faq details {
+      break-inside: avoid; -webkit-column-break-inside: avoid;
+      margin-bottom: 18px;
+    }
     details {
       background: var(--card); border-radius: 16px;
-      padding: 16px 20px;
-      transition: background .15s;
+      padding: 20px 24px;
+      transition: background .25s ease;
     }
-    details:hover { background: #eeeff3; }
+    details:hover { background: #efefef; }
+    /* + on the left, question after it, matching the reference. */
     summary {
-      cursor: pointer; font-weight: 600; font-size: 14.5px;
-      list-style: none; position: relative; padding-right: 30px;
-      letter-spacing: -0.1px; display: flex; align-items: center; gap: 12px;
+      cursor: pointer; font-weight: 500; font-size: 15px; color: var(--ink);
+      list-style: none; letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 16px;
     }
     summary::-webkit-details-marker { display: none; }
     summary::before {
-      content: "+"; position: absolute; right: 4px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted); font-size: 20px; font-weight: 300; line-height: 1;
+      content: "+"; flex-shrink: 0;
+      color: var(--muted); font-size: 22px; font-weight: 300; line-height: 1;
+      transition: transform .25s ease;
     }
-    details[open] summary::before { content: "–"; }
-    details p { color: var(--sub); font-size: 14px; margin-top: 12px; line-height: 1.6; }
-    details a { color: var(--blue-deep); font-weight: 600; }
+    details[open] summary::before { content: "+"; transform: rotate(45deg); }
+    details p {
+      color: var(--muted); font-size: 14px; margin: 12px 0 0 32px; line-height: 1.6em;
+    }
+    details a { color: var(--accent, #0099ff); font-weight: 600; }
 
     /* ── Final CTA ───────────────────────────────────── */
     .final { text-align: center; padding: 88px 24px 120px; }
