@@ -294,7 +294,7 @@
     /* ── Data (radial-gradient hero) ─────────────────── */
     .data-band {
       position: relative;
-      padding: 150px 24px 200px;
+      padding: 120px 24px 120px;
       text-align: center;
     }
     /* Blurred gradient sheet: rotated so the deep blue sits low and
@@ -319,10 +319,10 @@
     .data-band .kicker { color: rgba(255,255,255,.8); }
     .data-band .section-sub { color: rgba(255,255,255,.92); max-width: 620px; }
     .data-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
       max-width: 940px; margin: 40px auto 0;
     }
-    @media (max-width: 820px) { .data-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 820px) { .data-grid { grid-template-columns: 1fr; max-width: 420px; } }
     .dcard {
       background: #fff;
       border: 1px solid rgba(255,255,255,.9);
@@ -824,9 +824,15 @@
     <h2 class="si-h2" id="si-title">Create your account</h2>
     <p class="si-sub" id="si-sub">Free forever. Nothing to install on your server.</p>
     <label class="si-field"><span>Email</span><input id="si-email" type="email" autocomplete="email" /></label>
-    <label class="si-field"><span id="si-pw-label">Password (8+ characters)</span><input id="si-password" type="password" autocomplete="new-password" /></label>
+    <label class="si-field" id="si-pw-field"><span id="si-pw-label">Password (8+ characters)</span><input id="si-password" type="password" autocomplete="new-password" /></label>
     <button class="si-submit" id="si-submit">Create account</button>
     <p class="si-status" id="si-status"></p>
+    <p class="si-foot" id="si-forgot-row" hidden style="text-align:right;margin-top:8px;">
+      <a href="#" id="si-forgot">Forgot password?</a>
+    </p>
+    <p class="si-foot" id="si-back-row" hidden style="text-align:right;margin-top:8px;">
+      <a href="#" id="si-back">&larr; Back to sign in</a>
+    </p>
     <p class="si-foot">
       Sign-in opens Marko in your Chrome extension. Don't have it yet?
       <a href="#install">Install Marko first.</a>
@@ -851,24 +857,47 @@
   const pwLabel = $("#si-pw-label");
   let mode = "signup";
 
+  const tabsRow = document.querySelector(".si-tabs");
+  const pwField = $("#si-pw-field");
+  const forgotRow = $("#si-forgot-row");
+  const backRow = $("#si-back-row");
+
   function setMode(next) {
     mode = next;
     document.querySelectorAll(".si-tab").forEach((t) =>
-      t.classList.toggle("active", t.dataset.mode === mode)
+      t.classList.toggle("active", t.dataset.mode === (mode === "forgot" ? "login" : mode))
     );
     if (mode === "signup") {
+      tabsRow.hidden = false;
+      pwField.hidden = false;
+      backRow.hidden = true;
       title.textContent = "Create your account";
       sub.textContent = "Free forever. Nothing to install on your server.";
       pwLabel.textContent = "Password (8+ characters)";
       pw.setAttribute("autocomplete", "new-password");
       submit.textContent = "Create account";
-    } else {
+      forgotRow.hidden = true;
+    } else if (mode === "login") {
+      tabsRow.hidden = false;
+      pwField.hidden = false;
+      backRow.hidden = true;
       title.textContent = "Welcome back";
       sub.textContent = "Sign in and Marko opens signed in.";
       pwLabel.textContent = "Password";
       pw.setAttribute("autocomplete", "current-password");
       submit.textContent = "Sign in";
+      forgotRow.hidden = false;
+    } else {
+      // "forgot" — collect email only, hide password field + tabs.
+      tabsRow.hidden = true;
+      pwField.hidden = true;
+      forgotRow.hidden = true;
+      backRow.hidden = false;
+      title.textContent = "Reset your password";
+      sub.textContent = "We'll email you a link to set a new one.";
+      submit.textContent = "Send reset link";
     }
+    submit.disabled = false;
     setStatus("", "");
   }
   function setStatus(msg, cls) {
@@ -918,6 +947,8 @@
   document.querySelectorAll(".si-tab").forEach((t) =>
     t.addEventListener("click", () => setMode(t.dataset.mode))
   );
+  $("#si-forgot").addEventListener("click", (e) => { e.preventDefault(); setMode("forgot"); });
+  $("#si-back").addEventListener("click", (e) => { e.preventDefault(); setMode("login"); });
   $("#si-close").addEventListener("click", close);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
   document.addEventListener("keydown", (e) => { if (!overlay.hidden && e.key === "Escape") close(); });
@@ -927,6 +958,20 @@
 
   submit.addEventListener("click", async () => {
     const e = email.value.trim().toLowerCase();
+    if (mode === "forgot") {
+      if (!e) { setStatus("Enter your email.", "err"); return; }
+      submit.disabled = true;
+      setStatus("Sending…", "");
+      try {
+        await callAuth("/auth/forgot-password", { email: e });
+        setStatus("If that email is registered, a reset link is on its way. Check your inbox.", "ok");
+      } catch (err) {
+        // Endpoint always returns 200; a hard failure means the request never left.
+        setStatus("Couldn't reach the server. Try again in a moment.", "err");
+        submit.disabled = false;
+      }
+      return;
+    }
     const p = pw.value;
     if (!e || !p) { setStatus("Enter email and password.", "err"); return; }
     submit.disabled = true;
