@@ -1,59 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 720" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 620" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
   <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#c1e28d"/>
-      <stop offset=".55" stop-color="#8fc862"/>
-      <stop offset="1" stop-color="#4f8a3a"/>
+    <!-- Distant ridges: hazy and desaturated so they read as far away. -->
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9cfc4" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#cfe3dd" stop-opacity=".55"/>
     </linearGradient>
-    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#a9d777"/>
-      <stop offset=".55" stop-color="#6eb04b"/>
-      <stop offset="1" stop-color="#37742a"/>
+    <linearGradient id="far2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#93c4b4" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#bcdccf" stop-opacity=".6"/>
     </linearGradient>
-    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#84c257"/>
-      <stop offset=".5" stop-color="#4f9c34"/>
-      <stop offset="1" stop-color="#1f5a1a"/>
+
+    <!-- Main hill: sunlit crown rolling into a cool shaded flank. -->
+    <linearGradient id="mid" x1=".15" y1="0" x2=".7" y2="1">
+      <stop offset="0" stop-color="#a9c64a"/>
+      <stop offset=".38" stop-color="#79ab3e"/>
+      <stop offset="1" stop-color="#2f6b32"/>
     </linearGradient>
-    <radialGradient id="sun" cx="82%" cy="4%" r="55%">
-      <stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/>
-      <stop offset=".35" stop-color="#fff3c8" stop-opacity=".35"/>
-      <stop offset="1" stop-color="#fff3c8" stop-opacity="0"/>
+    <linearGradient id="midShade" x1="0" y1="0" x2="1" y2=".6">
+      <stop offset="0" stop-color="#20512a" stop-opacity=".55"/>
+      <stop offset=".6" stop-color="#2c6132" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#2c6132" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="right" x1=".2" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#c3d552"/>
+      <stop offset=".45" stop-color="#8fb843"/>
+      <stop offset="1" stop-color="#3d7a35"/>
+    </linearGradient>
+
+    <linearGradient id="near" x1=".3" y1="0" x2=".6" y2="1">
+      <stop offset="0" stop-color="#8dbb42"/>
+      <stop offset=".45" stop-color="#69a23a"/>
+      <stop offset="1" stop-color="#4a8a33"/>
+    </linearGradient>
+    <linearGradient id="nearShade" x1="0" y1="0" x2=".85" y2=".4">
+      <stop offset="0" stop-color="#24552a" stop-opacity=".5"/>
+      <stop offset=".55" stop-color="#2d6330" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#2d6330" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="sun" cx="72%" cy="10%" r="75%">
+      <stop offset="0" stop-color="#fff6c9" stop-opacity=".5"/>
+      <stop offset=".45" stop-color="#f2f0a8" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="shade" cx="18%" cy="120%" r="90%">
-      <stop offset="0" stop-color="#000" stop-opacity=".18"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0"/>
-    </radialGradient>
+
+    <filter id="haze" x="-10%" y="-40%" width="120%" height="200%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <filter id="softEdge" x="-5%" y="-20%" width="110%" height="150%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+    <!-- Foreground defocus, mimicking a shallow depth of field. -->
+    <filter id="bokeh" x="-5%" y="-20%" width="110%" height="160%">
+      <feGaussianBlur stdDeviation="4.5"/>
+    </filter>
+
+    <pattern id="flowers" width="120" height="90" patternUnits="userSpaceOnUse">
+      <circle cx="14" cy="20" r="2.6" fill="#fff" opacity=".85"/>
+      <circle cx="62" cy="10" r="2" fill="#fdfff0" opacity=".7"/>
+      <circle cx="95" cy="34" r="2.9" fill="#fff" opacity=".8"/>
+      <circle cx="38" cy="52" r="2.2" fill="#f7ffe8" opacity=".75"/>
+      <circle cx="78" cy="70" r="2.7" fill="#fff" opacity=".8"/>
+      <circle cx="8" cy="76" r="2.1" fill="#fffdf2" opacity=".65"/>
+      <circle cx="112" cy="82" r="2.4" fill="#fff" opacity=".7"/>
+    </pattern>
   </defs>
 
-  <!-- Back ridge -->
-  <path d="M0 300
-           C 240 240, 480 330, 720 280
-           C 960 230, 1200 320, 1440 260
-           C 1680 210, 1920 300, 2160 250
-           C 2280 226, 2340 240, 2400 236
-           L 2400 720 L 0 720 Z"
-        fill="url(#g1)"/>
+  <!-- Far ridge line, barely there. -->
+  <path filter="url(#haze)" fill="url(#far)"
+        d="M0,352 C170,318 300,300 470,312 C640,324 760,352 930,344 C1110,336 1250,306 1420,314 C1500,318 1560,330 1600,338 L1600,620 L0,620 Z"/>
+  <path filter="url(#haze)" fill="url(#far2)" opacity=".8"
+        d="M0,392 C140,368 260,344 430,352 C600,360 700,388 880,382 C1060,376 1200,350 1380,358 C1470,362 1550,376 1600,384 L1600,620 L0,620 Z"/>
 
-  <!-- Middle ridge -->
-  <path d="M0 430
-           C 260 380, 520 460, 780 400
-           C 1040 340, 1300 470, 1560 410
-           C 1820 350, 2080 450, 2340 390
-           L 2400 386 L 2400 720 L 0 720 Z"
-        fill="url(#g2)"/>
+  <!-- Main rolling hill. -->
+  <path filter="url(#softEdge)" fill="url(#mid)"
+        d="M300,620 C300,620 330,470 520,418 C660,380 780,404 900,438 C1040,478 1180,470 1310,436 C1440,402 1540,404 1600,416 L1600,620 Z"/>
+  <path filter="url(#softEdge)" fill="url(#midShade)"
+        d="M300,620 C300,620 330,470 520,418 C620,390 700,398 780,418 C700,470 620,540 580,620 Z"/>
 
-  <!-- Front ridge (with a couple of gentle bumps) -->
-  <path d="M0 550
-           C 200 500, 420 590, 640 540
-           C 860 490, 1080 610, 1300 560
-           C 1520 510, 1740 620, 1960 560
-           C 2140 510, 2280 570, 2400 540
-           L 2400 720 L 0 720 Z"
-        fill="url(#g3)"/>
+  <!-- Right hill catching the low sun. -->
+  <path filter="url(#softEdge)" fill="url(#right)"
+        d="M980,620 C1010,520 1120,462 1270,452 C1400,444 1520,470 1600,494 L1600,620 Z"/>
 
-  <!-- Warm sunlight glow from top-right, over everything -->
-  <rect width="2400" height="720" fill="url(#sun)"/>
-  <!-- Soft shadow into bottom-left corner -->
-  <rect width="2400" height="720" fill="url(#shade)"/>
+  <!-- Left shoulder. -->
+  <path filter="url(#softEdge)" fill="url(#mid)" opacity=".95"
+        d="M0,470 C90,442 190,432 300,448 C280,502 250,560 240,620 L0,620 Z"/>
+
+  <!-- Foreground meadow. -->
+  <path fill="url(#near)"
+        d="M0,560 C180,506 340,494 520,522 C700,550 860,608 1040,600 C1220,592 1400,552 1600,566 L1600,620 L0,620 Z"/>
+  <path fill="url(#nearShade)"
+        d="M0,560 C180,506 340,494 520,522 C640,540 740,576 850,592 C560,600 250,600 0,620 Z"/>
+
+  <!-- Wildflowers, densest in the near field. -->
+  <path fill="url(#flowers)" opacity=".55" filter="url(#bokeh)"
+        d="M0,566 C180,512 340,500 520,528 C700,556 860,614 1040,606 C1220,598 1400,558 1600,572 L1600,620 L0,620 Z"/>
+
+  <rect width="1600" height="620" fill="url(#sun)"/>
 </svg>
