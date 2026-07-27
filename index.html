@@ -51,17 +51,17 @@
 
     /* ── Nav ─────────────────────────────────────────── */
     .navbar {
-      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
       z-index: 100;
-      width: min(640px, calc(100% - 32px));
+      width: min(660px, calc(100% - 32px));
       background: var(--ink);
-      border-radius: 999px;
+      border-radius: 0 0 26px 26px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 6px 6px 6px 14px;
+      padding: 9px 8px 10px 16px;
       color: #fff;
     }
     .navbar .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
-    .logo-chip { width: 22px; height: 22px; border-radius: 6px; display: block; }
+    .logo-chip { width: 24px; height: 24px; border-radius: 7px; display: block; box-shadow: 0 0 0 1px rgba(255,255,255,.18); }
     .nav-mid { display: flex; align-items: center; gap: 17px; font-size: 12.5px; }
     .nav-mid a { color: rgba(255,255,255,.72); }
     .nav-mid a:hover { color: #fff; }
@@ -298,8 +298,8 @@
        never shows its own edge. */
     .data-glow {
       position: absolute;
-      left: -60px; right: -60px; bottom: 120px;
-      height: 680px;
+      left: -60px; right: -60px; bottom: 40px;
+      height: 560px;
       background: linear-gradient(#190096 0%, #0080ff 21.0902%, #78d2ff 52.6658%, #fff0 100%);
       transform: rotate(180deg);
       filter: blur(50px);
@@ -308,9 +308,9 @@
     }
     .data-band > *:not(.data-glow) { position: relative; z-index: 2; }
 
-    .data-band h2, .data-band h2 .serif { color: #fff; }
-    .data-band .kicker { color: rgba(255,255,255,.82); }
-    .data-band .section-sub { color: rgba(255,255,255,.9); max-width: 620px; }
+    .data-band h2, .data-band h2 .serif { color: var(--ink); }
+    .data-band .kicker { color: var(--blue-deep); }
+    .data-band .section-sub { color: var(--sub); max-width: 620px; }
     .data-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
       max-width: 940px; margin: 40px auto 0;
@@ -377,7 +377,7 @@
       overflow: hidden;
     }
     .foot-grid {
-      display: grid; grid-template-columns: 1.9fr 1fr 1fr; gap: 88px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 96px;
       max-width: 1140px; margin: 0 auto; padding: 0 24px;
       position: relative; z-index: 2;
     }
@@ -396,14 +396,14 @@
       font-style: italic; font-weight: 400; letter-spacing: -.8px;
     }
     .foot-blurb { color: rgba(255,255,255,.5); font-size: 13.5px; line-height: 1.6; margin-bottom: 22px; max-width: 400px; }
-    .foot-btn {
+    .foot-col a.foot-btn, .foot-btn {
       display: inline-flex; align-items: center; gap: 8px;
-      background: #fff; color: var(--ink);
+      background: #fff; color: #000;
       padding: 9px 17px; border-radius: 999px;
       font-size: 13px; font-weight: 600;
       transition: transform .25s;
     }
-    .foot-btn:hover { transform: translateY(-1px); }
+    .foot-col a.foot-btn:hover, .foot-btn:hover { transform: translateY(-1px); color: #000; }
     .foot-btn svg { width: 13px; height: 13px; }
     .foot-copy { color: rgba(255,255,255,.35); font-size: 12.5px; margin-top: 26px; }
     .foot-built { color: rgba(255,255,255,.5); font-size: 12.5px; margin-top: 8px; }
@@ -737,14 +737,6 @@
       </a>
       <p class="foot-copy">&copy; 2026 Marko &middot; MIT License</p>
       <p class="foot-built">A product by <a href="https://strativ.se" target="_blank" rel="noopener">Strativ</a></p>
-    </div>
-    <div class="foot-col">
-      <h4>Menu</h4>
-      <a href="#">Home</a>
-      <a href="#how">How it works</a>
-      <a href="#features">Features</a>
-      <a href="#install">Install</a>
-      <a href="#faq">FAQ</a>
     </div>
     <div class="foot-col">
       <h4>Product</h4>
