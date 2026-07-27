@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 620" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 296 1600 324" preserveAspectRatio="none" aria-hidden="true">
   <defs>
     <!-- Distant ridges: hazy and desaturated so they read as far away. -->
     <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
@@ -97,5 +97,5 @@
   <path fill="url(#flowers)" opacity=".55" filter="url(#bokeh)"
         d="M0,566 C180,512 340,500 520,528 C700,556 860,614 1040,606 C1220,598 1400,558 1600,572 L1600,620 L0,620 Z"/>
 
-  <rect width="1600" height="620" fill="url(#sun)"/>
+  <rect x="0" y="296" width="1600" height="324" fill="url(#sun)"/>
 </svg>
