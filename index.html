@@ -234,14 +234,23 @@
       position: relative;
       padding: 140px 24px 220px;
       text-align: center;
-      background:
-        radial-gradient(ellipse 120% 70% at 50% 46%,
-          rgba(25, 0, 150, .92) 0%,
-          rgba(0, 128, 255, .82) 26%,
-          rgba(120, 210, 255, .45) 55%,
-          rgba(120, 210, 255, .12) 76%,
-          rgba(255, 255, 255, 0) 92%);
+      overflow: hidden;
     }
+    /* Blurred gradient sheet: rotated so the deep blue sits low and
+       dissolves upward, and pulled past the section sides so the 50px blur
+       never shows its own edge. */
+    .data-glow {
+      position: absolute;
+      left: -60px; right: -60px; bottom: 120px;
+      height: 680px;
+      background: linear-gradient(#190096 0%, #0080ff 21.0902%, #78d2ff 52.6658%, #fff0 100%);
+      transform: rotate(180deg);
+      filter: blur(50px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .data-band > *:not(.data-glow) { position: relative; z-index: 2; }
+
     .data-band h2, .data-band h2 .serif { color: #fff; }
     .data-band .kicker { color: rgba(255,255,255,.82); }
     .data-band .section-sub { color: rgba(255,255,255,.9); max-width: 620px; }
@@ -538,6 +547,7 @@
 </section>
 
 <section class="data-band">
+  <div class="data-glow" aria-hidden="true"></div>
   <div class="kicker">Your data</div>
   <h2>Local by default. <span class="serif">Cloud when you want it.</span></h2>
   <p class="section-sub">Marko ships with a hosted backend so you can sign up in one click. Prefer to self-host? Deploy your own Cloudflare Worker and point Marko at it in Settings.</p>
