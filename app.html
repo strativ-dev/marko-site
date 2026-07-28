@@ -503,7 +503,6 @@
       </div>
       <hr />
       <button id="mi-settings">Settings</button>
-      <button id="mi-password">Change password</button>
       <hr />
       <button id="mi-install">Install extension</button>
       <button id="mi-landing">Open landing page</button>
@@ -1044,6 +1043,24 @@ function modal(html) {
   return ov;
 }
 
+// In-app confirm (no browser confirm()). Resolves true/false.
+function confirmModal({ title, body = "", okLabel = "Confirm", danger = false }) {
+  return new Promise((resolve) => {
+    const ov = modal(`
+      <h2>${esc(title)}</h2>
+      ${body ? `<p class="sub">${esc(body)}</p>` : ""}
+      <div class="row">
+        <button class="btn ghost" data-close>Cancel</button>
+        <button class="btn ${danger ? "danger" : "blue"}" id="cf-ok">${esc(okLabel)}</button>
+      </div>`);
+    let done = false;
+    const finish = (v) => { if (done) return; done = true; ov.remove(); resolve(v); };
+    ov.querySelector("[data-close]").addEventListener("click", () => finish(false));
+    ov.querySelector("#cf-ok").addEventListener("click", () => finish(true));
+    ov.addEventListener("click", (e) => { if (e.target === ov) finish(false); });
+  });
+}
+
 function openCreateModal() {
   const ov = modal(`
     <h2>Create project</h2>
@@ -1118,7 +1135,7 @@ function openShareModal() {
     ov.querySelectorAll(".mrow-x").forEach((b) =>
       b.addEventListener("click", async () => {
         const email = b.dataset.email;
-        if (!confirm(`Remove ${email} from "${p.name}"? They lose access to this project.`)) return;
+        if (!(await confirmModal({ title: "Remove member?", body: `${email} will lose access to "${p.name}". Their existing comments stay.`, okLabel: "Remove", danger: true }))) return;
         const st = ov.querySelector("#sh-status");
         st.textContent = "Removing…"; st.className = "status";
         try {
@@ -1294,31 +1311,6 @@ function openDetailsModal() {
   });
 }
 
-function openPasswordModal() {
-  const ov = modal(`
-    <h2>Change password</h2>
-    <label><span>Current password</span><input id="pw-old" type="password" autocomplete="current-password" /></label>
-    <label><span>New password (8+ characters)</span><input id="pw-new" type="password" autocomplete="new-password" /></label>
-    <p class="status" id="pw-status"></p>
-    <div class="row">
-      <button class="btn ghost" data-close>Cancel</button>
-      <button class="btn blue" id="pw-go">Update</button>
-    </div>`);
-  ov.querySelector("[data-close]").addEventListener("click", () => ov.remove());
-  ov.querySelector("#pw-go").addEventListener("click", async () => {
-    const st = ov.querySelector("#pw-status");
-    const oldPassword = ov.querySelector("#pw-old").value;
-    const newPassword = ov.querySelector("#pw-new").value;
-    if (newPassword.length < 8) { st.textContent = "New password too short."; st.className = "status err"; return; }
-    st.textContent = "Updating…"; st.className = "status";
-    try {
-      await api("/auth/change-password", { method: "POST", body: JSON.stringify({ oldPassword, newPassword }) });
-      st.textContent = "Password updated."; st.className = "status ok";
-      setTimeout(() => ov.remove(), 900);
-    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
-  });
-}
-
 /* ── profile ── */
 let profileTab = "personal";
 let prefs = null;
@@ -1358,6 +1350,16 @@ function paintProfile() {
             <button class="btn blue" id="pf-save">Save</button>
             <span class="status" id="pf-status"></span>
           </div>
+        </div>
+        <div class="prof-card" style="margin-top:16px">
+          <h3>Change password</h3>
+          <p class="sub">Set a new password. You'll stay signed in on this device.</p>
+          <label class="prof-field"><span>New password (8+ characters)</span><input id="pf-pw1" type="password" autocomplete="new-password" /></label>
+          <label class="prof-field"><span>Confirm new password</span><input id="pf-pw2" type="password" autocomplete="new-password" /></label>
+          <div class="row" style="justify-content:flex-start">
+            <button class="btn blue" id="pf-pw-save">Update password</button>
+            <span class="status" id="pf-pw-status"></span>
+          </div>
         </div>`
       : `
         <div class="prof-card">
@@ -1376,6 +1378,20 @@ function paintProfile() {
   document.querySelectorAll(".prof-tab").forEach((t) =>
     t.addEventListener("click", () => { profileTab = t.dataset.tab; paintProfile(); })
   );
+
+  const pwSave = $("#pf-pw-save");
+  if (pwSave) pwSave.addEventListener("click", async () => {
+    const st = $("#pf-pw-status");
+    const a = $("#pf-pw1").value, b = $("#pf-pw2").value;
+    if (a.length < 8) { st.textContent = "At least 8 characters."; st.className = "status err"; return; }
+    if (a !== b) { st.textContent = "Passwords don't match."; st.className = "status err"; return; }
+    st.textContent = "Updating…"; st.className = "status";
+    try {
+      await api("/auth/change-password", { method: "POST", body: JSON.stringify({ newPassword: a }) });
+      $("#pf-pw1").value = ""; $("#pf-pw2").value = "";
+      st.textContent = "Password updated."; st.className = "status ok";
+    } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+  });
 
   const save = $("#pf-save");
   if (save) save.addEventListener("click", async () => {
@@ -1839,7 +1855,6 @@ async function boot() {
   );
   $("#btn-account").addEventListener("click", () => { $("#acct-menu").hidden = !$("#acct-menu").hidden; });
   $("#mi-logout").addEventListener("click", logout);
-  $("#mi-password").addEventListener("click", () => { $("#acct-menu").hidden = true; openPasswordModal(); });
   $("#mi-landing").addEventListener("click", () => { location.href = "index.html"; });
   $("#mi-settings").addEventListener("click", () => {
     $("#acct-menu").hidden = true;
