@@ -535,6 +535,24 @@ const SEVERITIES = [
   { id: "critical", label: "Critical", color: "var(--sev-critical)" },
 ];
 const SHOTS_URL = "https://marko-shots.strativ.workers.dev";
+const EXT_ID = "jhnnkjnpggliikhiiceijlkclhlblgjf";
+const CALLBACK = "chrome-extension://" + EXT_ID + "/auth/callback.html";
+// Hand the current Supabase session to the extension (hidden iframe → its
+// web-accessible callback page). Fails silently if the extension isn't
+// installed. Runs on every dashboard load so the extension stays signed in.
+function bridgeToExtension(session) {
+  if (!session) return;
+  const name = (session.user.user_metadata || {}).name || "";
+  const frame = document.createElement("iframe");
+  frame.style.display = "none";
+  frame.src = CALLBACK + "#" +
+    "at=" + encodeURIComponent(session.access_token) +
+    "&rt=" + encodeURIComponent(session.refresh_token) +
+    "&exp=" + encodeURIComponent(String((session.expires_at || 0) * 1000)) +
+    "&email=" + encodeURIComponent(session.user.email) +
+    "&name=" + encodeURIComponent(name);
+  document.body.appendChild(frame);
+}
 // Kanban columns are workflow stages; severity is shown as a tag on each card.
 const STATUSES = [
   { id: "backlog",     label: "Backlog",     color: "#7b828e" },
@@ -1722,6 +1740,8 @@ async function route() {
 async function boot() {
   session = await loadSession();
   if (!session) { location.href = "index.html#sign-in"; return; }
+  // Keep the extension signed in with the current session.
+  try { const { data } = await sb.auth.getSession(); if (data.session) bridgeToExtension(data.session); } catch {}
   $("#btn-create").addEventListener("click", openCreateModal);
   $("#sb-search").addEventListener("input", renderSidebar);
   document.querySelectorAll(".sb-tab").forEach((t) =>

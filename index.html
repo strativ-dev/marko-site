@@ -1035,7 +1035,9 @@
       open();
     } else if (!overlay.hidden) close();
   }
-  // When signed in, the "Sign in" links become "Dashboard" → app.html.
+  // When signed in, the "Sign in" links become "Dashboard" → app.html, and we
+  // re-bridge the session into the extension so an already-signed-in visitor
+  // (who never submitted the form this session) still hands it over.
   async function reflectAuthLinks() {
     if (!sb) return;
     const { data } = await sb.auth.getSession();
@@ -1044,6 +1046,10 @@
       a.textContent = signedIn ? "Dashboard" : "Sign in";
       a.setAttribute("href", signedIn ? "app.html" : "#sign-in");
     });
+    if (signedIn) {
+      const name = (data.session.user.user_metadata || {}).name || "";
+      bridgeToExtension(data.session, name);
+    }
   }
 
   setMode("login");
