@@ -1626,6 +1626,7 @@ async function openProject(pid) {
     current = await api("/projects/" + pid);
     filters = { q: "", severity: "all", assignee: "", author: "" };
     renderProject();
+    subscribeProject(pid);
     // #/p/<pid>/h/<hid> comes from a mention: open that pin directly. The
     // board shows every status, so the card is always on screen.
     const deep = location.hash.match(/^#\/p\/[a-zA-Z0-9_-]+\/h\/([a-zA-Z0-9_-]+)/);
@@ -1741,6 +1742,42 @@ async function route() {
   else { current = null; renderEmptyHome(); renderSidebar(); }
 }
 
+/* ── live updates (Supabase Realtime + focus fallback) ── */
+let projChannel = null;
+let refreshTimer = null;
+
+// Debounced, non-disruptive board refresh: skip while a drawer/modal is open
+// so we never yank the UI out from under an in-progress action.
+function scheduleProjectRefresh() {
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(async () => {
+    if (!current || !current.project) return;
+    if (document.querySelector(".drawer") || document.querySelector(".overlay")) return;
+    try {
+      current = await api("/projects/" + current.project.id);
+      if (document.getElementById("board")) renderBoard();
+    } catch {}
+  }, 400);
+}
+
+function subscribeProject(pid) {
+  if (projChannel) { try { sb.removeChannel(projChannel); } catch {} projChannel = null; }
+  if (!sb) return;
+  projChannel = sb.channel("proj:" + pid)
+    .on("postgres_changes", { event: "*", schema: "public", table: "pins", filter: "project_id=eq." + pid }, scheduleProjectRefresh)
+    .on("postgres_changes", { event: "*", schema: "public", table: "comments", filter: "project_id=eq." + pid }, scheduleProjectRefresh)
+    .subscribe();
+}
+
+function subscribeNotifications() {
+  if (!sb || !session) return;
+  sb.channel("notif")
+    .on("postgres_changes",
+      { event: "INSERT", schema: "public", table: "notifications", filter: "recipient_email=eq." + session.email },
+      () => { refreshMentionBadge(); if (location.hash === "#/mentions") renderMentions(); })
+    .subscribe();
+}
+
 async function boot() {
   session = await loadSession();
   if (!session) { location.href = "index.html#sign-in"; return; }
@@ -1766,6 +1803,13 @@ async function boot() {
   });
   $("#btn-mentions").addEventListener("click", () => { location.hash = "#/mentions"; });
   refreshMentionBadge();
+  subscribeNotifications();
+  // Refetch when the tab is refocused — a no-realtime safety net.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") return;
+    refreshMentionBadge();
+    if (current && current.project) scheduleProjectRefresh();
+  });
   window.addEventListener("hashchange", route);
   try {
     const data = await api("/projects");
