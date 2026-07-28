@@ -1696,12 +1696,16 @@ function paintMentions() {
       <p>When a teammate writes @${esc((session.email || "").split("@")[0])} in a comment, it lands here.</p></div>`;
     return;
   }
+  const verbOf = (kind) => kind === "invited" ? "added you to"
+    : kind === "newComment" ? "commented on"
+    : kind === "newPin" ? "opened a pin in"
+    : "mentioned you in";
   list.innerHTML = mentions.map((m) => `
     <button class="mention-item ${m.read ? "" : "unread"}" data-id="${esc(m.id)}"
             data-pid="${esc(m.projectId)}" data-hid="${esc(m.pinId)}">
       <span class="av" style="background:${avatarColor(m.byEmail || m.byName)}">${esc(initials(m.byName || m.byEmail))}</span>
       <span class="body">
-        <span class="who"><b>${esc(m.byName || m.byEmail)}</b> <span>mentioned you in ${esc(m.projectName)}</span></span>
+        <span class="who"><b>${esc(m.byName || m.byEmail)}</b> <span>${verbOf(m.kind)} ${esc(m.projectName)}</span></span>
         <span class="txt">${esc(m.text)}</span>
         <span class="when">${fmtWhen(m.at)}</span>
       </span>

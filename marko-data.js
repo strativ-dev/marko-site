@@ -146,19 +146,15 @@
         }
 
         if (seg[2] === "invites" && method === "POST") {
-          const clean = [...new Set((body.emails || [])
-            .map((e) => String(e).trim().toLowerCase())
-            .filter((v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)))];
-          const { data: existing } = await sb.from("project_members").select("email").eq("project_id", pid);
-          const have = new Set((existing || []).map((m) => m.email));
-          const toAdd = clean.filter((e) => !have.has(e));
-          if (toAdd.length) {
-            const { error } = await sb.from("project_members")
-              .insert(toAdd.map((email) => ({ project_id: pid, email })));
-            if (error) throw error;
-          }
+          // Route through the invite-user Edge Function: it adds members and
+          // sends Supabase's invite email to brand-new addresses (needs the
+          // service-role key, so it can't run here in the browser).
+          const { data, error } = await sb.functions.invoke("invite-user", {
+            body: { projectId: pid, emails: body.emails || [] },
+          });
+          if (error) throw error;
           const { data: all } = await sb.from("project_members").select("email").eq("project_id", pid);
-          return { members: (all || []).map((m) => m.email), added: toAdd };
+          return { members: (all || []).map((m) => m.email), added: data.added || [], emailed: data.emailed || [] };
         }
 
         if (seg[2] === "pins" && seg.length === 3 && method === "POST") {
