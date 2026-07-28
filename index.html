@@ -447,7 +447,7 @@
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
     <a href="#faq">FAQ</a>
-    <a href="#sign-in">Sign in</a>
+    <a href="#sign-in" class="js-authlink">Sign in</a>
   </div>
   <a class="nav-cta" href="#install">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
@@ -672,7 +672,7 @@
       <div class="istep"><span class="n">2</span><div><p>Open <code>chrome://extensions</code> in Chrome.</p><p class="hint">Paste it into the address bar. Chrome blocks direct links to it.</p></div></div>
       <div class="istep"><span class="n">3</span><div><p>Turn on <b>Developer mode</b> (top-right toggle).</p></div></div>
       <div class="istep"><span class="n">4</span><div><p>Click <b>Load unpacked</b> and select the unzipped folder.</p></div></div>
-      <div class="istep"><span class="n">5</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd>. Done.</p></div></div>
+      <div class="istep"><span class="n">5</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd> (<kbd>⌘</kbd><kbd>⇧</kbd><kbd>M</kbd> on Mac). Done.</p></div></div>
     </div>
   </div>
 </section>
@@ -731,7 +731,7 @@
     <div class="foot-col">
       <h4>Product</h4>
       <a href="app.html">Open the app</a>
-      <a href="#sign-in">Sign in</a>
+      <a href="#sign-in" class="js-authlink">Sign in</a>
       <a href="https://github.com/strativ-dev/marko-site/releases/latest">Releases</a>
       <a href="https://github.com/strativ-dev/marko-ux-tool/blob/main/cloudflare-worker/README.md">Self-host guide</a>
     </div>
@@ -817,11 +817,11 @@
     </button>
     <div class="si-brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b></div>
     <div class="si-tabs" role="tablist">
-      <button class="si-tab active" data-mode="signup" role="tab">Create account</button>
-      <button class="si-tab" data-mode="login" role="tab">Sign in</button>
+      <button class="si-tab active" data-mode="login" role="tab">Sign in</button>
+      <button class="si-tab" data-mode="signup" role="tab">Create account</button>
     </div>
-    <h2 class="si-h2" id="si-title">Create your account</h2>
-    <p class="si-sub" id="si-sub">Free forever. Nothing to install on your server.</p>
+    <h2 class="si-h2" id="si-title">Welcome back</h2>
+    <p class="si-sub" id="si-sub">New here? Just sign in — we'll create your account.</p>
     <label class="si-field"><span>Email</span><input id="si-email" type="email" autocomplete="email" /></label>
     <label class="si-field" id="si-pw-field"><span id="si-pw-label">Password (8+ characters)</span><input id="si-password" type="password" autocomplete="new-password" /></label>
     <button class="si-submit" id="si-submit">Create account</button>
@@ -839,11 +839,13 @@
   </div>
 </div>
 
+<script src="vendor/supabase.js"></script>
+<script src="marko-web.js"></script>
 <script>
 (() => {
   const EXT_ID = "jhnnkjnpggliikhiiceijlkclhlblgjf";
-  const BACKEND = "https://marko-share.strativ.workers.dev";
   const CALLBACK = "chrome-extension://" + EXT_ID + "/auth/callback.html";
+  const sb = window.marko && window.marko.supabase;
 
   const $ = (s) => document.querySelector(s);
   const overlay = $("#signin-overlay");
@@ -854,7 +856,7 @@
   const title = $("#si-title");
   const sub = $("#si-sub");
   const pwLabel = $("#si-pw-label");
-  let mode = "signup";
+  let mode = "login";
 
   const tabsRow = document.querySelector(".si-tabs");
   const pwField = $("#si-pw-field");
@@ -881,8 +883,8 @@
       pwField.hidden = false;
       backRow.hidden = true;
       title.textContent = "Welcome back";
-      sub.textContent = "Sign in and Marko opens signed in.";
-      pwLabel.textContent = "Password";
+      sub.textContent = "New here? Just sign in — we'll create your account.";
+      pwLabel.textContent = "Password (8+ characters)";
       pw.setAttribute("autocomplete", "current-password");
       submit.textContent = "Sign in";
       forgotRow.hidden = false;
@@ -913,34 +915,30 @@
     document.documentElement.style.overflow = "";
     if (location.hash === "#sign-in") history.replaceState(null, "", location.pathname + location.search);
   }
-  function parseExp(token) {
-    try {
-      const [body] = String(token || "").split(".");
-      const b = body.replace(/-/g, "+").replace(/_/g, "/");
-      const pad = b.length % 4 ? "=".repeat(4 - (b.length % 4)) : "";
-      const p = JSON.parse(atob(b + pad));
-      return (Number(p.exp) || 0) * 1000;
-    } catch { return 0; }
+  function friendly(msg) {
+    const m = String(msg || "").toLowerCase();
+    if (m.includes("invalid login")) return "Wrong email or password.";
+    if (m.includes("already registered") || m.includes("already been registered"))
+      return "An account with that email already exists.";
+    if (m.includes("email")) return "That doesn't look like a valid email.";
+    if (m.includes("password")) return "Password must be at least 8 characters.";
+    return msg || "Something went wrong.";
   }
-  function friendly(code) {
-    return ({
-      bad_email: "That doesn't look like a valid email.",
-      password_too_short: "Password must be at least 8 characters.",
-      already_registered: "An account with that email already exists.",
-      invalid_credentials: "Wrong email or password.",
-      worker_not_configured: "Backend is missing its signing key.",
-    })[code] || code || "Something went wrong.";
-  }
-  async function callAuth(path, body) {
-    const res = await fetch(BACKEND + path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    let data = {};
-    try { data = await res.json(); } catch {}
-    if (!res.ok) throw new Error(data.error || ("http_" + res.status));
-    return data;
+
+  // Bridge a signed-in Supabase session into the extension via its
+  // web-accessible callback page in a hidden iframe. Fails silently when the
+  // extension isn't installed.
+  function bridgeToExtension(session, name) {
+    if (!session) return;
+    const frame = document.createElement("iframe");
+    frame.style.display = "none";
+    frame.src = CALLBACK + "#" +
+      "at=" + encodeURIComponent(session.access_token) +
+      "&rt=" + encodeURIComponent(session.refresh_token) +
+      "&exp=" + encodeURIComponent(String((session.expires_at || 0) * 1000)) +
+      "&email=" + encodeURIComponent(session.user.email) +
+      "&name=" + encodeURIComponent(name || "");
+    document.body.appendChild(frame);
   }
 
   document.querySelectorAll(".si-tab").forEach((t) =>
@@ -957,46 +955,68 @@
 
   submit.addEventListener("click", async () => {
     const e = email.value.trim().toLowerCase();
+    if (!sb) { setStatus("Auth failed to initialise. Reload the page.", "err"); return; }
+
     if (mode === "forgot") {
       if (!e) { setStatus("Enter your email.", "err"); return; }
       submit.disabled = true;
       setStatus("Sending…", "");
-      try {
-        await callAuth("/auth/forgot-password", { email: e });
-        setStatus("If that email is registered, a reset link is on its way. Check your inbox.", "ok");
-      } catch (err) {
-        // Endpoint always returns 200; a hard failure means the request never left.
-        setStatus("Couldn't reach the server. Try again in a moment.", "err");
-        submit.disabled = false;
-      }
+      // Supabase always resolves without revealing whether the address exists.
+      await sb.auth.resetPasswordForEmail(e, {
+        redirectTo: new URL("reset.html", location.href).href,
+      });
+      setStatus("If that email is registered, a reset link is on its way. Check your inbox.", "ok");
       return;
     }
+
     const p = pw.value;
     if (!e || !p) { setStatus("Enter email and password.", "err"); return; }
+    if (mode === "signup" && p.length < 8) {
+      setStatus("Password must be at least 8 characters.", "err"); return;
+    }
     submit.disabled = true;
     setStatus(mode === "signup" ? "Creating account…" : "Signing in…", "");
     try {
-      const data = await callAuth(mode === "signup" ? "/auth/signup" : "/auth/login", { email: e, password: p });
-      const exp = parseExp(data.token);
-      const name = (data.user && data.user.name) || e.split("@")[0] || "";
+      const name = e.split("@")[0] || "";
+      let session;
+      if (mode === "signup") {
+        const { data, error } = await sb.auth.signUp({
+          email: e, password: p, options: { data: { name } },
+        });
+        if (error) throw error;
+        session = data.session;
+        // Email-confirmation enabled: no session until they confirm.
+        if (!session) {
+          setStatus("Account created. Check your inbox to confirm, then sign in.", "ok");
+          submit.disabled = false;
+          return;
+        }
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email: e, password: p });
+        if (!error) {
+          session = data.session;
+        } else if (/invalid login/i.test(error.message)) {
+          // Unknown email → create the account on the fly (per product choice:
+          // never block a new email at sign-in). A known email with the wrong
+          // password comes back "already registered", which we surface instead.
+          if (p.length < 8) { setStatus("Password must be at least 8 characters.", "err"); submit.disabled = false; return; }
+          const up = await sb.auth.signUp({ email: e, password: p, options: { data: { name } } });
+          if (up.error) {
+            if (/registered/i.test(up.error.message)) throw new Error("invalid login credentials");
+            throw up.error;
+          }
+          session = up.data.session;
+          if (!session) {
+            setStatus("Account created. Check your inbox to confirm, then sign in.", "ok");
+            submit.disabled = false;
+            return;
+          }
+        } else {
+          throw error;
+        }
+      }
 
-      // 1. web app session
-      localStorage.setItem("marko:web:session", JSON.stringify({
-        token: data.token, exp, email: data.user.email, name,
-      }));
-
-      // 2. bridge the session into the extension via its (web-accessible)
-      //    callback page in a hidden iframe. If the extension isn't
-      //    installed the iframe just fails silently.
-      const frame = document.createElement("iframe");
-      frame.style.display = "none";
-      frame.src = CALLBACK + "#" +
-        "token=" + encodeURIComponent(data.token) +
-        "&exp=" + encodeURIComponent(String(exp)) +
-        "&email=" + encodeURIComponent(data.user.email) +
-        "&name=" + encodeURIComponent(name);
-      document.body.appendChild(frame);
-
+      bridgeToExtension(session, (session.user.user_metadata || {}).name || name);
       setStatus("Signed in. Opening your projects…", "ok");
       setTimeout(() => { window.location.href = "app.html"; }, 900);
     } catch (err) {
@@ -1005,21 +1025,32 @@
     }
   });
 
-  function hasValidSession() {
-    try {
-      const s = JSON.parse(localStorage.getItem("marko:web:session") || "null");
-      return !!(s && s.token && (s.exp || 0) > Date.now() + 30_000);
-    } catch { return false; }
-  }
-  function checkHash() {
+  async function checkHash() {
     if (location.hash === "#sign-in") {
       // Already signed in: skip the form, go straight to the app.
-      if (hasValidSession()) { window.location.href = "app.html"; return; }
+      if (sb) {
+        const { data } = await sb.auth.getSession();
+        if (data.session) { window.location.href = "app.html"; return; }
+      }
       open();
     } else if (!overlay.hidden) close();
   }
+  // When signed in, the "Sign in" links become "Dashboard" → app.html.
+  async function reflectAuthLinks() {
+    if (!sb) return;
+    const { data } = await sb.auth.getSession();
+    const signedIn = !!data.session;
+    document.querySelectorAll(".js-authlink").forEach((a) => {
+      a.textContent = signedIn ? "Dashboard" : "Sign in";
+      a.setAttribute("href", signedIn ? "app.html" : "#sign-in");
+    });
+  }
+
+  setMode("login");
   window.addEventListener("hashchange", checkHash);
   checkHash();
+  reflectAuthLinks();
+  if (sb) sb.auth.onAuthStateChange(() => reflectAuthLinks());
 })();
 </script>
 

@@ -84,33 +84,50 @@
     </div>
     <p class="foot"><a href="index.html">Back to Marko</a></p>
   </div>
+<script src="vendor/supabase.js"></script>
+<script src="marko-web.js"></script>
 <script>
 (() => {
-  const BACKEND = "https://marko-share.strativ.workers.dev";
   const $ = (s) => document.querySelector(s);
   const pw1 = $("#pw1"), pw2 = $("#pw2");
   const submit = $("#submit"), status = $("#status");
-
-  const token = (location.hash || "").replace(/^#/, "").split("&")
-    .map((kv) => kv.split("="))
-    .find((kv) => kv[0] === "token")?.[1];
-
-  if (!token) {
-    $("#form-wrap").innerHTML =
-      '<h1>Invalid reset link</h1>' +
-      '<p class="sub">This link is missing a token. Request a new one from the sign-in page.</p>';
-  }
+  const sb = window.marko && window.marko.supabase;
 
   function setStatus(msg, cls) {
     status.textContent = msg;
     status.className = "status" + (cls ? " " + cls : "");
   }
-  function friendly(code) {
-    return ({
-      bad_token: "This reset link is invalid or expired. Request a new one.",
-      password_too_short: "Password must be at least 8 characters.",
-      worker_not_configured: "Backend is missing its signing key.",
-    })[code] || code || "Something went wrong.";
+  function invalidLink() {
+    $("#form-wrap").innerHTML =
+      '<h1>Invalid or expired link</h1>' +
+      '<p class="sub">Request a fresh reset link from the sign-in page.</p>';
+  }
+
+  // Supabase turns the emailed recovery link into a temporary session
+  // (detectSessionInUrl handles the tokens in the URL). Only then can the
+  // password be changed. If no recovery session lands, the link is bad.
+  let ready = false;
+  if (!sb) {
+    invalidLink();
+  } else {
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || (session && !ready)) {
+        ready = true;
+      }
+    });
+    // Fallback: some flows have the session ready before the listener binds.
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) ready = true;
+      else setTimeout(() => { if (!ready) invalidLink(); }, 1500);
+    });
+  }
+
+  function friendly(msg) {
+    const m = String(msg || "").toLowerCase();
+    if (m.includes("session") || m.includes("token") || m.includes("expired"))
+      return "This reset link is invalid or expired. Request a new one.";
+    if (m.includes("password")) return "Password must be at least 8 characters.";
+    return msg || "Something went wrong.";
   }
 
   [pw1, pw2].forEach((el) =>
@@ -121,16 +138,13 @@
     const a = pw1.value, b = pw2.value;
     if (a.length < 8) { setStatus("Password must be at least 8 characters.", "err"); return; }
     if (a !== b) { setStatus("Passwords don't match.", "err"); return; }
+    if (!sb || !ready) { setStatus("This reset link is invalid or expired. Request a new one.", "err"); return; }
     submit.disabled = true;
     setStatus("Updating…", "");
     try {
-      const res = await fetch(BACKEND + "/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: decodeURIComponent(token), newPassword: a }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || ("http_" + res.status));
+      const { error } = await sb.auth.updateUser({ password: a });
+      if (error) throw error;
+      await sb.auth.signOut();
       $("#form-wrap").hidden = true;
       $("#done-wrap").hidden = false;
       history.replaceState(null, "", location.pathname);
