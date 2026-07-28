@@ -534,6 +534,7 @@ const SEVERITIES = [
   { id: "high",     label: "High",     color: "var(--sev-high)" },
   { id: "critical", label: "Critical", color: "var(--sev-critical)" },
 ];
+const SHOTS_URL = "https://marko-shots.strativ.workers.dev";
 // Kanban columns are workflow stages; severity is shown as a tag on each card.
 const STATUSES = [
   { id: "backlog",     label: "Backlog",     color: "#7b828e" },
@@ -552,6 +553,13 @@ const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const initials = (s) => (String(s || "?").trim()[0] || "?").toUpperCase();
 const fmtDate = (t) => t ? new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+// Deterministic avatar color per person (same email → same color everywhere).
+const AV_COLORS = ["#0099ff","#7c5cff","#f97316","#e5484d","#16a34a","#eab308","#06b6d4","#ec4899","#8b5cf6","#f43f5e","#14b8a6","#f59e0b"];
+function avatarColor(seed) {
+  const s = String(seed || "?"); let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return AV_COLORS[h % AV_COLORS.length];
+}
 
 let session = null;   // { token, exp, email, name }
 let projects = [];
@@ -580,9 +588,12 @@ async function logout() {
 
 /* ── sidebar ── */
 function renderSidebar() {
-  $("#acct-av").textContent = initials(session.name || session.email);
+  const meColor = avatarColor(session.email);
+  const acctAv = $("#acct-av");
+  acctAv.textContent = initials(session.name || session.email);
+  acctAv.style.background = meColor;
   const wsAv = $("#ws-av"), wsName = $("#ws-name");
-  if (wsAv) wsAv.textContent = initials(session.name || session.email);
+  if (wsAv) { wsAv.textContent = initials(session.name || session.email); wsAv.style.background = meColor; }
   if (wsName) wsName.textContent = (session.name || session.email.split("@")[0]) + "'s workspace";
   $("#acct-name").textContent = session.name || session.email.split("@")[0];
   $("#acct-email").textContent = session.email;
@@ -690,7 +701,7 @@ function renderProject() {
         ${roster.map((m) => `
           <button class="person ${filters.author === m ? "on" : ""}" data-who="${esc(m)}"
                   title="${esc(m)} &mdash; ${authored(m)} comment${authored(m) === 1 ? "" : "s"}">
-            <span class="p-av">${esc(initials(m))}</span>
+            <span class="p-av" style="background:${avatarColor(m)}">${esc(initials(m))}</span>
             <span class="p-n">${authored(m)}</span>
           </button>`).join("")}
       </div>
@@ -719,12 +730,18 @@ function renderProject() {
         <option value="">Assigned to</option>
         ${assignees.map((a) => `<option ${filters.assignee === a ? "selected" : ""} value="${esc(a)}">${esc(a)}</option>`).join("")}
       </select>
+      <span style="flex:1"></span>
+      <button class="btn ghost" id="btn-import" title="Import pins from a CSV">Import CSV</button>
+      <input type="file" id="import-file" accept=".csv,text/csv" hidden />
+      <span class="status" id="import-status"></span>
     </div>
     <div class="board" id="board"></div>`;
 
   $("#f-q").addEventListener("input", (e) => { filters.q = e.target.value; renderBoard(); });
   $("#f-severity").addEventListener("change", (e) => { filters.severity = e.target.value; renderBoard(); });
   $("#f-assignee").addEventListener("change", (e) => { filters.assignee = e.target.value; renderBoard(); });
+  $("#btn-import").addEventListener("click", () => $("#import-file").click());
+  $("#import-file").addEventListener("change", (e) => importCsv(e.target.files[0]));
   const unarch = $("#unarchive-now");
   if (unarch) unarch.addEventListener("click", async () => {
     const { project: up } = await api("/projects/" + project.id, {
@@ -773,7 +790,7 @@ function renderBoard() {
             <div class="txt">${esc(h.comment)}</div>
             <div class="meta">
               <span class="n">${1 + (h.comments || []).length}</span>
-              <span class="av" title="${esc(h.createdBy)}">${esc(initials(h.createdBy))}</span>
+              <span class="av" style="background:${avatarColor(h.createdBy)}" title="${esc(h.createdBy)}">${esc(initials(h.createdBy))}</span>
               ${h.assignee ? `<span title="assignee">→ ${esc(h.assignee.split("@")[0])}</span>` : ""}
               ${h.due ? `<span>${fmtDate(h.due)}</span>` : ""}
             </div>
@@ -921,7 +938,7 @@ function openDrawer(hid) {
 }
 function renderComment(c) {
   return `<div class="cmt">
-    <span class="av">${esc(initials(c.byName || c.by))}</span>
+    <span class="av" style="background:${avatarColor(c.by || c.byName)}">${esc(initials(c.byName || c.by))}</span>
     <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${esc(c.text)}<div class="at">${new Date(c.at).toLocaleString()}</div></div>
   </div>`;
 }
@@ -966,7 +983,7 @@ function attachMentions(input, box) {
     if (!hits.length) return close();
     box.innerHTML = hits.map((e, i) => `
       <button class="${i === 0 ? "on" : ""}" data-m="${esc(e)}">
-        <span class="av">${esc(initials(e))}</span>
+        <span class="av" style="background:${avatarColor(e)}">${esc(initials(e))}</span>
         <span class="who"><b>${esc(e.split("@")[0])}</b><span>${esc(e)}</span></span>
       </button>`).join("");
     box.hidden = false;
@@ -1382,7 +1399,7 @@ function paintExport() {
       <div class="ex-meta">
         <div>
           <span class="ex-label">Made by</span>
-          <div class="ex-person"><span class="av">${esc(initials(p.owner))}</span>${esc(p.owner)}</div>
+          <div class="ex-person"><span class="av" style="background:${avatarColor(p.owner)}">${esc(initials(p.owner))}</span>${esc(p.owner)}</div>
         </div>
         <div>
           <span class="ex-label">Severities</span>
@@ -1403,7 +1420,7 @@ function paintExport() {
           <div class="ex-item-body">
             <div class="ex-item-head">
               <span class="ex-num">${i + 1}</span>
-              ${exportOpts.hideAuthor ? "" : `<span class="av sm">${esc(initials(h.createdBy))}</span><b>${esc((h.createdBy || "").split("@")[0])}</b>`}
+              ${exportOpts.hideAuthor ? "" : `<span class="av sm" style="background:${avatarColor(h.createdBy)}">${esc(initials(h.createdBy))}</span><b>${esc((h.createdBy || "").split("@")[0])}</b>`}
             </div>
             <span class="ex-label">Note</span>
             <p class="ex-line">${esc(h.comment)}</p>
@@ -1416,6 +1433,7 @@ function paintExport() {
             ${h.device || h.viewport ? `<span class="ex-label">Device</span><p class="ex-line">${esc(h.device || "")} ${esc(h.viewport || "")}</p>` : ""}
             <span class="ex-label">Element</span>
             <p class="ex-line ex-code">${esc(h.selector || "—")}</p>
+            ${h.hasShot ? `<span class="ex-label">Screenshot URL</span><p class="ex-line ex-code" style="word-break:break-all"><a href="${esc(shotUrl(h))}" target="_blank" rel="noopener" style="color:var(--blue)">${esc(shotUrl(h))}</a></p>` : ""}
             ${(h.comments || []).length ? `<span class="ex-label">Replies (${h.comments.length})</span>
               ${h.comments.map((c) => `<p class="ex-line">${esc(c.byName || c.by)}: ${esc(c.text)}</p>`).join("")}` : ""}
           </div>
@@ -1497,14 +1515,81 @@ function openExportModal() {
   });
 }
 
+function shotUrl(h) {
+  return h.hasShot ? `${SHOTS_URL}/shot/${current.project.id}/${h.id}` : "";
+}
+
+// Minimal RFC-4180 CSV parser (handles quotes, escaped quotes, newlines in fields).
+function parseCsv(text) {
+  const rows = []; let row = [], field = "", inQuotes = false;
+  const s = String(text).replace(/\r\n?/g, "\n");
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inQuotes) {
+      if (c === '"') { if (s[i + 1] === '"') { field += '"'; i++; } else inQuotes = false; }
+      else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+    else field += c;
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  return rows.filter((r) => r.some((v) => v.trim() !== ""));
+}
+
+// Import pins from a CSV (as produced by Export, or any file with a header row
+// containing at least a "comment" column). Creates one pin per row.
+async function importCsv(file) {
+  if (!file) return;
+  const st = $("#import-status");
+  st.textContent = "Reading…"; st.className = "status";
+  try {
+    const rows = parseCsv(await file.text());
+    if (rows.length < 2) throw new Error("no data rows");
+    const head = rows[0].map((h) => h.trim().toLowerCase());
+    const col = (name) => head.indexOf(name);
+    const ci = { comment: col("comment"), severity: col("severity"), status: col("status"), assignee: col("assignee") };
+    if (ci.comment === -1) throw new Error('missing a "comment" column');
+    const sevIds = SEVERITIES.map((s) => s.id);
+    const stIds = STATUSES.map((s) => s.id);
+    let ok = 0;
+    for (let r = 1; r < rows.length; r++) {
+      const cells = rows[r];
+      const comment = (cells[ci.comment] || "").trim();
+      if (!comment) continue;
+      const sev = ci.severity > -1 ? (cells[ci.severity] || "").trim().toLowerCase() : "";
+      let stat = ci.status > -1 ? (cells[ci.status] || "").trim().toLowerCase() : "";
+      if (stat === "resolved") stat = "done";
+      if (stat === "active") stat = "backlog";
+      const body = {
+        comment,
+        severity: sevIds.includes(sev) ? sev : "neutral",
+        status: stIds.includes(stat) ? stat : "backlog",
+        assignee: ci.assignee > -1 ? (cells[ci.assignee] || "").trim() : "",
+        pageUrl: current.project.url || "",
+        selector: "body",
+      };
+      const { pin } = await api(`/projects/${current.project.id}/pins`, { method: "POST", body: JSON.stringify(body) });
+      current.pins.push(pin);
+      ok++;
+      st.textContent = `Importing… ${ok}`;
+    }
+    st.textContent = `Imported ${ok} pin${ok === 1 ? "" : "s"}.`; st.className = "status ok";
+    renderBoard();
+  } catch (e) {
+    st.textContent = "Import failed: " + (e.message || e); st.className = "status err";
+  } finally {
+    $("#import-file").value = "";
+  }
+}
 function downloadCsv() {
   const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  const head = ["#", "comment", "severity", "status", "author", "assignee", "created", "page", "selector", "replies"];
+  const head = ["#", "comment", "severity", "status", "author", "assignee", "created", "page", "selector", "screenshot", "replies"];
   const rows = exportedPins().map((h, i) => [
     i + 1, h.comment, severityOf(h), statusOf(h),
     exportOpts.hideAuthor ? "" : h.createdBy, h.assignee || "",
     exportOpts.hideDate ? "" : new Date(h.createdAt).toISOString(),
-    h.pageUrl || "", h.selector || "",
+    h.pageUrl || "", h.selector || "", shotUrl(h),
     (h.comments || []).map((c) => `${c.byName || c.by}: ${c.text}`).join(" | "),
   ].map(cell).join(","));
   const blob = new Blob([[head.map(cell).join(","), ...rows].join("\n")], { type: "text/csv" });
@@ -1596,7 +1681,7 @@ function paintMentions() {
   list.innerHTML = mentions.map((m) => `
     <button class="mention-item ${m.read ? "" : "unread"}" data-id="${esc(m.id)}"
             data-pid="${esc(m.projectId)}" data-hid="${esc(m.pinId)}">
-      <span class="av">${esc(initials(m.byName || m.byEmail))}</span>
+      <span class="av" style="background:${avatarColor(m.byEmail || m.byName)}">${esc(initials(m.byName || m.byEmail))}</span>
       <span class="body">
         <span class="who"><b>${esc(m.byName || m.byEmail)}</b> <span>mentioned you in ${esc(m.projectName)}</span></span>
         <span class="txt">${esc(m.text)}</span>
