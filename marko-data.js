@@ -38,7 +38,7 @@
   }
   function countsOf(pins) {
     const c = { active: 0, resolved: 0, total: 0 };
-    for (const p of pins) { c.total++; if (p.status === "resolved") c.resolved++; else c.active++; }
+    for (const p of pins) { c.total++; if (p.status === "resolved" || p.status === "done") c.resolved++; else c.active++; }
     return c;
   }
   async function me() {
@@ -166,7 +166,7 @@
           const row = {
             project_id: pid, page_url: body.pageUrl || "", selector: body.selector || "",
             xr: body.xr || 0, yr: body.yr || 0, comment: body.comment || "",
-            severity: body.severity || "neutral", status: "active", assignee: body.assignee || "",
+            severity: body.severity || "neutral", status: body.status || "backlog", assignee: body.assignee || "",
             due: Number.isFinite(body.due) ? body.due : null, device: body.device || "desktop",
             viewport: body.viewport || "", has_shot: false,
             created_by: u.id, created_by_email: u.email,
