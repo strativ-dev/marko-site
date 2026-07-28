@@ -298,6 +298,7 @@
     }
     .state .big { font-family: var(--display); font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
     .serif { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; }
+    .mention { color: var(--blue); font-weight: 600; background: var(--blue-wash); border-radius: 4px; padding: 0 3px; }
     .mini-spin {
       display: inline-block; width: 12px; height: 12px; vertical-align: -1px;
       border: 2px solid var(--line); border-top-color: var(--blue);
@@ -578,6 +579,9 @@ function avatarColor(seed) {
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return AV_COLORS[h % AV_COLORS.length];
 }
+// Render comment text with @email mentions highlighted (esc first, then wrap).
+const MENTION_RE = /@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+const renderText = (t) => esc(t).replace(MENTION_RE, (m) => `<span class="mention">${m}</span>`);
 
 let session = null;   // { token, exp, email, name }
 let projects = [];
@@ -689,6 +693,12 @@ function applyFilters(pins) {
     if (filters.author && h.createdBy !== filters.author) return false;
     if (filters.severity && filters.severity !== "all" && severityOf(h) !== filters.severity) return false;
     if (filters.assignee && (h.assignee || "") !== filters.assignee) return false;
+    if (filters.mentioned) {
+      const needle = "@" + filters.mentioned.toLowerCase();
+      const inComment = (h.comment || "").toLowerCase().includes(needle);
+      const inThread = (h.comments || []).some((c) => (c.text || "").toLowerCase().includes(needle));
+      if (!inComment && !inThread) return false;
+    }
     if (filters.q) {
       const q = filters.q.toLowerCase();
       const inComment = (h.comment || "").toLowerCase().includes(q);
@@ -748,6 +758,10 @@ function renderProject() {
         <option value="">Assigned to</option>
         ${assignees.map((a) => `<option ${filters.assignee === a ? "selected" : ""} value="${esc(a)}">${esc(a)}</option>`).join("")}
       </select>
+      <select id="f-mentioned">
+        <option value="">Mentioned</option>
+        ${roster.map((m) => `<option ${filters.mentioned === m ? "selected" : ""} value="${esc(m)}">${esc(m)}</option>`).join("")}
+      </select>
       <span style="flex:1"></span>
       <button class="btn ghost" id="btn-import" title="Import pins from a CSV">Import CSV</button>
       <input type="file" id="import-file" accept=".csv,text/csv" hidden />
@@ -758,6 +772,7 @@ function renderProject() {
   $("#f-q").addEventListener("input", (e) => { filters.q = e.target.value; renderBoard(); });
   $("#f-severity").addEventListener("change", (e) => { filters.severity = e.target.value; renderBoard(); });
   $("#f-assignee").addEventListener("change", (e) => { filters.assignee = e.target.value; renderBoard(); });
+  $("#f-mentioned").addEventListener("change", (e) => { filters.mentioned = e.target.value; renderBoard(); });
   $("#btn-import").addEventListener("click", () => $("#import-file").click());
   $("#import-file").addEventListener("change", (e) => importCsv(e.target.files[0]));
   const unarch = $("#unarchive-now");
@@ -805,7 +820,7 @@ function renderBoard() {
           return `
           <div class="hcard" draggable="true" data-hid="${h.id}">
             <span class="sev-tag" style="--sc:${sev.color}">${sev.label}</span>
-            <div class="txt">${esc(h.comment)}</div>
+            <div class="txt">${renderText(h.comment)}</div>
             <div class="meta">
               <span class="n">${1 + (h.comments || []).length}</span>
               <span class="av" style="background:${avatarColor(h.createdBy)}" title="${esc(h.createdBy)}">${esc(initials(h.createdBy))}</span>
@@ -875,7 +890,7 @@ function openDrawer(hid) {
       </button>
     </header>
     <div class="body">
-      <p class="first">${esc(h.comment)}</p>
+      <p class="first">${renderText(h.comment)}</p>
       <p class="whenwho">${esc(h.createdBy)} · ${new Date(h.createdAt).toLocaleString()}${h.pageUrl ? ` · <a href="${esc(h.pageUrl)}" target="_blank" rel="noopener" style="color:var(--blue)">open page</a>` : ""}</p>
       ${h.hasShot ? `<div class="shot-wrap" id="shot-wrap">
         <img class="d-shot" id="d-shot" alt="Screenshot of the commented element" />
@@ -957,7 +972,7 @@ function openDrawer(hid) {
 function renderComment(c) {
   return `<div class="cmt">
     <span class="av" style="background:${avatarColor(c.by || c.byName)}">${esc(initials(c.byName || c.by))}</span>
-    <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${esc(c.text)}<div class="at">${new Date(c.at).toLocaleString()}</div></div>
+    <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${renderText(c.text)}<div class="at">${new Date(c.at).toLocaleString()}</div></div>
   </div>`;
 }
 function closeDrawer() { const d = $("#drawer"); if (d) d.remove(); }
@@ -1658,7 +1673,7 @@ async function openProject(pid) {
   $("#main").innerHTML = `<div class="state"><div class="big">Loading…</div></div>`;
   try {
     current = await api("/projects/" + pid);
-    filters = { q: "", severity: "all", assignee: "", author: "" };
+    filters = { q: "", severity: "all", assignee: "", author: "", mentioned: "" };
     renderProject();
     subscribeProject(pid);
     // #/p/<pid>/h/<hid> comes from a mention: open that pin directly. The
