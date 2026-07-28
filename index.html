@@ -774,10 +774,9 @@
     }
     .si-close:hover { background: var(--card); color: var(--text); }
     .si-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-    .si-brand .chip {
-      width: 34px; height: 34px; border-radius: 9px; background: var(--blue-mid);
-      color: #fff; font-family: "Arial Black", Impact, sans-serif; font-size: 20px;
-      display: flex; align-items: center; justify-content: center;
+    .si-brand img {
+      width: 34px; height: 34px; border-radius: 9px; display: block;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.06);
     }
     .si-brand b { font-weight: 700; font-size: 16px; }
     .si-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--card); padding: 4px; border-radius: 10px; }
@@ -816,7 +815,7 @@
     <button class="si-close" id="si-close" aria-label="Close">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <div class="si-brand"><div class="chip">M</div><b>Marko</b></div>
+    <div class="si-brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b></div>
     <div class="si-tabs" role="tablist">
       <button class="si-tab active" data-mode="signup" role="tab">Create account</button>
       <button class="si-tab" data-mode="login" role="tab">Sign in</button>

@@ -36,10 +36,9 @@
       box-shadow: 0 30px 70px rgba(10, 14, 30, .35);
     }
     .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-    .chip {
-      width: 34px; height: 34px; border-radius: 9px; background: var(--blue-mid);
-      color: #fff; font-family: "Arial Black", Impact, sans-serif; font-size: 20px;
-      display: flex; align-items: center; justify-content: center;
+    .brand img {
+      width: 34px; height: 34px; border-radius: 9px; display: block;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.06);
     }
     .brand b { font-weight: 700; font-size: 16px; }
     h1 { font-size: 20px; font-weight: 700; margin: 4px 0 6px; letter-spacing: -0.02em; }
@@ -69,7 +68,7 @@
 </head>
 <body>
   <div class="card">
-    <div class="brand"><div class="chip">M</div><b>Marko</b></div>
+    <div class="brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b></div>
     <div id="form-wrap">
       <h1>Set a new password</h1>
       <p class="sub">Enter a new password for your Marko account. All existing sessions will be signed out.</p>
