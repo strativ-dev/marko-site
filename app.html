@@ -1086,7 +1086,39 @@ function openShareModal() {
       <button class="btn ghost" id="sh-copy">Copy project link</button>
       <button class="btn blue" id="sh-send">Invite</button>
     </div>
-    <p class="sub" style="margin:14px 0 0">Members: <span id="sh-members">${esc([p.owner, ...(p.members || [])].join(", "))}</span></p>`);
+    <div class="sub" style="margin:14px 0 6px">Members</div>
+    <div id="sh-members"></div>`);
+  const isOwner = p.owner === session.email;
+
+  function paintMembers() {
+    const rows = [{ email: p.owner, owner: true }, ...(p.members || []).map((e) => ({ email: e, owner: false }))];
+    ov.querySelector("#sh-members").innerHTML = rows.map((m) => `
+      <div class="mrow" style="display:flex;align-items:center;gap:9px;padding:6px 0">
+        <span class="av sm" style="background:${avatarColor(m.email)}">${esc(initials(m.email))}</span>
+        <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px">${esc(m.email)}</span>
+        ${m.owner ? `<span style="font-size:11px;color:var(--muted)">Owner</span>`
+          : (isOwner ? `<button class="mrow-x" data-email="${esc(m.email)}" title="Remove from project"
+               style="border:0;background:var(--card);color:var(--muted);width:24px;height:24px;border-radius:6px;cursor:pointer">×</button>` : "")}
+      </div>`).join("");
+    ov.querySelectorAll(".mrow-x").forEach((b) =>
+      b.addEventListener("click", async () => {
+        const email = b.dataset.email;
+        if (!confirm(`Remove ${email} from "${p.name}"? They lose access to this project.`)) return;
+        const st = ov.querySelector("#sh-status");
+        st.textContent = "Removing…"; st.className = "status";
+        try {
+          const { members } = await api(`/projects/${p.id}/members`, { method: "DELETE", body: JSON.stringify({ email }) });
+          p.members = members;
+          const sp = current.project; if (sp) sp.members = members;
+          paintMembers();
+          renderProject();
+          st.textContent = "Removed " + email + "."; st.className = "status ok";
+        } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }
+      })
+    );
+  }
+  paintMembers();
+
   ov.querySelector("#sh-copy").addEventListener("click", async () => {
     await navigator.clipboard.writeText(shareUrl);
     const st = ov.querySelector("#sh-status");
@@ -1100,7 +1132,9 @@ function openShareModal() {
     try {
       const { members, added } = await api(`/projects/${p.id}/invites`, { method: "POST", body: JSON.stringify({ emails }) });
       p.members = members;
-      ov.querySelector("#sh-members").textContent = [p.owner, ...members].join(", ");
+      ov.querySelector("#sh-emails").value = "";
+      paintMembers();
+      renderProject();
       st.textContent = added.length ? `Invited ${added.join(", ")}.` : "Already members.";
       st.className = "status ok";
     } catch (e) { st.textContent = "Failed: " + e.message; st.className = "status err"; }

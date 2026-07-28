@@ -157,6 +157,14 @@
           return { members: (all || []).map((m) => m.email), added: data.added || [], emailed: data.emailed || [] };
         }
 
+        if (seg[2] === "members" && method === "DELETE") {
+          // Owner-only via RLS; a non-owner's delete simply affects no rows.
+          const { error } = await sb.from("project_members").delete().eq("project_id", pid).eq("email", body.email);
+          if (error) throw error;
+          const { data: all } = await sb.from("project_members").select("email").eq("project_id", pid);
+          return { members: (all || []).map((m) => m.email) };
+        }
+
         if (seg[2] === "pins" && seg.length === 3 && method === "POST") {
           const u = await me();
           const row = {
