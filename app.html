@@ -481,6 +481,22 @@
     .drawer footer { border-top: 1px solid var(--line); padding: 14px 20px; display: flex; gap: 10px; }
     .composer { position: relative; flex: 1; }
     .composer input { width: 100%; }
+    /* Mention highlighter: a mirror div behind the input paints the coloured
+       mention; the input renders transparent text over it and keeps its caret.
+       Every metric below must match `.drawer footer input` exactly, or the
+       colour drifts off the glyphs. */
+    .composer .mkhl-back {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+      border: 1px solid transparent; border-radius: 10px; padding: 10px 13px;
+      font: inherit; color: var(--ink); white-space: pre;
+    }
+    .composer input { position: relative; background: transparent; color: transparent; caret-color: var(--ink); }
+    .composer input::selection { background: rgba(0,153,255,.28); }
+    /* color:transparent would take the placeholder with it. */
+    .composer input::placeholder { color: var(--muted); }
+    /* Colour only — padding or a bolder weight would widen the mirrored text
+       and walk the caret off the glyphs. */
+    .composer .mkhl-back .mention { padding: 0; font-weight: inherit; }
     .mentions {
       position: absolute; left: 0; right: 0; bottom: calc(100% + 6px);
       background: #fff; border: 1px solid var(--line); border-radius: 12px;
@@ -624,8 +640,15 @@ function avatarColor(seed) {
   return AV_COLORS[h % AV_COLORS.length];
 }
 // Render comment text with @email mentions highlighted (esc first, then wrap).
-const MENTION_RE = /@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-const renderText = (t) => esc(t).replace(MENTION_RE, (m) => `<span class="mention">${m}</span>`);
+const MENTION_RE = /@([a-zA-Z0-9._%+-]+)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+// Saved comments: the domain is noise once the mention is resolved, so show just
+// the local part and keep the full address on hover. The stored text is
+// untouched — the notification triggers scrape full emails out of it.
+const renderText = (t) => esc(t).replace(MENTION_RE, (m, user) => `<span class="mention" title="${m}">@${user}</span>`);
+// Composer mirror: must stay glyph-for-glyph identical to the input, so this one
+// keeps the full address and only adds colour. Do not "simplify" this into
+// renderText — shortening here walks the caret off the glyphs.
+const renderMentionsFull = (t) => esc(t).replace(MENTION_RE, (m) => `<span class="mention">${m}</span>`);
 
 let session = null;   // { token, exp, email, name }
 let projects = [];
@@ -991,10 +1014,13 @@ function openDrawer(hid) {
   $("#d-status").addEventListener("change", (e) => patch({ status: e.target.value }));
   $("#d-assignee").addEventListener("change", (e) => patch({ assignee: e.target.value }));
   $("#d-due").addEventListener("change", (e) => patch({ due: e.target.value ? new Date(e.target.value).getTime() : null }));
+  // Assigned once attachMentions runs, below; send() is defined first.
+  let repaintComposer = () => {};
   const send = async () => {
     const text = $("#d-new-comment").value.trim();
     if (!text) return;
     $("#d-new-comment").value = "";
+    repaintComposer();
     try {
       const { comment } = await api(`/projects/${current.project.id}/pins/${h.id}/comments`, { method: "POST", body: JSON.stringify({ text }) });
       h.comments = h.comments || [];
@@ -1004,7 +1030,7 @@ function openDrawer(hid) {
     } catch {}
   };
   $("#d-send").addEventListener("click", send);
-  attachMentions($("#d-new-comment"), $("#d-mentions"));
+  repaintComposer = attachMentions($("#d-new-comment"), $("#d-mentions"));
   $("#d-new-comment").addEventListener("keydown", (e) => {
     // Enter picks the highlighted name when the list is open, otherwise sends.
     const box = $("#d-mentions");
@@ -1050,7 +1076,28 @@ function moveMention(box, dir) {
   items.forEach((b) => b.classList.remove("on"));
   items[(i + dir + items.length) % items.length].classList.add("on");
 }
+// An input can't colour a substring, so the mention highlight is painted on a
+// mirror div behind it: same box, same font, same metrics. The input's own
+// glyphs go transparent and only its caret shows through, so selection, undo
+// and IME all stay native. Relies on the parent being position:relative.
+function attachHighlighter(input) {
+  const back = document.createElement("div");
+  back.className = "mkhl-back";
+  input.parentNode.insertBefore(back, input);
+  const paint = () => {
+    back.innerHTML = renderMentionsFull(input.value);
+    back.scrollLeft = input.scrollLeft;
+  };
+  input.addEventListener("input", paint);
+  // Single-line field: the caret scrolls the text horizontally, so follow it.
+  input.addEventListener("scroll", () => { back.scrollLeft = input.scrollLeft; });
+  paint();
+  return paint;
+}
+// Returns a repaint fn: callers that assign input.value directly (no input
+// event) must call it to keep the mirror in step.
 function attachMentions(input, box) {
+  const paint = attachHighlighter(input);
   const close = () => { box.hidden = true; };
   input.addEventListener("input", () => {
     const upto = input.value.slice(0, input.selectionStart);
@@ -1071,6 +1118,7 @@ function attachMentions(input, box) {
         const pos = input.selectionStart;
         const before = input.value.slice(0, pos).replace(/@[a-zA-Z0-9._%+-]*$/, "@" + b.dataset.m + " ");
         input.value = before + input.value.slice(pos);
+        paint();
         close();
         input.focus();
       })
