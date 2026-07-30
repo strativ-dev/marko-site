@@ -1125,6 +1125,9 @@ function attachMentions(input, box) {
     );
   });
   input.addEventListener("blur", () => setTimeout(close, 150));
+  // Callers (drawer send()) repaint the mirror after clearing input.value,
+  // which fires no input event — hand them the paint fn.
+  return paint;
 }
 
 /* ── modals ── */
