@@ -107,7 +107,10 @@
         if (method === "POST") {
           const u = await me();
           const { data, error } = await sb.from("projects")
-            .insert({ name: body.name, url: body.url || "", description: body.description || "", owner: u.id, owner_email: u.email })
+            // owner is left to the column default (auth.uid()), so a stale
+            // client session can't disagree with the token and trip
+            // projects_insert.
+            .insert({ name: body.name, url: body.url || "", description: body.description || "", owner_email: u.email })
             .select("*, project_members(email)").single();
           if (error) throw error;
           return { project: mapProject(data) };
