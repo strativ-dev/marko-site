@@ -38,7 +38,7 @@
       --ease: .25s ease;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
     body {
       background: var(--white);
       color: var(--text);
@@ -139,8 +139,9 @@
     .trust {
       display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
       margin-top: 18px;
-      color: rgba(255,255,255,.72); font-size: 13.5px;
+      color: rgba(0,0,0,.6); font-size: 13.5px; font-weight: 500;
     }
+    .trust a { color: var(--blue-deep); }
 
     /* ── Sections (white) ─────────────────────────────── */
     section { padding: 88px 0; }
@@ -436,6 +437,24 @@
 
     @media (max-width: 640px) {
       .nav-mid a { display: none; }
+    }
+    @media (max-width: 560px) {
+      .wrap { padding: 0 18px; }
+      section { padding: 64px 0; }
+      .navbar { padding: 8px 8px 9px 14px; }
+      .nav-cta { padding: 7px 13px; }
+      .hero-wrap { padding: 108px 20px 220px; }
+      .hero-hills { height: min(42vw, 260px); }
+      .cta-big { min-width: 100%; padding: 14px 22px; }
+      .trust { gap: 18px; }
+      .fstep { padding: 26px 20px; }
+      .data-band { padding: 88px 20px; }
+      .foot-mark { margin-top: 24px; }
+    }
+    @media (max-width: 380px) {
+      h1 { font-size: 40px; }
+      h1 .serif { font-size: 42px; }
+      .nav-cta span, .nav-cta { font-size: 12px; }
     }
   </style>
 </head>
@@ -928,8 +947,14 @@
   // Bridge a signed-in Supabase session into the extension via its
   // web-accessible callback page in a hidden iframe. Fails silently when the
   // extension isn't installed.
+  // Each frame is a full extension document, and onAuthStateChange re-fires on
+  // every token refresh (~hourly) — so skip sessions already handed over, and
+  // drop the frame once the handoff lands instead of leaving it in the DOM.
+  let lastBridgedToken = "";
   function bridgeToExtension(session, name) {
     if (!session) return;
+    if (session.access_token === lastBridgedToken) return;
+    lastBridgedToken = session.access_token;
     const frame = document.createElement("iframe");
     frame.style.display = "none";
     frame.src = CALLBACK + "#" +
@@ -938,6 +963,9 @@
       "&exp=" + encodeURIComponent(String((session.expires_at || 0) * 1000)) +
       "&email=" + encodeURIComponent(session.user.email) +
       "&name=" + encodeURIComponent(name || "");
+    const drop = () => frame.remove();
+    frame.addEventListener("load", () => setTimeout(drop, 1000));
+    setTimeout(drop, 10000); // extension not installed: load never fires
     document.body.appendChild(frame);
   }
 
@@ -1055,8 +1083,11 @@
   setMode("login");
   window.addEventListener("hashchange", checkHash);
   checkHash();
-  reflectAuthLinks();
+  // The subscription emits INITIAL_SESSION on attach (signed in or not), which
+  // already covers the first paint — calling reflectAuthLinks() directly too
+  // would just run the whole thing twice on every load.
   if (sb) sb.auth.onAuthStateChange(() => reflectAuthLinks());
+  else reflectAuthLinks();
 })();
 </script>
 

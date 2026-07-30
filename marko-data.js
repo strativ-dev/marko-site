@@ -12,14 +12,14 @@
   const mapComment = (c) => ({
     id: c.id, by: c.author_email, byName: c.author_name, text: c.text, at: c.created_at,
   });
+  // Comments arrive ordered (every embed asks for created_at.asc), so there is
+  // no client-side sort allocating two Date objects per comparison.
   const mapPin = (h) => ({
     id: h.id, pageUrl: h.page_url, selector: h.selector, xr: h.xr, yr: h.yr,
     comment: h.comment, severity: h.severity, status: h.status, assignee: h.assignee,
     due: h.due, device: h.device, viewport: h.viewport, hasShot: h.has_shot,
     createdBy: h.created_by_email, createdAt: h.created_at,
-    comments: (h.comments || [])
-      .slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-      .map(mapComment),
+    comments: (h.comments || []).map(mapComment),
   });
   const mapProject = (p) => ({
     id: p.id, name: p.name, url: p.url, description: p.description || "",
@@ -28,23 +28,18 @@
     createdAt: p.created_at, updatedAt: p.updated_at,
   });
 
-  function hostOf(u) {
-    const s = String(u || "").trim();
-    if (!s) return "";
-    try {
-      const url = new URL(/^https?:\/\//i.test(s) ? s : "https://" + s);
-      return url.host.replace(/^www\./i, "").toLowerCase();
-    } catch { return ""; }
-  }
   function countsOf(pins) {
     const c = { active: 0, resolved: 0, total: 0 };
     for (const p of pins) { c.total++; if (p.status === "resolved" || p.status === "done") c.resolved++; else c.active++; }
     return c;
   }
+  // getSession() reads the cached session; getUser() would spend a network
+  // round trip on /auth/v1/user for an id and email we already hold — and this
+  // runs on every project, pin and comment write (once per row on CSV import).
   async function me() {
-    const { data, error } = await sb.auth.getUser();
-    if (error || !data.user) throw new Error("unauthorized");
-    return data.user;
+    const { data } = await sb.auth.getSession();
+    if (!data.session || !data.session.user) throw new Error("unauthorized");
+    return data.session.user;
   }
   async function accessToken() {
     const { data } = await sb.auth.getSession();
@@ -61,12 +56,34 @@
     });
     if (!r.ok) throw new Error("shot_upload_failed");
   }
+  // A shot is written once and never changes, so cache the object URL per pin.
+  // Without this, reopening a drawer re-downloads the image and strands another
+  // blob that nothing ever revokes.
+  const shotCache = new Map();
   async function getShot(pid, pinId) {
+    const key = `${pid}/${pinId}`;
+    if (shotCache.has(key)) return { shot: shotCache.get(key) };
     const r = await fetch(`${SHOTS_URL}/shot/${pid}/${pinId}`, {
       headers: { Authorization: "Bearer " + (await accessToken()) },
     });
     if (!r.ok) return { shot: null };
-    return { shot: URL.createObjectURL(await r.blob()) };
+    const url = URL.createObjectURL(await r.blob());
+    shotCache.set(key, url);
+    return { shot: url };
+  }
+  function dropShot(pid, pinId) {
+    const key = `${pid}/${pinId}`;
+    const url = shotCache.get(key);
+    if (url) { try { URL.revokeObjectURL(url); } catch {} shotCache.delete(key); }
+  }
+  // Called when leaving a project: its shots can no longer be on screen.
+  function releaseShots(pid) {
+    for (const key of [...shotCache.keys()]) {
+      if (key.startsWith(pid + "/")) {
+        try { URL.revokeObjectURL(shotCache.get(key)); } catch {}
+        shotCache.delete(key);
+      }
+    }
   }
 
   function fail(e) {
@@ -95,26 +112,13 @@
           if (error) throw error;
           return { project: mapProject(data) };
         }
+        // One round trip: the pin statuses ride along as an embed instead of a
+        // second query that re-filters the same project ids.
         const { data, error } = await sb.from("projects")
-          .select("*, project_members(email)").order("updated_at", { ascending: false });
+          .select("*, project_members(email), pins(status)")
+          .order("updated_at", { ascending: false });
         if (error) throw error;
-        const ids = data.map((p) => p.id);
-        const byId = {};
-        if (ids.length) {
-          const { data: pins } = await sb.from("pins").select("project_id,status").in("project_id", ids);
-          for (const p of pins || []) (byId[p.project_id] ||= []).push(p);
-        }
-        return { projects: data.map((p) => ({ ...mapProject(p), counts: countsOf(byId[p.id] || []) })) };
-      }
-
-      if (seg[0] === "projects" && seg[1] === "find") {
-        const url = new URLSearchParams(query).get("url") || "";
-        const host = hostOf(url);
-        const { data } = await sb.from("projects").select("*, project_members(email)");
-        const hit = (data || []).find((p) => !p.archived && hostOf(p.url) === host);
-        if (!hit) return { project: null };
-        const { data: pins } = await sb.from("pins").select("status").eq("project_id", hit.id);
-        return { project: mapProject(hit), counts: countsOf(pins || []) };
+        return { projects: data.map((p) => ({ ...mapProject(p), counts: countsOf(p.pins || []) })) };
       }
 
       // /projects/:id [ /pins/:hid [ /comments | /shot ] | /invites ]
@@ -127,7 +131,9 @@
               .select("*, project_members(email)").eq("id", pid).single();
             if (error) throw new Error("not_found");
             const { data: pins } = await sb.from("pins")
-              .select("*, comments(*)").eq("project_id", pid).order("created_at");
+              .select("*, comments(*)").eq("project_id", pid)
+              .order("created_at")
+              .order("created_at", { referencedTable: "comments", ascending: true });
             return { project: mapProject(proj), pins: (pins || []).map(mapPin) };
           }
           if (method === "PATCH") {
@@ -175,7 +181,8 @@
             viewport: body.viewport || "", has_shot: false,
             created_by: u.id, created_by_email: u.email,
           };
-          const { data, error } = await sb.from("pins").insert(row).select("*, comments(*)").single();
+          // A brand-new pin has no comments; no point asking for the embed.
+          const { data, error } = await sb.from("pins").insert(row).select("*").single();
           if (error) throw error;
           if (body.shot) {
             try {
@@ -191,7 +198,7 @@
           const hid = seg[3];
           if (seg[4] === "shot") {
             if (method === "PUT") { await uploadShot(pid, hid, body.shot); await sb.from("pins").update({ has_shot: true }).eq("id", hid); return { ok: true }; }
-            if (method === "DELETE") { await fetch(`${SHOTS_URL}/shot/${pid}/${hid}`, { method: "DELETE", headers: { Authorization: "Bearer " + (await accessToken()) } }); return { ok: true }; }
+            if (method === "DELETE") { dropShot(pid, hid); await fetch(`${SHOTS_URL}/shot/${pid}/${hid}`, { method: "DELETE", headers: { Authorization: "Bearer " + (await accessToken()) } }); return { ok: true }; }
             return await getShot(pid, hid);
           }
           if (seg[4] === "comments" && method === "POST") {
@@ -204,15 +211,20 @@
             return { comment: mapComment(data) };
           }
           if (method === "PATCH") {
+            // Callers apply the change to their local pin first and never read
+            // this back, so don't drag the pin's whole comment thread with it.
             const patch = {};
             for (const k of ["comment", "severity", "status", "assignee", "due"]) if (k in body) patch[k] = body[k];
-            const { data, error } = await sb.from("pins").update(patch).eq("id", hid).select("*, comments(*)").single();
+            const { data, error } = await sb.from("pins").update(patch).eq("id", hid).select("*").single();
             if (error) throw error;
             return { pin: mapPin(data) };
           }
           if (method === "DELETE") {
-            await fetch(`${SHOTS_URL}/shot/${pid}/${hid}`, { method: "DELETE", headers: { Authorization: "Bearer " + (await accessToken()) } }).catch(() => {});
+            // Both deletes are independent; the shot leg is best-effort.
+            dropShot(pid, hid);
+            const shotGone = fetch(`${SHOTS_URL}/shot/${pid}/${hid}`, { method: "DELETE", headers: { Authorization: "Bearer " + (await accessToken()) } }).catch(() => {});
             const { error } = await sb.from("pins").delete().eq("id", hid);
+            await shotGone;
             if (error) throw error;
             return { ok: true };
           }
@@ -249,8 +261,10 @@
           let q = sb.from("notifications").update({ read: true });
           q = body.all === true ? q.eq("read", false) : q.in("id", body.ids || []);
           await q;
-          const { data } = await sb.from("notifications").select("read");
-          return { ok: true, unread: (data || []).filter((n) => !n.read).length };
+          // head+count: Postgres returns the number, not every notification row.
+          const { count } = await sb.from("notifications")
+            .select("id", { count: "exact", head: true }).eq("read", false);
+          return { ok: true, unread: count || 0 };
         }
         const { data } = await sb.from("notifications").select("*").order("created_at", { ascending: false }).limit(100);
         const notes = (data || []).map((n) => ({
@@ -270,5 +284,5 @@
     }
   }
 
-  window.MarkoData = { api };
+  window.MarkoData = { api, releaseShots };
 })();

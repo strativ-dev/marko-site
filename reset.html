@@ -108,8 +108,12 @@
   // password be changed. If no recovery session lands, the link is bad.
   let ready = false;
   if (!sb) {
+    // invalidLink() replaces #form-wrap wholesale, so the wiring below would
+    // only bind handlers to nodes that are already detached.
     invalidLink();
-  } else {
+    return;
+  }
+  {
     sb.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY" || (session && !ready)) {
         ready = true;
