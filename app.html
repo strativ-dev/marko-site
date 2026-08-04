@@ -678,7 +678,7 @@ async function loadSession() {
 }
 async function logout() {
   try { if (sb) await sb.auth.signOut(); } catch {}
-  location.href = "index.html#sign-in";
+  location.href = "signin.html";
 }
 
 /* ── sidebar ── */
@@ -1961,7 +1961,7 @@ function subscribeNotifications() {
 
 async function boot() {
   session = await loadSession();
-  if (!session) { location.href = "index.html#sign-in"; return; }
+  if (!session) { location.href = "signin.html"; return; }
   // Keep the extension signed in with the current session.
   try { const { data } = await sb.auth.getSession(); if (data.session) bridgeToExtension(data.session); } catch {}
   $("#btn-create").addEventListener("click", openCreateModal);

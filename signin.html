@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — Marko</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="marko-128.png?v=1.14.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-mid: #0080ff;
+      --ink: #000000;
+      --text: #000000;
+      --sub: #3a3f49;
+      --muted: #7b828e;
+      --line: #e3e3e3;
+      --card: #f6f7f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    [hidden] { display: none !important; }
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, #e6f2ff 0%, #ffffff 55%),
+        #ffffff;
+      font: 15px/1.55 "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+    }
+    main {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 32px 20px;
+    }
+    .back {
+      position: fixed; top: 22px; left: 24px;
+      display: flex; align-items: center; gap: 9px;
+      font-weight: 700; font-size: 15px; color: var(--text); text-decoration: none;
+    }
+    .back img { width: 28px; height: 28px; border-radius: 8px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+    .si-card {
+      width: min(420px, 100%);
+      background: #fff; border-radius: 22px;
+      padding: 34px 28px; position: relative;
+      box-shadow: 0 30px 70px rgba(10, 14, 30, .12), 0 0 0 1px rgba(10,14,30,.04);
+    }
+    .si-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .si-brand img {
+      width: 34px; height: 34px; border-radius: 9px; display: block;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.06);
+    }
+    .si-brand b { font-weight: 700; font-size: 16px; }
+    .si-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--card); padding: 4px; border-radius: 10px; }
+    .si-tab {
+      flex: 1; padding: 8px 12px; border: 0; background: transparent;
+      border-radius: 7px; font: 600 13.5px "Inter", sans-serif; color: var(--sub);
+      cursor: pointer; transition: background .12s, color .12s;
+    }
+    .si-tab.active { background: #fff; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+    .si-h2 { font-size: 20px; font-weight: 700; margin: 4px 0 4px; letter-spacing: -0.02em; }
+    .si-sub { color: var(--muted); font-size: 13.5px; margin-bottom: 18px; }
+    .si-field { display: block; margin-bottom: 12px; }
+    .si-field span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
+    .si-field input {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--line);
+      border-radius: 10px; font: 15px "Inter", sans-serif; color: var(--text);
+      background: #fff; transition: border-color .12s, box-shadow .12s;
+    }
+    .si-field input:focus { outline: 0; border-color: var(--blue-mid); box-shadow: 0 0 0 3px rgba(47,106,232,.18); }
+    .si-submit {
+      width: 100%; padding: 13px 18px; margin-top: 6px;
+      background: var(--ink); color: #fff; border: 0; border-radius: 999px;
+      font: 600 15px "Inter", sans-serif; cursor: pointer;
+      transition: transform .12s, box-shadow .12s, opacity .12s;
+    }
+    .si-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
+    .si-submit:disabled { opacity: .55; cursor: default; }
+    .si-google {
+      width: 100%; padding: 11px 18px; margin-bottom: 14px;
+      background: #fff; color: var(--text); border: 1px solid var(--line); border-radius: 999px;
+      font: 600 14.5px "Inter", sans-serif; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background .12s, box-shadow .12s;
+    }
+    .si-google:hover:not(:disabled) { background: var(--card); }
+    .si-google:disabled { opacity: .55; cursor: default; }
+    .si-divider { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; color: var(--muted); font-size: 12px; }
+    .si-divider::before, .si-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .si-status { min-height: 20px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+    .si-status.err { color: #e5484d; }
+    .si-status.ok { color: #22c55e; }
+    .si-foot { color: var(--muted); font-size: 12px; margin-top: 14px; line-height: 1.5; }
+    .si-foot a { color: var(--blue-mid); }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html"><img src="marko-128.png?v=1.14.0" alt="" />Marko</a>
+
+<main>
+  <div class="si-card" role="main" aria-labelledby="si-title">
+    <div class="si-brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b></div>
+    <div class="si-tabs" role="tablist">
+      <button class="si-tab active" data-mode="login" role="tab">Sign in</button>
+      <button class="si-tab" data-mode="signup" role="tab">Create account</button>
+    </div>
+    <h2 class="si-h2" id="si-title">Welcome back</h2>
+    <p class="si-sub" id="si-sub">New here? Just sign in — we'll create your account.</p>
+    <div id="si-google-row">
+      <button class="si-google" id="si-google" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.63h6.46a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.58-5.17 3.58-8.8Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.9l-3.88-3a7.4 7.4 0 0 1-11-3.9H1.06v3.09A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.06 14.2a7.2 7.2 0 0 1 0-4.4V6.71H1.06a12 12 0 0 0 0 10.58l4-3.09Z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.35.6 4.6 1.79l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.06 6.71l4 3.09A7.16 7.16 0 0 1 12 4.75Z"/></svg>
+        Continue with Google
+      </button>
+      <div class="si-divider"><span>or</span></div>
+    </div>
+    <label class="si-field"><span>Email</span><input id="si-email" type="email" autocomplete="email" /></label>
+    <label class="si-field" id="si-pw-field"><span id="si-pw-label">Password (8+ characters)</span><input id="si-password" type="password" autocomplete="new-password" /></label>
+    <button class="si-submit" id="si-submit">Create account</button>
+    <p class="si-status" id="si-status"></p>
+    <p class="si-foot" id="si-forgot-row" hidden style="text-align:right;margin-top:8px;">
+      <a href="#" id="si-forgot">Forgot password?</a>
+    </p>
+    <p class="si-foot" id="si-back-row" hidden style="text-align:right;margin-top:8px;">
+      <a href="#" id="si-back">&larr; Back to sign in</a>
+    </p>
+    <p class="si-foot">
+      Sign-in opens Marko in your Chrome extension. Don't have it yet?
+      <a href="index.html#install">Install Marko first.</a>
+    </p>
+  </div>
+</main>
+
+<script src="vendor/supabase.js"></script>
+<script src="marko-web.js"></script>
+<script>
+(() => {
+  const EXT_ID = "jhnnkjnpggliikhiiceijlkclhlblgjf";
+  const CALLBACK = "chrome-extension://" + EXT_ID + "/auth/callback.html";
+  const sb = window.marko && window.marko.supabase;
+
+  const $ = (s) => document.querySelector(s);
+  const email = $("#si-email");
+  const pw = $("#si-password");
+  const submit = $("#si-submit");
+  const status = $("#si-status");
+  const title = $("#si-title");
+  const sub = $("#si-sub");
+  const pwLabel = $("#si-pw-label");
+  let mode = "login";
+
+  const tabsRow = document.querySelector(".si-tabs");
+  const pwField = $("#si-pw-field");
+  const forgotRow = $("#si-forgot-row");
+  const backRow = $("#si-back-row");
+  const googleRow = $("#si-google-row");
+  const googleBtn = $("#si-google");
+
+  function setMode(next) {
+    mode = next;
+    document.querySelectorAll(".si-tab").forEach((t) =>
+      t.classList.toggle("active", t.dataset.mode === (mode === "forgot" ? "login" : mode))
+    );
+    if (mode === "signup") {
+      tabsRow.hidden = false;
+      pwField.hidden = false;
+      backRow.hidden = true;
+      googleRow.hidden = false;
+      title.textContent = "Create your account";
+      sub.textContent = "Free forever. Nothing to install on your server.";
+      pwLabel.textContent = "Password (8+ characters)";
+      pw.setAttribute("autocomplete", "new-password");
+      submit.textContent = "Create account";
+      forgotRow.hidden = true;
+    } else if (mode === "login") {
+      tabsRow.hidden = false;
+      pwField.hidden = false;
+      backRow.hidden = true;
+      googleRow.hidden = false;
+      title.textContent = "Welcome back";
+      sub.textContent = "New here? Just sign in — we'll create your account.";
+      pwLabel.textContent = "Password (8+ characters)";
+      pw.setAttribute("autocomplete", "current-password");
+      submit.textContent = "Sign in";
+      forgotRow.hidden = false;
+    } else {
+      // "forgot" — collect email only, hide password field + tabs + Google.
+      tabsRow.hidden = true;
+      pwField.hidden = true;
+      forgotRow.hidden = true;
+      backRow.hidden = false;
+      googleRow.hidden = true;
+      title.textContent = "Reset your password";
+      sub.textContent = "We'll email you a link to set a new one.";
+      submit.textContent = "Send reset link";
+    }
+    submit.disabled = false;
+    setStatus("", "");
+  }
+  function setStatus(msg, cls) {
+    status.textContent = msg;
+    status.className = "si-status" + (cls ? " " + cls : "");
+  }
+  function friendly(msg) {
+    const m = String(msg || "").toLowerCase();
+    if (m.includes("invalid login")) return "Wrong email or password.";
+    if (m.includes("already registered") || m.includes("already been registered"))
+      return "An account with that email already exists.";
+    if (m.includes("email")) return "That doesn't look like a valid email.";
+    if (m.includes("password")) return "Password must be at least 8 characters.";
+    return msg || "Something went wrong.";
+  }
+
+  // Bridge a signed-in Supabase session into the extension via its
+  // web-accessible callback page in a hidden iframe. Fails silently when the
+  // extension isn't installed.
+  let lastBridgedToken = "";
+  function bridgeToExtension(session, name) {
+    if (!session) return;
+    if (session.access_token === lastBridgedToken) return;
+    lastBridgedToken = session.access_token;
+    const meta = session.user.user_metadata || {};
+    const avatar = meta.avatar_url || meta.picture || "";
+    const frame = document.createElement("iframe");
+    frame.style.display = "none";
+    frame.src = CALLBACK + "#" +
+      "at=" + encodeURIComponent(session.access_token) +
+      "&rt=" + encodeURIComponent(session.refresh_token) +
+      "&exp=" + encodeURIComponent(String((session.expires_at || 0) * 1000)) +
+      "&email=" + encodeURIComponent(session.user.email) +
+      "&name=" + encodeURIComponent(name || "") +
+      "&avatar=" + encodeURIComponent(avatar);
+    const drop = () => frame.remove();
+    frame.addEventListener("load", () => setTimeout(drop, 1000));
+    setTimeout(drop, 10000); // extension not installed: load never fires
+    document.body.appendChild(frame);
+  }
+
+  document.querySelectorAll(".si-tab").forEach((t) =>
+    t.addEventListener("click", () => setMode(t.dataset.mode))
+  );
+  $("#si-forgot").addEventListener("click", (e) => { e.preventDefault(); setMode("forgot"); });
+  $("#si-back").addEventListener("click", (e) => { e.preventDefault(); setMode("login"); });
+  googleBtn.addEventListener("click", async () => {
+    if (!sb) { setStatus("Auth failed to initialise. Reload the page.", "err"); return; }
+    googleBtn.disabled = true;
+    setStatus("Redirecting to Google…", "");
+    // scopes is deliberately just "email profile" — that's what gets us the
+    // address + avatar picture. No Drive/Calendar/Contacts/etc are requested.
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: location.origin + location.pathname,
+        scopes: "email profile",
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) { setStatus(friendly(error.message), "err"); googleBtn.disabled = false; }
+    // On success the browser navigates to Google, so nothing else to do here.
+  });
+  [email, pw].forEach((el) =>
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") submit.click(); })
+  );
+
+  submit.addEventListener("click", async () => {
+    const e = email.value.trim().toLowerCase();
+    if (!sb) { setStatus("Auth failed to initialise. Reload the page.", "err"); return; }
+
+    if (mode === "forgot") {
+      if (!e) { setStatus("Enter your email.", "err"); return; }
+      submit.disabled = true;
+      setStatus("Sending…", "");
+      // Supabase always resolves without revealing whether the address exists.
+      await sb.auth.resetPasswordForEmail(e, {
+        redirectTo: new URL("reset.html", location.href).href,
+      });
+      setStatus("If that email is registered, a reset link is on its way. Check your inbox.", "ok");
+      return;
+    }
+
+    const p = pw.value;
+    if (!e || !p) { setStatus("Enter email and password.", "err"); return; }
+    if (mode === "signup" && p.length < 8) {
+      setStatus("Password must be at least 8 characters.", "err"); return;
+    }
+    submit.disabled = true;
+    setStatus(mode === "signup" ? "Creating account…" : "Signing in…", "");
+    try {
+      const name = e.split("@")[0] || "";
+      let session;
+      if (mode === "signup") {
+        const { data, error } = await sb.auth.signUp({
+          email: e, password: p, options: { data: { name } },
+        });
+        if (error) throw error;
+        session = data.session;
+        // Email-confirmation enabled: no session until they confirm.
+        if (!session) {
+          setStatus("Account created. Check your inbox to confirm, then sign in.", "ok");
+          submit.disabled = false;
+          return;
+        }
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email: e, password: p });
+        if (!error) {
+          session = data.session;
+        } else if (/invalid login/i.test(error.message)) {
+          // Unknown email → create the account on the fly (per product choice:
+          // never block a new email at sign-in). A known email with the wrong
+          // password comes back "already registered", which we surface instead.
+          if (p.length < 8) { setStatus("Password must be at least 8 characters.", "err"); submit.disabled = false; return; }
+          const up = await sb.auth.signUp({ email: e, password: p, options: { data: { name } } });
+          if (up.error) {
+            if (/registered/i.test(up.error.message)) throw new Error("invalid login credentials");
+            throw up.error;
+          }
+          session = up.data.session;
+          if (!session) {
+            setStatus("Account created. Check your inbox to confirm, then sign in.", "ok");
+            submit.disabled = false;
+            return;
+          }
+        } else {
+          throw error;
+        }
+      }
+
+      bridgeToExtension(session, (session.user.user_metadata || {}).name || name);
+      setStatus("Signed in. Opening your projects…", "ok");
+      setTimeout(() => { window.location.href = "app.html"; }, 900);
+    } catch (err) {
+      setStatus(friendly(err.message), "err");
+      submit.disabled = false;
+    }
+  });
+
+  async function checkExistingSession() {
+    if (!sb) return;
+    const { data } = await sb.auth.getSession();
+    if (data.session) { window.location.href = "app.html"; }
+  }
+
+  setMode("login");
+  checkExistingSession();
+  // SIGNED_IN only fires on an actual new sign-in (password submit already
+  // handles its own redirect above; this is what catches the browser landing
+  // back here after the Google OAuth round trip, where there's no submit
+  // handler to hook).
+  if (sb) {
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        const name = (session.user.user_metadata || {}).name || (session.user.user_metadata || {}).full_name || "";
+        bridgeToExtension(session, name);
+        window.location.href = "app.html";
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
