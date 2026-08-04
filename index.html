@@ -823,6 +823,17 @@
     }
     .si-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
     .si-submit:disabled { opacity: .55; cursor: default; }
+    .si-google {
+      width: 100%; padding: 11px 18px; margin-bottom: 14px;
+      background: #fff; color: var(--text); border: 1px solid var(--line); border-radius: 999px;
+      font: 600 14.5px "Inter", sans-serif; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background .12s, box-shadow .12s;
+    }
+    .si-google:hover:not(:disabled) { background: var(--card); }
+    .si-google:disabled { opacity: .55; cursor: default; }
+    .si-divider { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; color: var(--muted); font-size: 12px; }
+    .si-divider::before, .si-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
     .si-status { min-height: 20px; margin-top: 12px; font-size: 13px; color: var(--muted); }
     .si-status.err { color: #e5484d; }
     .si-status.ok { color: #22c55e; }
@@ -841,6 +852,13 @@
     </div>
     <h2 class="si-h2" id="si-title">Welcome back</h2>
     <p class="si-sub" id="si-sub">New here? Just sign in — we'll create your account.</p>
+    <div id="si-google-row">
+      <button class="si-google" id="si-google" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.63h6.46a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.58-5.17 3.58-8.8Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.9l-3.88-3a7.4 7.4 0 0 1-11-3.9H1.06v3.09A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.06 14.2a7.2 7.2 0 0 1 0-4.4V6.71H1.06a12 12 0 0 0 0 10.58l4-3.09Z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.35.6 4.6 1.79l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.06 6.71l4 3.09A7.16 7.16 0 0 1 12 4.75Z"/></svg>
+        Continue with Google
+      </button>
+      <div class="si-divider"><span>or</span></div>
+    </div>
     <label class="si-field"><span>Email</span><input id="si-email" type="email" autocomplete="email" /></label>
     <label class="si-field" id="si-pw-field"><span id="si-pw-label">Password (8+ characters)</span><input id="si-password" type="password" autocomplete="new-password" /></label>
     <button class="si-submit" id="si-submit">Create account</button>
@@ -881,6 +899,8 @@
   const pwField = $("#si-pw-field");
   const forgotRow = $("#si-forgot-row");
   const backRow = $("#si-back-row");
+  const googleRow = $("#si-google-row");
+  const googleBtn = $("#si-google");
 
   function setMode(next) {
     mode = next;
@@ -891,6 +911,7 @@
       tabsRow.hidden = false;
       pwField.hidden = false;
       backRow.hidden = true;
+      googleRow.hidden = false;
       title.textContent = "Create your account";
       sub.textContent = "Free forever. Nothing to install on your server.";
       pwLabel.textContent = "Password (8+ characters)";
@@ -901,6 +922,7 @@
       tabsRow.hidden = false;
       pwField.hidden = false;
       backRow.hidden = true;
+      googleRow.hidden = false;
       title.textContent = "Welcome back";
       sub.textContent = "New here? Just sign in — we'll create your account.";
       pwLabel.textContent = "Password (8+ characters)";
@@ -908,11 +930,12 @@
       submit.textContent = "Sign in";
       forgotRow.hidden = false;
     } else {
-      // "forgot" — collect email only, hide password field + tabs.
+      // "forgot" — collect email only, hide password field + tabs + Google.
       tabsRow.hidden = true;
       pwField.hidden = true;
       forgotRow.hidden = true;
       backRow.hidden = false;
+      googleRow.hidden = true;
       title.textContent = "Reset your password";
       sub.textContent = "We'll email you a link to set a new one.";
       submit.textContent = "Send reset link";
@@ -955,6 +978,8 @@
     if (!session) return;
     if (session.access_token === lastBridgedToken) return;
     lastBridgedToken = session.access_token;
+    const meta = session.user.user_metadata || {};
+    const avatar = meta.avatar_url || meta.picture || "";
     const frame = document.createElement("iframe");
     frame.style.display = "none";
     frame.src = CALLBACK + "#" +
@@ -962,7 +987,8 @@
       "&rt=" + encodeURIComponent(session.refresh_token) +
       "&exp=" + encodeURIComponent(String((session.expires_at || 0) * 1000)) +
       "&email=" + encodeURIComponent(session.user.email) +
-      "&name=" + encodeURIComponent(name || "");
+      "&name=" + encodeURIComponent(name || "") +
+      "&avatar=" + encodeURIComponent(avatar);
     const drop = () => frame.remove();
     frame.addEventListener("load", () => setTimeout(drop, 1000));
     setTimeout(drop, 10000); // extension not installed: load never fires
@@ -974,6 +1000,23 @@
   );
   $("#si-forgot").addEventListener("click", (e) => { e.preventDefault(); setMode("forgot"); });
   $("#si-back").addEventListener("click", (e) => { e.preventDefault(); setMode("login"); });
+  googleBtn.addEventListener("click", async () => {
+    if (!sb) { setStatus("Auth failed to initialise. Reload the page.", "err"); return; }
+    googleBtn.disabled = true;
+    setStatus("Redirecting to Google…", "");
+    // scopes is deliberately just "email profile" — that's what gets us the
+    // address + avatar picture. No Drive/Calendar/Contacts/etc are requested.
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: location.origin + location.pathname + "#sign-in",
+        scopes: "email profile",
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) { setStatus(friendly(error.message), "err"); googleBtn.disabled = false; }
+    // On success the browser navigates to Google, so nothing else to do here.
+  });
   $("#si-close").addEventListener("click", close);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
   document.addEventListener("keydown", (e) => { if (!overlay.hidden && e.key === "Escape") close(); });
@@ -1086,8 +1129,23 @@
   // The subscription emits INITIAL_SESSION on attach (signed in or not), which
   // already covers the first paint — calling reflectAuthLinks() directly too
   // would just run the whole thing twice on every load.
-  if (sb) sb.auth.onAuthStateChange(() => reflectAuthLinks());
-  else reflectAuthLinks();
+  //
+  // SIGNED_IN only fires on an actual new sign-in (password submit already
+  // handles its own redirect above; this is what catches the browser landing
+  // back here after the Google OAuth round trip, where there's no submit
+  // handler to hook). It never fires for an already-signed-in visitor just
+  // loading the page — that's INITIAL_SESSION — so this can't hijack normal
+  // browsing.
+  if (sb) {
+    sb.auth.onAuthStateChange((event, session) => {
+      reflectAuthLinks();
+      if (event === "SIGNED_IN" && session) {
+        const name = (session.user.user_metadata || {}).name || (session.user.user_metadata || {}).full_name || "";
+        bridgeToExtension(session, name);
+        window.location.href = "app.html";
+      }
+    });
+  } else reflectAuthLinks();
 })();
 </script>
 

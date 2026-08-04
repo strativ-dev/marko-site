@@ -121,6 +121,8 @@
       color: #fff; font-weight: 700; font-size: 13px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
+    /* Google accounts get a real photo instead of the initials badge. */
+    .av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
     .sb-account .who { min-width: 0; text-align: left; }
     .sb-account .who b { display: block; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sb-account .who span { font-size: 11px; color: #8a90a3; }
@@ -600,7 +602,9 @@ function bridgeToExtension(session) {
   if (!session) return;
   if (session.access_token === lastBridgedToken) return; // same session, already handed over
   lastBridgedToken = session.access_token;
-  const name = (session.user.user_metadata || {}).name || "";
+  const meta = session.user.user_metadata || {};
+  const name = meta.name || meta.full_name || "";
+  const avatar = meta.avatar_url || meta.picture || "";
   const frame = document.createElement("iframe");
   frame.style.display = "none";
   frame.src = CALLBACK + "#" +
@@ -608,7 +612,8 @@ function bridgeToExtension(session) {
     "&rt=" + encodeURIComponent(session.refresh_token) +
     "&exp=" + encodeURIComponent(String((session.expires_at || 0) * 1000)) +
     "&email=" + encodeURIComponent(session.user.email) +
-    "&name=" + encodeURIComponent(name);
+    "&name=" + encodeURIComponent(name) +
+    "&avatar=" + encodeURIComponent(avatar);
   const drop = () => frame.remove();
   frame.addEventListener("load", () => setTimeout(drop, 1000));
   setTimeout(drop, 10000); // extension not installed: load never fires
@@ -662,11 +667,13 @@ async function loadSession() {
   const { data } = await sb.auth.getSession();
   if (!data.session) return null;
   const u = data.session.user;
+  const meta = u.user_metadata || {};
   return {
     token: data.session.access_token,
     exp: (data.session.expires_at || 0) * 1000,
     email: u.email,
-    name: (u.user_metadata || {}).name || (u.email || "").split("@")[0],
+    name: meta.name || meta.full_name || (u.email || "").split("@")[0],
+    avatar: meta.avatar_url || meta.picture || "",
   };
 }
 async function logout() {
@@ -677,11 +684,17 @@ async function logout() {
 /* ── sidebar ── */
 function renderSidebar() {
   const meColor = avatarColor(session.email);
+  // Google accounts carry a real photo — show it instead of the initials
+  // badge when we have one; every other member (no profile fetch here) still
+  // gets the deterministic color+initial badge.
+  const meAvatarHtml = session.avatar
+    ? `<img src="${esc(session.avatar)}" alt="" referrerpolicy="no-referrer" />`
+    : esc(initials(session.name || session.email));
   const acctAv = $("#acct-av");
-  acctAv.textContent = initials(session.name || session.email);
-  acctAv.style.background = meColor;
+  acctAv.innerHTML = meAvatarHtml;
+  acctAv.style.background = session.avatar ? "transparent" : meColor;
   const wsAv = $("#ws-av"), wsName = $("#ws-name");
-  if (wsAv) { wsAv.textContent = initials(session.name || session.email); wsAv.style.background = meColor; }
+  if (wsAv) { wsAv.innerHTML = meAvatarHtml; wsAv.style.background = session.avatar ? "transparent" : meColor; }
   if (wsName) wsName.textContent = (session.name || session.email.split("@")[0]) + "'s workspace";
   $("#acct-name").textContent = session.name || session.email.split("@")[0];
   $("#acct-email").textContent = session.email;
