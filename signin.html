@@ -348,7 +348,7 @@
   </div>
 
   <p class="si-eyebrow">Your account</p>
-  <h1 class="si-hero-title">
+  <h1 class="si-hero-title" id="si-hero-title">
     Welcome back.
     <span class="serif">Let's review.</span>
   </h1>
@@ -405,6 +405,7 @@
   let mode = "login";
 
   const tabsRow = document.querySelector(".si-tabs");
+  const heroTitle = $("#si-hero-title");
   const pwField = $("#si-pw-field");
   const forgotRow = $("#si-forgot-row");
   const backRow = $("#si-back-row");
@@ -421,6 +422,7 @@
       pwField.hidden = false;
       backRow.hidden = true;
       googleRow.hidden = false;
+      heroTitle.innerHTML = 'Welcome. <span class="serif">Let\'s get started.</span>';
       title.textContent = "Create your account";
       sub.textContent = "Free forever. Nothing to install on your server.";
       pwLabel.textContent = "Password (8+ characters)";
@@ -432,6 +434,7 @@
       pwField.hidden = false;
       backRow.hidden = true;
       googleRow.hidden = false;
+      heroTitle.innerHTML = 'Welcome back. <span class="serif">Let\'s review.</span>';
       title.textContent = "Welcome back";
       sub.textContent = "New here? Just sign in — we'll create your account.";
       pwLabel.textContent = "Password (8+ characters)";
