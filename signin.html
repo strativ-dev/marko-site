@@ -86,7 +86,94 @@
       width: 100%; height: min(30vw, 340px);
       pointer-events: none; z-index: 1;
     }
-    .page-wrap > *:not(.hero-hills) { position: relative; z-index: 2; }
+    .page-wrap > *:not(.hero-hills):not(.bg-art) { position: relative; z-index: 2; }
+
+    /* ── Background art (product hints) ──────────────── */
+    .bg-art {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+    }
+    /* Browser frame — left, tilted */
+    .bg-browser {
+      position: absolute;
+      left: calc(50% - 440px); top: 100px;
+      width: 300px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px; padding: 13px;
+      transform: rotate(-7deg);
+    }
+    .bg-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 11px; }
+    .bg-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.3); }
+    .bg-url { flex: 1; height: 14px; border-radius: 999px; background: rgba(255,255,255,.16); margin-left: 4px; }
+    .bg-page { background: rgba(255,255,255,.07); border-radius: 10px; padding: 11px; }
+    .bg-block { height: 8px; border-radius: 5px; background: rgba(255,255,255,.20); margin-bottom: 7px; }
+    .bg-block.short { width: 60%; }
+    .bg-el {
+      margin-top: 12px; border: 2px solid rgba(249,115,22,.55);
+      border-radius: 8px; height: 36px; position: relative;
+      background: rgba(249,115,22,.09);
+    }
+    .bg-pin {
+      position: absolute; top: -13px; left: 10px;
+      width: 21px; height: 21px;
+      border-radius: 11px 11px 11px 3px;
+      background: #f97316; color: #fff;
+      font: 700 11px "Inter", sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(249,115,22,.4);
+    }
+    .bg-comment-card {
+      margin-top: 10px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 10px; padding: 9px 10px;
+    }
+    .bg-cline { height: 7px; border-radius: 4px; background: rgba(255,255,255,.22); margin-bottom: 5px; }
+    .bg-cline.short { width: 55%; margin-bottom: 0; }
+    .bg-chip-row { display: flex; gap: 5px; margin-top: 7px; }
+    .bg-chip {
+      border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
+      padding: 2px 8px; font: 500 10px "Inter", sans-serif;
+      color: rgba(255,255,255,.55);
+    }
+    /* Comment thread — right, tilted */
+    .bg-thread {
+      position: absolute;
+      right: calc(50% - 440px); top: 140px;
+      width: 200px; transform: rotate(5deg);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .bg-tcard {
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 12px; padding: 10px 12px;
+    }
+    .bg-av {
+      width: 20px; height: 20px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font: 700 9px "Inter", sans-serif; color: #fff;
+      vertical-align: middle; margin-right: 5px;
+    }
+    .bg-tline { height: 7px; border-radius: 4px; background: rgba(255,255,255,.20); margin-top: 7px; }
+    .bg-tline.short { width: 65%; margin-top: 4px; }
+    .bg-badge {
+      display: inline-block; border-radius: 6px;
+      padding: 2px 7px; font: 600 9px "Inter", sans-serif;
+      color: #fff; margin-top: 7px;
+    }
+    /* Floating solo pin — top right */
+    .bg-solo-pin {
+      position: absolute; right: calc(50% - 360px); top: 88px;
+      width: 24px; height: 24px;
+      border-radius: 12px 12px 12px 3px;
+      background: #0099ff; color: #fff;
+      font: 700 11px "Inter", sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      transform: rotate(5deg);
+      box-shadow: 0 3px 10px rgba(0,153,255,.35);
+      opacity: .7;
+    }
+    @media (max-width: 860px) { .bg-art { display: none; } }
 
     /* ── Hero copy above the card ─────────────────────── */
     .si-eyebrow {
@@ -214,6 +301,51 @@
 </nav>
 
 <div class="page-wrap">
+
+  <div class="bg-art" aria-hidden="true">
+    <!-- Browser + pin annotation — left -->
+    <div class="bg-browser">
+      <div class="bg-bar">
+        <span class="bg-dot"></span><span class="bg-dot"></span><span class="bg-dot"></span>
+        <span class="bg-url"></span>
+      </div>
+      <div class="bg-page">
+        <div class="bg-block"></div>
+        <div class="bg-block short"></div>
+        <div class="bg-el">
+          <div class="bg-pin">1</div>
+        </div>
+        <div class="bg-comment-card">
+          <div class="bg-cline"></div>
+          <div class="bg-cline short"></div>
+          <div class="bg-chip-row">
+            <span class="bg-chip">High</span>
+            <span class="bg-chip">@anna</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment thread — right -->
+    <div class="bg-thread">
+      <div class="bg-tcard">
+        <span class="bg-av" style="background:#0080ff">A</span>
+        <span style="font:500 10px 'Inter',sans-serif;color:rgba(255,255,255,.5)">acme.example</span>
+        <div class="bg-tline"></div>
+        <div class="bg-tline short"></div>
+        <div class="bg-badge" style="background:rgba(239,68,68,.55)">Critical</div>
+      </div>
+      <div class="bg-tcard">
+        <span class="bg-av" style="background:#17b26a">B</span>
+        <span style="font:500 10px 'Inter',sans-serif;color:rgba(255,255,255,.5)">Replied</span>
+        <div class="bg-tline"></div>
+        <div class="bg-badge" style="background:rgba(234,179,8,.55)">Medium</div>
+      </div>
+    </div>
+
+    <!-- Solo floating pin -->
+    <div class="bg-solo-pin">4</div>
+  </div>
 
   <p class="si-eyebrow">Your account</p>
   <h1 class="si-hero-title">
