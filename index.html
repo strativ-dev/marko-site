@@ -774,9 +774,16 @@
             Download marko-firefox.xpi
           </a>
           <p class="hint" style="margin-top:10px;">⚠️ Do not open the file directly — Zen blocks unsigned extensions. Use the Load Temporary Add-on dialog above.</p>
-          <p class="hint">Temporary add-ons are removed on restart — reinstall after each browser restart.</p>
+          <p class="hint">Temporary add-ons are removed on restart. To make it permanent, follow the optional step below.</p>
         </div></div>
         <div class="istep"><span class="n">4</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd>. Done.</p></div></div>
+        <div class="istep" style="margin-top:8px;opacity:.75;"><span class="n" style="background:#6b7280;">★</span><div>
+          <p><b>Optional — install permanently (no restart required):</b></p>
+          <p style="margin-top:6px;">1. Open <code>about:config</code> in Zen → accept the warning.</p>
+          <p>2. Search <code>xpinstall.signatures.required</code> → toggle it to <b>false</b>.</p>
+          <p>3. Download the <code>.xpi</code> above and open it directly — Zen will install it permanently.</p>
+          <p class="hint" style="margin-top:4px;">This pref may be locked on some Zen builds. If the toggle is missing, the temporary method is your only option.</p>
+        </div></div>
       </div>
     </div>
   </div>
