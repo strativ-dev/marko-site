@@ -124,18 +124,35 @@
       font-size: clamp(15px, 1.8vw, 17.5px); line-height: 1.6;
       color: rgba(255,255,255,.96);
     }
+    .cta-row {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+      margin: 32px auto 0; max-width: 560px;
+    }
     .cta-big {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      min-width: min(420px, 100%);
-      margin: 32px auto 0;
+      flex: 1 1 200px;
       background: var(--ink); color: #fff;
       border-radius: 999px;
       padding: 15px 28px;
       font-size: 16px; font-weight: 600;
+      text-decoration: none;
       transition: transform .3s ease-out;
     }
     .cta-big:hover { transform: translateY(-2px); }
     .cta-big svg { width: 16px; height: 16px; }
+    .cta-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      flex: 1 1 160px;
+      background: #fff; color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 13px 28px;
+      font-size: 16px; font-weight: 600;
+      text-decoration: none;
+      transition: transform .3s ease-out, background .2s, color .2s;
+    }
+    .cta-secondary:hover { transform: translateY(-2px); background: var(--ink); color: #fff; }
+    .cta-secondary svg { width: 16px; height: 16px; }
     .trust {
       display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
       margin-top: 18px;
@@ -273,7 +290,27 @@
     .feature p { color: var(--muted); font-size: 14.5px; line-height: 1.55; }
 
     /* ── Install steps ───────────────────────────────── */
+    .browser-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+    .btab {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 20px; border-radius: 999px; border: 1.5px solid var(--line);
+      background: transparent; color: var(--muted); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btab svg { width: 18px; height: 18px; }
+    .btab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .btab:not(.active):hover { border-color: var(--ink); color: var(--ink); }
+    .install-panel { display: none; }
+    .install-panel.active { display: block; }
     .install-steps { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .dl-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: var(--ink); color: #fff; border-radius: 14px; padding: 16px 24px;
+      text-decoration: none; font-size: 15px; font-weight: 700;
+      transition: opacity .2s; margin-bottom: 4px;
+    }
+    .dl-btn:hover { opacity: .85; }
+    .dl-btn svg { width: 20px; height: 20px; stroke: #fff; }
     .istep {
       display: flex; gap: 15px; align-items: flex-start;
       background: var(--card); border-radius: 16px; padding: 17px 20px;
@@ -486,7 +523,7 @@
   <p class="hero-sub">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with annotated screenshots, severities, and comments, so your team can find, fix, and close anything in minutes.</p>
   <a class="cta-big" href="#install">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
-    Download for Chrome
+    Download for Chrome or Firefox
   </a>
   <div class="trust">
     <span>Free forever</span>
@@ -685,13 +722,46 @@
   <div class="wrap">
     <div class="kicker">Get started</div>
     <h2>Installed in <span class="serif">two minutes.</span></h2>
-    <p class="section-sub">Marko ships as an open-source package while the Chrome Web Store listing is in review.</p>
-    <div class="install-steps">
-      <div class="istep"><span class="n">1</span><div><p><a href="https://github.com/strativ-dev/marko-site/releases/latest">Download the latest release zip</a> and unzip it.</p></div></div>
-      <div class="istep"><span class="n">2</span><div><p>Open <code>chrome://extensions</code> in Chrome.</p><p class="hint">Paste it into the address bar. Chrome blocks direct links to it.</p></div></div>
-      <div class="istep"><span class="n">3</span><div><p>Turn on <b>Developer mode</b> (top-right toggle).</p></div></div>
-      <div class="istep"><span class="n">4</span><div><p>Click <b>Load unpacked</b> and select the unzipped folder.</p></div></div>
-      <div class="istep"><span class="n">5</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd> (<kbd>⌘</kbd><kbd>⇧</kbd><kbd>M</kbd> on Mac). Done.</p></div></div>
+    <p class="section-sub">Marko ships as an open-source extension for Chrome and Firefox.</p>
+
+    <div class="browser-tabs">
+      <button class="btab active" data-browser="chrome">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><line x1="12" y1="3" x2="6" y2="15" stroke="currentColor" stroke-width="2"/><line x1="12" y1="3" x2="18" y2="15" stroke="currentColor" stroke-width="2"/><line x1="3" y1="15" x2="21" y2="15" stroke="currentColor" stroke-width="2"/></svg>
+        Chrome
+      </button>
+      <button class="btab" data-browser="firefox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c2.5 2 4 4.5 4 9s-1.5 7-4 9"/><path d="M12 3c-2.5 2-4 4.5-4 9s1.5 7 4 9"/><path d="M3 12h18"/></svg>
+        Firefox
+      </button>
+    </div>
+
+    <!-- Chrome -->
+    <div class="install-panel active" id="panel-chrome">
+      <div class="install-steps">
+        <a class="dl-btn" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-chrome.zip" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+          Download for Chrome
+        </a>
+        <div class="istep"><span class="n">1</span><div><p>Unzip the downloaded file.</p></div></div>
+        <div class="istep"><span class="n">2</span><div><p>Open <code>chrome://extensions</code> in Chrome.</p><p class="hint">Paste it into the address bar — Chrome blocks direct links to it.</p></div></div>
+        <div class="istep"><span class="n">3</span><div><p>Turn on <b>Developer mode</b> (top-right toggle).</p></div></div>
+        <div class="istep"><span class="n">4</span><div><p>Click <b>Load unpacked</b> and select the unzipped folder.</p></div></div>
+        <div class="istep"><span class="n">5</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd> (<kbd>⌘</kbd><kbd>⇧</kbd><kbd>M</kbd> on Mac). Done.</p></div></div>
+      </div>
+    </div>
+
+    <!-- Firefox -->
+    <div class="install-panel" id="panel-firefox">
+      <div class="install-steps">
+        <a class="dl-btn" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-firefox.xpi" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+          Download for Firefox
+        </a>
+        <div class="istep"><span class="n">1</span><div><p>Open <code>about:debugging</code> in Firefox.</p></div></div>
+        <div class="istep"><span class="n">2</span><div><p>Click <b>This Firefox</b> → <b>Load Temporary Add-on…</b></p></div></div>
+        <div class="istep"><span class="n">3</span><div><p>Select the downloaded <code>marko-firefox.xpi</code> file.</p><p class="hint">Temporary add-ons are removed on restart — reinstall after each browser restart.</p></div></div>
+        <div class="istep"><span class="n">4</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd>. Done.</p></div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -724,10 +794,16 @@
 <section class="final">
   <div class="wrap">
     <h2>Cut review time <span class="serif">today.</span></h2>
-    <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
-      Download for Chrome
-    </a>
+    <div class="cta-row" style="margin-top:0;">
+      <a class="cta-big" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-chrome.zip" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+        Download for Chrome
+      </a>
+      <a class="cta-secondary" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-firefox.xpi" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+        Download for Firefox
+      </a>
+    </div>
   </div>
 </section>
 
@@ -736,7 +812,7 @@
     <div class="foot-col foot-lead">
       <div class="foot-brand">
         <img src="marko-128.png?v=1.14.0" alt="" />
-        Marko <span class="tag">Chrome extension</span>
+        Marko <span class="tag">Browser extension</span>
       </div>
       <div class="foot-tag">Spot it. Pin it.<br/><span class="serif">Shipped by Friday.</span></div>
       <p class="foot-blurb">Marko saves your bug reports and UX feedback as pins anchored to real page elements, with screenshots, severities, and comment threads, so your team can find, fix, and close anything in minutes.</p>
@@ -822,6 +898,15 @@
   if (sb) sb.auth.onAuthStateChange(() => reflectAuthLinks());
   else reflectAuthLinks();
 })();
+
+// ── Browser tab switcher ────────────────────────────────────────────────────
+document.querySelectorAll(".btab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const browser = btn.dataset.browser;
+    document.querySelectorAll(".btab").forEach(b => b.classList.toggle("active", b === btn));
+    document.querySelectorAll(".install-panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + browser));
+  });
+});
 </script>
 
 </body>
