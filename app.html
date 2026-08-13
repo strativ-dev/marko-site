@@ -605,6 +605,14 @@ function bridgeToExtension(session) {
   const meta = session.user.user_metadata || {};
   const name = meta.name || meta.full_name || "";
   const avatar = meta.avatar_url || meta.picture || "";
+  // postMessage bridge — works on Firefox/Zen where chrome-extension:// URL fails.
+  window.postMessage({
+    type: "marko-bridge",
+    at: session.access_token, rt: session.refresh_token,
+    exp: (session.expires_at || 0) * 1000,
+    email: session.user.email, name, avatar,
+  }, "*");
+  // iframe bridge — Chrome (extension catches it via auth/callback.html).
   const frame = document.createElement("iframe");
   frame.style.display = "none";
   frame.src = CALLBACK + "#" +
