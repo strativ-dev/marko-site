@@ -1972,6 +1972,11 @@ async function boot() {
   if (!session) { location.href = "signin.html"; return; }
   // Keep the extension signed in with the current session.
   try { const { data } = await sb.auth.getSession(); if (data.session) bridgeToExtension(data.session); } catch {}
+  // Re-bridge when content script announces it's ready (fires at document_idle,
+  // after the initial bridgeToExtension call above — handles the race on Firefox).
+  window.addEventListener("marko-content-ready", async () => {
+    try { const { data } = await sb.auth.getSession(); if (data.session) bridgeToExtension(data.session); } catch {}
+  }, { once: true });
   $("#btn-create").addEventListener("click", openCreateModal);
   $("#sb-search").addEventListener("input", renderSidebar);
   document.querySelectorAll(".sb-tab").forEach((t) =>
