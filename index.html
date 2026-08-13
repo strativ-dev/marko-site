@@ -711,7 +711,7 @@
   <div class="wrap">
     <div class="kicker">Get started</div>
     <h2>Installed in <span class="serif">two minutes.</span></h2>
-    <p class="section-sub">Marko ships as an open-source extension for Chrome and Firefox.</p>
+    <p class="section-sub">Marko ships as an open-source extension for Chrome, Firefox, and Zen Browser.</p>
 
     <div class="browser-tabs">
       <button class="btab active" data-browser="chrome">
@@ -721,6 +721,10 @@
       <button class="btab" data-browser="firefox">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c2.5 2 4 4.5 4 9s-1.5 7-4 9"/><path d="M12 3c-2.5 2-4 4.5-4 9s1.5 7 4 9"/><path d="M3 12h18"/></svg>
         Firefox
+      </button>
+      <button class="btab" data-browser="zen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+        Zen
       </button>
     </div>
 
@@ -742,13 +746,35 @@
     <!-- Firefox -->
     <div class="install-panel" id="panel-firefox">
       <div class="install-steps">
-        <a class="dl-btn" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-firefox.xpi" download>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
-          Download for Firefox
-        </a>
-        <div class="istep"><span class="n">1</span><div><p>Open <code>about:debugging</code> in Firefox.</p></div></div>
+        <div class="istep"><span class="n">1</span><div><p>Open <code>about:debugging</code> in Firefox or Zen Browser.</p></div></div>
         <div class="istep"><span class="n">2</span><div><p>Click <b>This Firefox</b> → <b>Load Temporary Add-on…</b></p></div></div>
-        <div class="istep"><span class="n">3</span><div><p>Select the downloaded <code>marko-firefox.xpi</code> file.</p><p class="hint">Temporary add-ons are removed on restart — reinstall after each browser restart.</p></div></div>
+        <div class="istep"><span class="n">3</span><div>
+          <p>Download the file below, then select it in the dialog.</p>
+          <a class="dl-btn" style="margin-top:10px;" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-firefox.xpi" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+            Download marko-firefox.xpi
+          </a>
+          <p class="hint" style="margin-top:10px;">⚠️ Do not open the file directly — Firefox blocks unsigned extensions. Use the Load Temporary Add-on dialog above.</p>
+          <p class="hint">Temporary add-ons are removed on restart — reinstall after each browser restart.</p>
+        </div></div>
+        <div class="istep"><span class="n">4</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd>. Done.</p></div></div>
+      </div>
+    </div>
+
+    <!-- Zen -->
+    <div class="install-panel" id="panel-zen">
+      <div class="install-steps">
+        <div class="istep"><span class="n">1</span><div><p>Open <code>about:debugging</code> in Zen Browser.</p></div></div>
+        <div class="istep"><span class="n">2</span><div><p>Click <b>This Firefox</b> → <b>Load Temporary Add-on…</b></p></div></div>
+        <div class="istep"><span class="n">3</span><div>
+          <p>Download the file below, then select it in the dialog.</p>
+          <a class="dl-btn" style="margin-top:10px;" href="https://github.com/strativ-dev/marko-site/releases/latest/download/marko-firefox.xpi" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>
+            Download marko-firefox.xpi
+          </a>
+          <p class="hint" style="margin-top:10px;">⚠️ Do not open the file directly — Zen blocks unsigned extensions. Use the Load Temporary Add-on dialog above.</p>
+          <p class="hint">Temporary add-ons are removed on restart — reinstall after each browser restart.</p>
+        </div></div>
         <div class="istep"><span class="n">4</span><div><p>Pin Marko to your toolbar, open any site, press <kbd>Alt</kbd>+<kbd>M</kbd>. Done.</p></div></div>
       </div>
     </div>
