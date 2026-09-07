@@ -8,15 +8,85 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Fragment+Mono&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <script>
+    // Runs before the stylesheet so the page never paints the wrong theme.
+    // "system" stores nothing on the element and lets prefers-color-scheme win.
+    (() => {
+      try {
+        const t = localStorage.getItem("marko:theme");
+        if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+      } catch {}
+    })();
+  </script>
   <style>
     :root {
       --blue: #0099ff; --blue-deep: #0070f3; --blue-wash: #eaf1fe;
       --ink: #000000; --text: #000000; --sub: #4b5563; --muted: #7b828e;
-      --line: #e3e3e3; --card: #f7f7f7; --white: #fff;
+      --line: #e3e3e3; --card: #f7f7f7; --surface: #ffffff;
+      --solid: #000000; --solid-fg: #ffffff;
       --sev-neutral: #0099ff; --sev-low: #22c55e; --sev-medium: #eab308;
       --sev-high: #f97316; --sev-critical: #e5484d;
       --sidebar: #000000;
       --display: "Inter Tight", "Inter Display", "Inter", -apple-system, sans-serif;
+      /* Elevation. Dark needs deeper, more opaque shadows — a translucent navy
+         over a dark surface reads as nothing at all. */
+      --shadow-xs: 0 1px 2px rgba(10,14,30,.05);
+      --shadow-sm: 0 1px 3px rgba(10,14,30,.14);
+      --shadow-card: 0 5px 16px rgba(10,14,30,.10);
+      --shadow-md: 0 10px 26px rgba(10,14,30,.18);
+      --shadow-picker: 0 12px 32px rgba(10,14,30,.16);
+      --shadow-menu: 0 18px 50px rgba(10,14,30,.18);
+      --shadow-modal: 0 30px 70px rgba(10,14,30,.35);
+      --shadow-drawer: -18px 0 50px rgba(10,14,30,.18);
+      --shadow-footer: 0 -8px 30px rgba(10,14,30,.14);
+      color-scheme: light;
+      /* Shared dropdown chevron. Ink is flush to its 12x8 box (path 0.8..11.2
+         with a 1.6 round stroke), so a `right Npx` offset is exactly an Npx
+         gap — letting every select match its own padding-left. */
+      --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M0.8 1.2 6 6.4 11.2 1.2' fill='none' stroke='%234b5563' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    /* Dark palette. Only the tokens are redeclared — every rule above is written
+       against them, so nothing else needs a dark variant. Declared twice: once
+       for an explicit choice, once for "System", which follows the OS unless the
+       user has explicitly picked light. */
+    :root[data-theme="dark"] {
+      --blue-deep: #4bb0ff; --blue-wash: rgba(0, 153, 255, .18);
+      --ink: #e8eaf0; --text: #e8eaf0; --sub: #b3bac7; --muted: #8b93a3;
+      --line: #2c313c; --card: #23262e; --surface: #16181d;
+      --solid: #eef0f5; --solid-fg: #14161b;
+      --shadow-xs: 0 1px 2px rgba(0,0,0,.5);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.55);
+      --shadow-card: 0 5px 16px rgba(0,0,0,.55);
+      --shadow-md: 0 10px 26px rgba(0,0,0,.6);
+      --shadow-picker: 0 12px 32px rgba(0,0,0,.65);
+      --shadow-menu: 0 18px 50px rgba(0,0,0,.7);
+      --shadow-modal: 0 30px 70px rgba(0,0,0,.8);
+      --shadow-drawer: -18px 0 50px rgba(0,0,0,.7);
+      --shadow-footer: 0 -8px 30px rgba(0,0,0,.6);
+      --sidebar: #0a0b0e;
+      --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M0.8 1.2 6 6.4 11.2 1.2' fill='none' stroke='%23b3bac7' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      color-scheme: dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --blue-deep: #4bb0ff; --blue-wash: rgba(0, 153, 255, .18);
+        --ink: #e8eaf0; --text: #e8eaf0; --sub: #b3bac7; --muted: #8b93a3;
+        --line: #2c313c; --card: #23262e; --surface: #16181d;
+        --solid: #eef0f5; --solid-fg: #14161b;
+        --shadow-xs: 0 1px 2px rgba(0,0,0,.5);
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.55);
+        --shadow-card: 0 5px 16px rgba(0,0,0,.55);
+        --shadow-md: 0 10px 26px rgba(0,0,0,.6);
+        --shadow-picker: 0 12px 32px rgba(0,0,0,.65);
+        --shadow-menu: 0 18px 50px rgba(0,0,0,.7);
+        --shadow-modal: 0 30px 70px rgba(0,0,0,.8);
+        --shadow-drawer: -18px 0 50px rgba(0,0,0,.7);
+        --shadow-footer: 0 -8px 30px rgba(0,0,0,.6);
+        --sidebar: #0a0b0e;
+        --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M0.8 1.2 6 6.4 11.2 1.2' fill='none' stroke='%23b3bac7' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        color-scheme: dark;
+      }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     /* Any element given the hidden attribute must stay hidden, even when a
@@ -24,7 +94,7 @@
     [hidden] { display: none !important; }
     body {
       font: 14px/1.6em "Inter", -apple-system, sans-serif; letter-spacing: -0.01em; color: var(--text);
-      background: var(--white); height: 100vh; display: flex; overflow: hidden;
+      background: var(--surface); height: 100vh; display: flex; overflow: hidden;
     }
     button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
     input, select { font: inherit; }
@@ -41,12 +111,16 @@
       box-shadow: 0 0 0 1px rgba(255,255,255,.18);
     }
     .sb-brand b { font-size: 16px; color: #fff; font-family: var(--display); }
-    .sb-create {
-      background: #fff; color: var(--ink); border-radius: 999px;
-      padding: 11px 14px; font-weight: 600; text-align: center; margin-bottom: 12px;
-      transition: background .25s ease, transform .12s;
+    /* Shortcut to the landing page's install section, pushed to the far end of
+       the brand row. */
+    .sb-ext {
+      margin-left: auto; display: flex; align-items: center; gap: 6px;
+      padding: 6px 11px; border-radius: 999px;
+      color: #c3c8d6; font-size: 12.5px; font-weight: 500; white-space: nowrap;
+      transition: background .18s ease, color .18s ease;
     }
-    .sb-create:hover { background: #f3f4f6; transform: translateY(-1px); }
+    .sb-ext:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+    .sb-ext svg { width: 14px; height: 14px; flex-shrink: 0; }
     .sb-mentions {
       display: flex; align-items: center; gap: 9px; width: 100%;
       padding: 9px 12px; margin-bottom: 12px; border-radius: 9px;
@@ -63,7 +137,7 @@
     .mention-list { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; overflow-y: auto; }
     .mention-item {
       display: flex; gap: 12px; padding: 14px 16px; border: 1px solid var(--line);
-      border-radius: 12px; text-align: left; width: 100%; background: #fff;
+      border-radius: 12px; text-align: left; width: 100%; background: var(--surface);
     }
     .mention-item:hover { border-color: #cdd9f6; background: #f7faff; }
     .mention-item.unread { border-left: 3px solid var(--blue); background: #f7faff; }
@@ -103,6 +177,21 @@
       border-radius: 9px; color: #c3c8d6; text-align: left; width: 100%;
     }
     .sb-item:hover { background: rgba(255,255,255,.06); }
+    /* Subtle create action at the end of the project list. Shares .sb-item
+       metrics so it lines up with the rows above it. */
+    .sb-new {
+      display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+      border-radius: 9px; color: #8a90a3; font-size: 13px; text-align: left;
+      width: 100%; margin-top: 2px; flex-shrink: 0;
+      transition: background .18s ease, color .18s ease;
+    }
+    .sb-new:hover { background: rgba(255,255,255,.06); color: #fff; }
+    .sb-new .ico {
+      width: 26px; height: 26px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+    }
+    .sb-new svg { width: 14px; height: 14px; }
     .sb-item.active { background: rgba(0,153,255,.28); color: #fff; }
     .sb-item .dot {
       width: 26px; height: 26px; border-radius: 7px; background: rgba(255,255,255,.12);
@@ -147,7 +236,20 @@
     .prof-tab { padding: 12px 14px; font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
     .prof-tab.on { color: var(--blue); border-color: var(--blue); }
     .prof-body { flex: 1; overflow-y: auto; padding: 24px; background: #f6f7fa; }
-    .prof-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; max-width: 620px; padding: 20px 22px; }
+    .themegroup {
+      display: flex; gap: 3px; padding: 3px; max-width: 320px;
+      background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    }
+    .themegroup button {
+      flex: 1; padding: 8px 4px; border-radius: 8px; font-size: 13px;
+      color: var(--sub); transition: background .15s ease, color .15s ease;
+    }
+    .themegroup button:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+    .themegroup button.on {
+      background: var(--surface); color: var(--text); font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+    .prof-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; max-width: 620px; padding: 20px 22px; }
     .prof-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
     .prof-card .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
     .prof-row {
@@ -166,14 +268,20 @@
     }
     .sw i::after {
       content: ""; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px;
-      border-radius: 50%; background: #fff; transition: transform .15s;
+      border-radius: 50%; background: var(--surface); transition: transform .15s;
       box-shadow: 0 1px 3px rgba(0,0,0,.3);
     }
     .sw input:checked + i { background: #17b26a; }
     .sw input:checked + i::after { transform: translateX(19px); }
     .prof-field { display: block; margin-bottom: 14px; }
     .prof-field span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
-    .prof-field input { width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0; }
+    .prof-field input {
+      width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0;
+      background: var(--surface); color: var(--text);
+    }
+    .prof-field input::placeholder { color: var(--muted); }
+    /* Only a genuinely disabled field should carry the recessed fill. */
+    .prof-field input:disabled { background: var(--card); color: var(--muted); }
 
     /* ── main ── */
     main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -190,9 +298,9 @@
       display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
       transition: background .25s ease, transform .12s, box-shadow .12s;
     }
-    .btn.blue { background: var(--ink); color: #fff; }
+    .btn.blue { background: var(--solid); color: var(--solid-fg); }
     .btn.blue:hover { background: #1c1f26; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.16); }
-    .btn.ghost { border: 1px solid var(--line); color: var(--sub); background: #fff; }
+    .btn.ghost { border: 1px solid var(--line); color: var(--sub); background: var(--surface); }
     .btn.ghost:hover { border-color: #d6d9e0; color: var(--text); }
     .people { display: flex; align-items: center; gap: 4px; margin-right: 4px; }
     .person {
@@ -209,7 +317,7 @@
     .person.on .p-av { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue); }
     .person .p-n {
       position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      background: #fff; border: 1px solid var(--line); border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
       font-size: 10px; font-weight: 700; line-height: 1; padding: 2px 5px; color: var(--sub);
     }
     .person.on .p-n { border-color: var(--blue); color: var(--blue); }
@@ -226,7 +334,7 @@
     .author-banner {
       display: flex; align-items: center; gap: 12px;
       margin: 12px 24px 0; padding: 10px 14px;
-      background: var(--ink); color: #fff; border-radius: 10px; font-size: 13.5px;
+      background: var(--solid); color: var(--solid-fg); border-radius: 10px; font-size: 13.5px;
     }
     .author-banner[hidden] { display: none; }
 
@@ -246,13 +354,25 @@
     }
     .filters input[type="search"] {
       border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; width: 200px; outline: 0;
+      background: var(--surface); color: var(--text);
     }
+    .filters input[type="search"]::placeholder { color: var(--muted); }
     .filters input[type="search"]:focus { border-color: var(--blue); }
+    /* The native select arrow sits at a fixed UA inset from the right border
+       (~2.7px) that padding cannot move, so draw our own chevron and place it
+       10px in — the same gap as padding-left, so both sides match. */
     .filters select {
-      border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px;
-      background: #fff; color: var(--sub); outline: 0;
+      /* Fixed width: a select otherwise sizes to its widest option, so the
+         assignee/mention filters stretched to fit a full email address while
+         the severity one stayed narrow. Long labels ellipsis-truncate. */
+      width: 170px; flex-shrink: 0; text-overflow: ellipsis;
+      border: 1px solid var(--line); border-radius: 9px; padding: 8px 32px 8px 10px;
+      background: var(--surface); color: var(--sub); outline: 0;
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+      background-image: var(--chevron);
+      background-repeat: no-repeat;
+      background-position: right 10px center;
     }
-
     .board {
       flex: 1; overflow-x: auto; overflow-y: hidden;
       display: flex; gap: 14px; padding: 10px 24px 24px; align-items: stretch;
@@ -264,12 +384,30 @@
       min-height: 100%;
     }
     .col .col-bar { height: 3px; opacity: .9; }
+    .col-toggle {
+      display: flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+      color: var(--muted); transition: background .15s ease, color .15s ease;
+    }
+    .col-toggle:hover { background: var(--surface); color: var(--text); }
+    .col-toggle svg { width: 14px; height: 14px; }
+    .col.collapsed { width: 52px; align-items: center; padding-top: 0; gap: 8px; }
+    /* align-items:center shrinks the bar to its content width, so stretch it back. */
+    .col.collapsed .col-bar { align-self: stretch; }
+    .col.collapsed .col-toggle { margin-top: 11px; }
+    /* Label turned on its side so a rolled-up column stays readable. */
+    .col-rail {
+      writing-mode: vertical-rl; display: flex; align-items: center; gap: 10px;
+      padding-bottom: 14px; font-weight: 700; font-size: 13px; color: var(--text);
+      letter-spacing: -.01em; white-space: nowrap;
+    }
+    .col-rail .col-n { writing-mode: horizontal-tb; }
     .col header {
       padding: 13px 15px 10px; font-weight: 700; font-size: 13px;
       display: flex; align-items: center; gap: 8px; color: var(--text); letter-spacing: -.01em;
     }
     .col-n {
-      background: var(--white); color: var(--sub); border: 1px solid var(--line);
+      background: var(--surface); color: var(--sub); border: 1px solid var(--line);
       border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 700;
       min-width: 21px; text-align: center; line-height: 1.5;
     }
@@ -277,7 +415,7 @@
       display: inline-flex; align-items: center; gap: 6px; line-height: 1;
       font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
       color: color-mix(in srgb, var(--sc) 68%, #000);
-      background: color-mix(in srgb, var(--sc) 15%, #fff);
+      background: color-mix(in srgb, var(--sc) 15%, var(--surface));
       box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sc) 24%, transparent);
       border-radius: 999px; padding: 4px 9px 4px 8px; margin-bottom: 11px;
     }
@@ -287,21 +425,24 @@
     }
     .col .cards { flex: 1; overflow-y: auto; padding: 2px 10px 10px; display: flex; flex-direction: column; gap: 9px; }
     .hcard {
-      background: var(--white); border-radius: 14px; padding: 12px 13px 11px;
-      box-shadow: 0 1px 2px rgba(10,14,30,.05); cursor: grab;
+      background: var(--surface); border-radius: 14px; padding: 12px 13px 11px;
+      box-shadow: var(--shadow-xs); cursor: grab;
       border: 1px solid var(--line);
       transition: box-shadow .16s ease, border-color .16s ease, transform .16s ease;
     }
     .hcard:hover {
       border-color: color-mix(in srgb, var(--blue) 45%, var(--line));
-      box-shadow: 0 5px 16px rgba(10,14,30,.10); transform: translateY(-1px);
+      box-shadow: var(--shadow-card); transform: translateY(-1px);
     }
     .hcard.dragging {
       opacity: .55; cursor: grabbing; transform: rotate(1.5deg);
-      box-shadow: 0 10px 26px rgba(10,14,30,.18); border-color: var(--blue);
+      box-shadow: var(--shadow-md); border-color: var(--blue);
     }
     .col.dragover { outline: 2px dashed var(--blue); outline-offset: -4px; background: var(--blue-wash); }
-    .hcard .txt { font-size: 13px; line-height: 1.5; color: var(--text); margin-bottom: 12px; word-wrap: break-word; }
+    .drop-line { height: 2px; border-radius: 2px; background: var(--blue); flex-shrink: 0; }
+    /* Comments can contain newlines (Shift+Enter in the dock composer), and
+       renderText escapes rather than converting them to <br>. */
+    .hcard .txt { font-size: 13px; line-height: 1.5; color: var(--text); margin-bottom: 12px; word-wrap: break-word; white-space: pre-wrap; }
     .hcard .meta { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11.5px; }
     .hcard .n {
       display: inline-flex; align-items: center; gap: 4px;
@@ -319,11 +460,10 @@
       padding: 2px 8px; font-weight: 600; font-size: 11px; max-width: 120px;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .hcard .due { margin-left: auto; font-weight: 500; }
     .hcard .av {
       width: 21px; height: 21px; border-radius: 50%; background: var(--blue); color: #fff;
       font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 0 2px var(--white);
+      box-shadow: 0 0 0 2px var(--surface);
     }
     .hcard .done { margin-left: auto; }
     .hcard input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
@@ -394,8 +534,8 @@
       backdrop-filter: blur(6px);
     }
     .modal {
-      width: min(440px, 100%); background: #fff; border-radius: 30px; padding: 26px;
-      box-shadow: 0 30px 70px rgba(10,14,30,.35);
+      width: min(440px, 100%); background: var(--surface); border-radius: 30px; padding: 26px;
+      box-shadow: var(--shadow-modal);
     }
     .modal h2 { font-family: var(--display); font-size: 18px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.02em; }
     .modal .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
@@ -403,6 +543,14 @@
     .modal label span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
     .modal input, .modal textarea, .modal select {
       width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0;
+      background: var(--surface); color: var(--text);
+    }
+    .modal input::placeholder, .modal textarea::placeholder { color: var(--muted); }
+    .modal select {
+      padding-right: 35px; background-color: var(--surface);
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+      background-image: var(--chevron); background-repeat: no-repeat;
+      background-position: right 13px center;
     }
     .modal input:focus, .modal textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,153,255,.15); }
     .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
@@ -434,22 +582,49 @@
     /* ── comment detail drawer ── */
     .drawer {
       position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
-      background: #fff; box-shadow: -18px 0 50px rgba(10,14,30,.18); z-index: 90;
+      background: var(--surface); box-shadow: var(--shadow-drawer); z-index: 90;
       display: flex; flex-direction: column;
     }
     .drawer header {
       padding: 16px 20px; border-bottom: 1px solid var(--line);
       display: flex; align-items: center; gap: 10px;
     }
-    .drawer header .sev { width: 10px; height: 10px; border-radius: 50%; }
-    .drawer header b { font-size: 14px; flex: 1; }
+    .drawer header .kebab.del:hover {
+      color: #e5484d; border-color: #e5484d; background: #fdeced;
+    }
     .drawer .body { flex: 1; overflow-y: auto; padding: 18px 20px; }
-    .drawer .first { font-size: 14px; margin-bottom: 6px; }
-    .drawer .whenwho { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+    .drawer .openpage {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--sub);
+      font-size: 12px; font-weight: 500; white-space: nowrap;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+    .drawer .openpage:hover { background: var(--card); color: var(--text); border-color: var(--muted); }
+    .drawer .openpage svg { width: 12px; height: 12px; flex-shrink: 0; }
     .shot-wrap { position: relative; margin-bottom: 16px; }
     .d-shot {
       display: block; width: 100%; border-radius: 10px; border: 1px solid var(--line);
       background: var(--card); cursor: zoom-in;
+    }
+    /* While the screenshot loads, show a skeleton with a spinner instead of the
+       image's alt text, which otherwise renders as a line of stray text. */
+    .shot-wrap.loading {
+      min-height: 160px; border-radius: 10px;
+      border: 1px solid var(--line); background: var(--card);
+    }
+    .shot-wrap.loading .d-shot { visibility: hidden; }
+    .shot-wrap.loading .shot-hint { display: none; }
+    .shot-spinner { display: none; }
+    .shot-wrap.loading .shot-spinner {
+      display: block; position: absolute; top: 50%; left: 50%;
+      width: 22px; height: 22px; margin: -11px 0 0 -11px;
+      border: 2px solid var(--line); border-top-color: var(--muted);
+      border-radius: 50%; animation: shot-spin .7s linear infinite;
+    }
+    @keyframes shot-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .shot-wrap.loading .shot-spinner { animation-duration: 2.4s; }
     }
     .shot-hint {
       position: absolute; right: 8px; bottom: 8px;
@@ -473,11 +648,41 @@
     .drawer .props { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
     .drawer .props label span { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
     .drawer .props select, .drawer .props input {
-      width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: 0; background: #fff;
+      width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: 0; background: var(--surface);
+    }
+    .drawer .props .fullrow { grid-column: 1 / -1; }
+    .drawer .statusgroup {
+      display: flex; gap: 3px; padding: 3px;
+      background: var(--card); border: 1px solid var(--line); border-radius: 9px;
+    }
+    .drawer .statusgroup button {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 6px 4px; border-radius: 7px; font-size: 11.5px;
+      color: var(--sub); white-space: nowrap;
+      transition: background .15s ease, color .15s ease;
+    }
+    .drawer .statusgroup button:hover { background: rgba(10, 14, 30, .05); }
+    .drawer .statusgroup button.on {
+      background: var(--surface); color: var(--text); font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+    /* Severity swatch, shown inside the closed control and every option. */
+    .sevdot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    #d-severity > button, #d-severity selectedcontent {
+      display: flex; align-items: center; gap: 8px;
+    }
+    /* The author-supplied button replaces the UA one, so it carries the control's
+       own look; without base-select it is inert and never rendered. */
+    #d-severity > button { all: unset; width: 100%; cursor: pointer; }
+    .drawer .props select {
+      padding-right: 27px;
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+      background-image: var(--chevron); background-repeat: no-repeat;
+      background-position: right 9px center;
     }
     .cmt { display: flex; gap: 10px; margin-bottom: 14px; }
     .cmt .av { width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .cmt .bubble { background: var(--card); border-radius: 10px; padding: 8px 12px; font-size: 13px; flex: 1; }
+    .cmt .bubble { background: var(--card); border-radius: 10px; padding: 8px 12px; font-size: 13px; flex: 1; white-space: pre-wrap; word-wrap: break-word; }
     .cmt .bubble .by { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
     .cmt .bubble .at { color: var(--muted); font-size: 11px; margin-top: 4px; }
     .drawer footer { border-top: 1px solid var(--line); padding: 14px 20px; display: flex; gap: 10px; }
@@ -501,8 +706,8 @@
     .composer .mkhl-back .mention { padding: 0; font-weight: inherit; }
     .mentions {
       position: absolute; left: 0; right: 0; bottom: calc(100% + 6px);
-      background: #fff; border: 1px solid var(--line); border-radius: 12px;
-      box-shadow: 0 -8px 30px rgba(10,14,30,.14); overflow: hidden; z-index: 5;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow-footer); overflow: hidden; z-index: 5;
     }
     .mentions button {
       display: flex; align-items: center; gap: 9px; width: 100%;
@@ -520,13 +725,56 @@
     .drawer footer input:focus { border-color: var(--blue); }
 
     .menu {
-      position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 12px;
-      box-shadow: 0 18px 50px rgba(10,14,30,.18); padding: 6px; z-index: 110; min-width: 200px;
+      position: absolute; background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow-menu); padding: 6px; z-index: 110; min-width: 200px;
     }
-    .menu button { display: block; width: 100%; text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 13.5px; }
+    .menu button {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 13.5px;
+    }
     .menu button:hover { background: var(--card); }
+    /* Icons stay muted against the label; the danger row tints its own. */
+    .menu button svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--muted); }
     .menu .danger { color: #e5484d; }
+    .menu .danger svg { color: currentColor; }
     .menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
+
+    /* macOS draws the native select popup *over* the control so the selected row
+       lands under the cursor. That position is OS-owned and CSS cannot move it.
+       Chromium's customizable select swaps the OS popup for a page-rendered
+       picker anchored below; the closed control is left exactly as it was (our
+       own chevron kept, the UA picker icon hidden). Engines without base-select
+       ignore all of this and keep the native popup.
+
+       Placed last on purpose: the per-context rules above set `appearance:none`
+       at the same specificity, so this has to come after them to win. */
+    @supports (appearance: base-select) {
+      .filters select, .modal select, .drawer .props select,
+      ::picker(select) { appearance: base-select; }
+      select::picker-icon { display: none; }   /* each select keeps our chevron */
+      ::picker(select) {
+        /* Pin it below the control. Without this the UA's position-try
+           fallbacks flip it above inside the fixed-position drawer. */
+        position-area: block-end span-inline-end;
+        margin-top: 6px;
+        min-width: anchor-size(width);
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        box-shadow: var(--shadow-picker);
+      }
+      /* Options stay children of the <select>, so they are styled through it —
+         not as descendants of the ::picker pseudo-element. */
+      select option {
+        display: flex; align-items: center; gap: 8px;
+        padding: 7px 10px; border-radius: 7px;
+        font-size: 13px; color: var(--text);
+      }
+      select option:hover { background: var(--card); }
+      select option:checked { background: var(--blue-wash); color: var(--blue-deep); }
+      select option::checkmark { display: none; }
+    }
 
     @media (max-width: 760px) {
       aside { display: none; }
@@ -536,8 +784,14 @@
 <body>
 
 <aside>
-  <div class="sb-brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b></div>
-  <button class="sb-create" id="btn-create">+ Create project</button>
+  <div class="sb-brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b>
+    <button class="sb-ext" id="btn-ext" title="Get the browser extension">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /><path d="M12 15V3" />
+      </svg>
+      <span>Extension</span>
+    </button>
+  </div>
   <button class="sb-mentions" id="btn-mentions">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="4" /><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9" />
@@ -645,6 +899,25 @@ const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const initials = (s) => (String(s || "?").trim()[0] || "?").toUpperCase();
 const fmtDate = (t) => t ? new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+const localPart = (e) => String(e || "").split("@")[0];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+// 15-Aug-2026
+const fmtAbs = (t) => {
+  const d = new Date(t);
+  return String(d.getDate()).padStart(2, "0") + "-" + MONTHS[d.getMonth()] + "-" + d.getFullYear();
+};
+// Relative while it still reads as "recent" — hours up to a day, then days up
+// to three — and an absolute date beyond that.
+function fmtStamp(t) {
+  const mins = Math.floor((Date.now() - new Date(t).getTime()) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + (mins === 1 ? " min ago" : " mins ago");
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + (hrs === 1 ? " hr ago" : " hrs ago");
+  const days = Math.floor(hrs / 24);
+  if (days <= 3) return days + (days === 1 ? " day ago" : " days ago");
+  return fmtAbs(t);
+}
 // Deterministic avatar color per person (same email → same color everywhere).
 const AV_COLORS = ["#0099ff","#7c5cff","#f97316","#e5484d","#16a34a","#eab308","#06b6d4","#ec4899","#8b5cf6","#f43f5e","#14b8a6","#f59e0b"];
 function avatarColor(seed) {
@@ -718,6 +991,10 @@ function renderSidebar() {
   );
 
   const shown = sbTab === "archived" ? archived : active;
+  const newProjectBtn = `<button class="sb-new" id="sb-new">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+    <span>New project</span>
+  </button>`;
   $("#sb-list").innerHTML = shown
     .filter((p) => !q || p.name.toLowerCase().includes(q) || (p.url || "").toLowerCase().includes(q))
     .map((p) => {
@@ -732,6 +1009,10 @@ function renderSidebar() {
     }).join("") || `<p style="color:#8a90a3;font-size:12.5px;padding:8px 10px">${
       sbTab === "archived" ? "Nothing archived." : q ? "No match." : "No projects yet."
     }</p>`;
+  // Always available, including on an empty list — that is exactly when it is
+  // wanted. Appended after the rows so it scrolls with them.
+  $("#sb-list").insertAdjacentHTML("beforeend", newProjectBtn);
+  $("#sb-new").addEventListener("click", openCreateModal);
   document.querySelectorAll(".sb-item").forEach((el) =>
     el.addEventListener("click", () => { location.hash = "#/p/" + el.dataset.pid; })
   );
@@ -853,7 +1134,8 @@ function renderProject() {
         ${roster.map((m) => `<option ${filters.mentioned === m ? "selected" : ""} value="${esc(m)}">${esc(m)}</option>`).join("")}
       </select>
       <span style="flex:1"></span>
-      <button class="btn ghost" id="btn-import" title="Import pins from a CSV">Import CSV</button>
+      <!-- Import moved into the kebab menu; the input and its status line stay
+           here so importCsv() has somewhere to report progress. -->
       <input type="file" id="import-file" accept=".csv,text/csv" hidden />
       <span class="status" id="import-status"></span>
     </div>
@@ -863,7 +1145,6 @@ function renderProject() {
   $("#f-severity").addEventListener("change", (e) => { filters.severity = e.target.value; renderBoard(); });
   $("#f-assignee").addEventListener("change", (e) => { filters.assignee = e.target.value; renderBoard(); });
   $("#f-mentioned").addEventListener("change", (e) => { filters.mentioned = e.target.value; renderBoard(); });
-  $("#btn-import").addEventListener("click", () => $("#import-file").click());
   $("#import-file").addEventListener("change", (e) => importCsv(e.target.files[0]));
   const unarch = $("#unarchive-now");
   if (unarch) unarch.addEventListener("click", async () => {
@@ -897,13 +1178,94 @@ function renderProject() {
   renderBoard();
 }
 
+/* ── card order (per browser) ───────────────────────────────────────────
+   Card order lives in localStorage, not the database: it is a personal
+   arrangement, so it does not follow the project to teammates or to another
+   device. Stored as one flat list of pin ids for the whole project; ids that
+   are missing from it (new pins, or pins dropped by a filter) fall to the end
+   in their server order. */
+const COLLAPSE_KEY = (pid) => "marko:collapsed:" + pid;
+// Which columns are rolled up. Per browser, like card order — a personal view
+// preference, not something to push onto teammates.
+function loadCollapsed(pid) {
+  try {
+    const v = JSON.parse(localStorage.getItem(COLLAPSE_KEY(pid)));
+    return Array.isArray(v) ? v : [];
+  } catch { return []; }
+}
+function saveCollapsed(pid, ids) {
+  try { localStorage.setItem(COLLAPSE_KEY(pid), JSON.stringify(ids)); } catch {}
+}
+// Only Done gets a toggle for now; the storage handles any number of columns.
+const COLLAPSIBLE = ["done"];
+
+const ORDER_KEY = (pid) => "marko:order:" + pid;
+function loadOrder(pid) {
+  try {
+    const v = JSON.parse(localStorage.getItem(ORDER_KEY(pid)));
+    return Array.isArray(v) ? v : [];
+  } catch { return []; }
+}
+function saveOrder(pid, ids) {
+  // Private windows and blocked site data throw here; order is a nicety, so
+  // failing to persist it must never break the board.
+  try { localStorage.setItem(ORDER_KEY(pid), JSON.stringify(ids)); } catch {}
+}
+// Array.sort is stable, so unknown ids keep the order the server sent.
+function sortByOrder(list, pid) {
+  const idx = new Map(loadOrder(pid).map((id, i) => [id, i]));
+  return list.slice().sort((a, b) =>
+    (idx.has(a.id) ? idx.get(a.id) : Infinity) - (idx.has(b.id) ? idx.get(b.id) : Infinity));
+}
+// Where a drop at this pointer position would land, among the cards on screen.
+function dropIndex(col, clientY) {
+  const cards = [...col.querySelectorAll(".hcard:not(.dragging)")];
+  for (let i = 0; i < cards.length; i++) {
+    const r = cards[i].getBoundingClientRect();
+    if (clientY < r.top + r.height / 2) return i;
+  }
+  return cards.length;
+}
+function clearDropLine() {
+  document.querySelectorAll(".drop-line").forEach((l) => l.remove());
+}
+function showDropLine(col, clientY) {
+  const cards = col.querySelector(".cards");
+  if (!cards) return;
+  let line = document.querySelector(".drop-line") || document.createElement("div");
+  line.className = "drop-line";
+  const items = [...cards.querySelectorAll(".hcard:not(.dragging)")];
+  let before = null;
+  for (const el of items) {
+    const r = el.getBoundingClientRect();
+    if (clientY < r.top + r.height / 2) { before = el; break; }
+  }
+  cards.insertBefore(line, before);
+}
+
 function renderBoard() {
   const filtered = applyFilters(current.pins);
+  const collapsed = loadCollapsed(current.project.id);
+  const chevron = (dir) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${dir === "left" ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"}"/></svg>`;
   $("#board").innerHTML = STATUSES.map((st) => {
-    const items = filtered.filter((h) => statusOf(h) === st.id);
+    const items = sortByOrder(filtered.filter((h) => statusOf(h) === st.id), current.project.id);
+    const canCollapse = COLLAPSIBLE.includes(st.id);
+    // A rolled-up column stays a drop target, so cards can still be moved into
+    // it without expanding first.
+    if (canCollapse && collapsed.includes(st.id)) {
+      return `<div class="col collapsed" data-status="${st.id}">
+        <div class="col-bar" style="background:${st.color}"></div>
+        <button class="col-toggle" data-toggle="${st.id}" title="Expand ${st.label}">${chevron("right")}</button>
+        <div class="col-rail">${st.label} <span class="col-n">${items.length}</span></div>
+      </div>`;
+    }
     return `<div class="col" data-status="${st.id}">
       <div class="col-bar" style="background:${st.color}"></div>
-      <header>${st.label} <span class="col-n">${items.length}</span></header>
+      <header>${st.label} <span class="col-n">${items.length}</span>
+        ${canCollapse ? `<span style="flex:1"></span>
+        <button class="col-toggle" data-toggle="${st.id}" title="Collapse ${st.label}">${chevron("left")}</button>` : ""}
+      </header>
       <div class="cards">
         ${items.map((h) => {
           const sev = SEVERITIES.find((s) => s.id === severityOf(h)) || SEVERITIES[0];
@@ -915,13 +1277,25 @@ function renderBoard() {
               <span class="n">${1 + (h.comments || []).length}</span>
               <span class="av" style="background:${avatarColor(h.createdBy)}" title="${esc(h.createdBy)}">${esc(initials(h.createdBy))}</span>
               ${h.assignee ? `<span class="asgn" title="Assigned to ${esc(h.assignee)}">→ ${esc(h.assignee.split("@")[0])}</span>` : ""}
-              ${h.due ? `<span class="due">${fmtDate(h.due)}</span>` : ""}
             </div>
           </div>`;
         }).join("")}
       </div>
     </div>`;
   }).join("");
+
+  document.querySelectorAll(".col-toggle").forEach((btn) =>
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const pid = current.project.id;
+      const id = btn.dataset.toggle;
+      const next = loadCollapsed(pid);
+      const i = next.indexOf(id);
+      if (i > -1) next.splice(i, 1); else next.push(id);
+      saveCollapsed(pid, next);
+      renderBoard();
+    })
+  );
 
   document.querySelectorAll(".hcard").forEach((el) =>
     el.addEventListener("click", () => openDrawer(el.dataset.hid))
@@ -930,33 +1304,71 @@ function renderBoard() {
   // drag a card to another status column
   document.querySelectorAll(".hcard").forEach((el) => {
     el.addEventListener("dragstart", (e) => {
+      // The drag image that follows the cursor is a raster snapshot the browser
+      // takes of the source node, so styling .dragging cannot reach it. Hand it
+      // a ghosted clone instead, grabbed at the same point the cursor took hold.
+      const r = el.getBoundingClientRect();
+      const ghost = el.cloneNode(true);
+      ghost.classList.remove("dragging");
+      ghost.style.cssText += `position:absolute;top:-1000px;left:-1000px;
+        width:${r.width}px;opacity:.2;pointer-events:none;margin:0;`;
+      document.body.appendChild(ghost);
+      e.dataTransfer.setDragImage(ghost, e.clientX - r.left, e.clientY - r.top);
+      // Safe to drop once the snapshot has been taken.
+      setTimeout(() => ghost.remove(), 0);
+
       el.classList.add("dragging");
       e.dataTransfer.setData("text/plain", el.dataset.hid);
       e.dataTransfer.effectAllowed = "move";
     });
-    el.addEventListener("dragend", () => el.classList.remove("dragging"));
+    el.addEventListener("dragend", () => { el.classList.remove("dragging"); clearDropLine(); });
   });
   document.querySelectorAll(".col").forEach((col) => {
     col.addEventListener("dragover", (e) => {
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
       col.classList.add("dragover");
+      showDropLine(col, e.clientY);
     });
     col.addEventListener("dragleave", (e) => {
-      if (!col.contains(e.relatedTarget)) col.classList.remove("dragover");
+      if (!col.contains(e.relatedTarget)) { col.classList.remove("dragover"); clearDropLine(); }
     });
     col.addEventListener("drop", async (e) => {
       e.preventDefault();
       col.classList.remove("dragover");
+      const at = dropIndex(col, e.clientY);
+      clearDropLine();
       const hid = e.dataTransfer.getData("text/plain");
       const status = col.dataset.status;
       const h = current.pins.find((x) => x.id === hid);
-      if (!h || !status || statusOf(h) === status) return;
-      const prev = h.status;
-      h.status = status;
+      if (!h || !status) return;
+
+      const pid = current.project.id;
+      const prevStatus = h.status;
+      const prevOrder = loadOrder(pid);
+
+      // Rebuild each column's order from what is on screen, move the dragged
+      // card into its new slot, then flatten column by column. Pins hidden by a
+      // filter keep a slot at the end so their order is not thrown away.
+      const filtered = applyFilters(current.pins);
+      const byStatus = new Map(STATUSES.map((st) =>
+        [st.id, sortByOrder(filtered.filter((x) => statusOf(x) === st.id), pid).map((x) => x.id)]));
+      for (const arr of byStatus.values()) {
+        const i = arr.indexOf(hid);
+        if (i > -1) arr.splice(i, 1);
+      }
+      const target = byStatus.get(status) || [];
+      target.splice(Math.min(at, target.length), 0, hid);
+      const flat = STATUSES.flatMap((st) => byStatus.get(st.id) || []);
+      const seen = new Set(flat);
+      saveOrder(pid, [...flat, ...current.pins.map((x) => x.id).filter((id) => !seen.has(id))]);
+
+      const statusChanged = statusOf(h) !== status;
+      if (statusChanged) h.status = status;
       renderBoard();
-      try { await api(`/projects/${current.project.id}/pins/${hid}`, { method: "PATCH", body: JSON.stringify({ status }) }); }
-      catch { h.status = prev; renderBoard(); }
+      if (!statusChanged) return;   // reorder only — nothing to persist server-side
+      try { await api(`/projects/${pid}/pins/${hid}`, { method: "PATCH", body: JSON.stringify({ status }) }); }
+      catch { h.status = prevStatus; saveOrder(pid, prevOrder); renderBoard(); }
     });
   });
 }
@@ -966,34 +1378,33 @@ function openDrawer(hid) {
   const h = current.pins.find((x) => x.id === hid);
   if (!h) return;
   closeDrawer();
-  const sev = SEVERITIES.find((s) => s.id === severityOf(h));
+  // Mirrors the pins_delete RLS policy (author or project owner), so the button
+  // is only offered where the server will actually allow it.
+  const canDelete = h.createdBy === session.email || current.project.owner === session.email;
   const el = document.createElement("div");
   el.className = "drawer";
   el.id = "drawer";
   el.innerHTML = `
     <header>
-      <span class="sev" style="background:${sev.color}"></span>
-      <b>Pin</b>
+      ${h.pageUrl ? `<button class="openpage" id="d-openpage">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        <span>Open page</span>
+      </button>` : ""}
+      <span style="flex:1"></span>
+      ${canDelete ? `<button class="kebab del" id="drawer-del" title="Delete comment" aria-label="Delete comment">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>` : ""}
       <button class="kebab" id="drawer-close" aria-label="Close">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </header>
     <div class="body">
-      <p class="first">${renderText(h.comment)}</p>
-      <p class="whenwho">${esc(h.createdBy)} · ${new Date(h.createdAt).toLocaleString()}${h.pageUrl ? ` · <a href="${esc(h.pageUrl)}" target="_blank" rel="noopener" style="color:var(--blue)">open page</a>` : ""}</p>
-      ${h.hasShot ? `<div class="shot-wrap" id="shot-wrap">
-        <img class="d-shot" id="d-shot" alt="Screenshot of the commented element" />
-        <span class="shot-hint">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-          Click to expand
-        </span>
-      </div>` : ""}
       <div class="props">
         <label><span>Severity</span>
-          <select id="d-severity">${SEVERITIES.map((s) => `<option value="${s.id}" ${s.id === severityOf(h) ? "selected" : ""}>${s.label}</option>`).join("")}</select>
-        </label>
-        <label><span>Status</span>
-          <select id="d-status">${STATUSES.map((s) => `<option value="${s.id}" ${s.id === statusOf(h) ? "selected" : ""}>${s.label}</option>`).join("")}</select>
+          <select id="d-severity">
+            <button><selectedcontent></selectedcontent></button>
+            ${SEVERITIES.map((s) => `<option value="${s.id}" ${s.id === severityOf(h) ? "selected" : ""}><i class="sevdot" style="background:${s.color}"></i>${s.label}</option>`).join("")}
+          </select>
         </label>
         <label><span>Assignee</span>
           <select id="d-assignee">
@@ -1002,9 +1413,24 @@ function openDrawer(hid) {
             ${h.assignee && !memberList().includes(h.assignee) ? `<option value="${esc(h.assignee)}" selected>${esc(h.assignee)}</option>` : ""}
           </select>
         </label>
-        <label><span>Due</span><input id="d-due" type="date" value="${h.due ? new Date(h.due).toISOString().slice(0, 10) : ""}" /></label>
+        <label class="fullrow"><span>Status</span>
+          <div class="statusgroup" id="d-status">
+            ${STATUSES.map((st) => `<button type="button" data-status="${st.id}" class="${st.id === statusOf(h) ? "on" : ""}">${st.label}</button>`).join("")}
+          </div>
+        </label>
       </div>
-      <div id="d-comments">${(h.comments || []).map(renderComment).join("")}</div>
+      ${h.hasShot ? `<div class="shot-wrap loading" id="shot-wrap">
+        <span class="shot-spinner" aria-hidden="true"></span>
+        <img class="d-shot" id="d-shot" alt="Screenshot of the commented element" />
+        <span class="shot-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          Click to expand
+        </span>
+      </div>` : ""}
+      <div id="d-comments">${[
+        { by: h.createdBy, byName: localPart(h.createdBy), text: h.comment, at: h.createdAt },
+        ...(h.comments || []),
+      ].map(renderComment).join("")}</div>
     </div>
     <footer>
       <div class="composer">
@@ -1015,12 +1441,58 @@ function openDrawer(hid) {
     </footer>`;
   document.body.appendChild(el);
 
+  // Click anywhere outside to dismiss. Registered on the next tick so the very
+  // click that opened the drawer does not immediately close it, and in the
+  // capture phase so it still fires for handlers that stop propagation.
+  if (drawerDismiss) document.removeEventListener("click", drawerDismiss, true);
+  drawerDismiss = (ev) => {
+    if (el.contains(ev.target)) return;
+    // Modals, the screenshot lightbox and menus open above the drawer; a click
+    // in one of those is not a click "outside".
+    if (ev.target.closest && ev.target.closest(".overlay, .menu, .lightbox")) return;
+    closeDrawer();
+  };
+  setTimeout(() => document.addEventListener("click", drawerDismiss, true), 0);
+
   $("#drawer-close").addEventListener("click", closeDrawer);
+  const openPage = $("#d-openpage");
+  if (openPage) openPage.addEventListener("click", () => {
+    window.open(h.pageUrl, "_blank", "noopener");
+  });
+  const delBtn = $("#drawer-del");
+  if (delBtn) delBtn.addEventListener("click", async () => {
+    const ok = await confirmModal({
+      title: "Delete this comment?",
+      body: "The comment, its replies and its screenshot are removed for everyone. This cannot be undone.",
+      okLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
+    // Optimistic: drop it from the board straight away, put it back if the
+    // request fails, so a dead network never silently loses a comment.
+    const idx = current.pins.findIndex((x) => x.id === h.id);
+    if (idx === -1) return;
+    const [removed] = current.pins.splice(idx, 1);
+    closeDrawer();
+    renderBoard();
+    try {
+      await api(`/projects/${current.project.id}/pins/${h.id}`, { method: "DELETE" });
+    } catch (e) {
+      current.pins.splice(idx, 0, removed);
+      renderBoard();
+      alertBanner("Could not delete that comment: " + e.message);
+    }
+  });
   const shotEl = $("#d-shot");
   if (shotEl) {
     api(`/projects/${current.project.id}/pins/${h.id}/shot`)
       .then((d) => {
         if (!d.shot) { $("#shot-wrap")?.remove(); return; }
+        // Drop the placeholder only once the image has decoded, not when the
+        // URL is assigned — otherwise the spinner disappears before anything
+        // is on screen.
+        shotEl.addEventListener("load", () => $("#shot-wrap")?.classList.remove("loading"), { once: true });
+        shotEl.addEventListener("error", () => $("#shot-wrap")?.remove(), { once: true });
         shotEl.src = d.shot;
         shotEl.addEventListener("click", () => openLightbox(d.shot));
       })
@@ -1032,9 +1504,13 @@ function openDrawer(hid) {
     try { await api(`/projects/${current.project.id}/pins/${h.id}`, { method: "PATCH", body: JSON.stringify(body) }); } catch {}
   };
   $("#d-severity").addEventListener("change", (e) => patch({ severity: e.target.value }));
-  $("#d-status").addEventListener("change", (e) => patch({ status: e.target.value }));
+  $("#d-status").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-status]");
+    if (!btn || btn.classList.contains("on")) return;
+    $("#d-status").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b === btn));
+    patch({ status: btn.dataset.status });
+  });
   $("#d-assignee").addEventListener("change", (e) => patch({ assignee: e.target.value }));
-  $("#d-due").addEventListener("change", (e) => patch({ due: e.target.value ? new Date(e.target.value).getTime() : null }));
   // Assigned once attachMentions runs, below; send() is defined first.
   let repaintComposer = () => {};
   const send = async () => {
@@ -1064,10 +1540,18 @@ function openDrawer(hid) {
 function renderComment(c) {
   return `<div class="cmt">
     <span class="av" style="background:${avatarColor(c.by || c.byName)}">${esc(initials(c.byName || c.by))}</span>
-    <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${renderText(c.text)}<div class="at">${new Date(c.at).toLocaleString()}</div></div>
+    <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${renderText(c.text)}<div class="at" title="${esc(new Date(c.at).toLocaleString())}">${esc(fmtStamp(c.at))}</div></div>
   </div>`;
 }
-function closeDrawer() { const d = $("#drawer"); if (d) d.remove(); }
+let drawerDismiss = null;
+function closeDrawer() {
+  const d = $("#drawer");
+  if (d) d.remove();
+  if (drawerDismiss) {
+    document.removeEventListener("click", drawerDismiss, true);
+    drawerDismiss = null;
+  }
+}
 
 function openLightbox(src) {
   const lb = document.createElement("div");
@@ -1299,14 +1783,29 @@ function openKebab(e) {
   const r = e.currentTarget.getBoundingClientRect();
   menu.style.top = r.bottom + 6 + "px";
   menu.style.right = (window.innerWidth - r.right) + "px";
+  const ico = (paths) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+  const ICONS = {
+    open: ico(`<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>`),
+    details: ico(`<circle cx="12" cy="12" r="9.5"/><path d="M12 16.5v-5"/><path d="M12 8h.01"/>`),
+    copy: ico(`<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>`),
+    export: ico(`<path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/>`),
+    import: ico(`<path d="M12 3v14"/><path d="m6 9 6-6 6 6"/><path d="M19 21H5"/>`),
+    // Box with a down arrow to file it away, up arrow to bring it back.
+    archive: ico(`<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M12 12v6"/><path d="m9 15 3 3 3-3"/>`),
+    unarchive: ico(`<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/>`),
+    delete: ico(`<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>`),
+  };
   menu.innerHTML = `
-    <button id="k-open">Open website</button>
-    <button id="k-details">Project details</button>
-    <button id="k-copy">Copy project link</button>
-    <button id="k-export">Export project</button>
-    <button id="k-archive">${p.archived ? "Unarchive" : "Archive"} project</button>
+    <button id="k-open">${ICONS.open}<span>Open website</span></button>
+    <button id="k-details">${ICONS.details}<span>Project details</span></button>
+    <button id="k-copy">${ICONS.copy}<span>Copy project link</span></button>
     <hr />
-    <button class="danger" id="k-delete">Delete project</button>`;
+    <button id="k-export">${ICONS.export}<span>Export project</span></button>
+    <button id="k-import">${ICONS.import}<span>Import CSV</span></button>
+    <hr />
+    <button id="k-archive">${p.archived ? ICONS.unarchive : ICONS.archive}<span>${p.archived ? "Unarchive" : "Archive"} project</span></button>
+    <button class="danger" id="k-delete">${ICONS.delete}<span>Delete project</span></button>`;
   document.body.appendChild(menu);
   const dismiss = (ev) => { if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener("click", dismiss, true); } };
   setTimeout(() => document.addEventListener("click", dismiss, true), 0);
@@ -1317,6 +1816,11 @@ function openKebab(e) {
     window.open(/^https?:/.test(p.url) ? p.url : "https://" + p.url, "_blank", "noopener");
   });
   $("#k-details").addEventListener("click", () => { menu.remove(); openDetailsModal(); });
+  $("#k-import").addEventListener("click", () => {
+    menu.remove();
+    const input = $("#import-file");
+    if (input) input.click();
+  });
   $("#k-export").addEventListener("click", () => { menu.remove(); location.hash = "#/p/" + p.id + "/export"; });
   $("#k-copy").addEventListener("click", async () => {
     menu.remove();
@@ -1444,6 +1948,21 @@ async function renderProfile() {
   renderSidebar();
 }
 
+const THEMES = [["light", "Light"], ["dark", "Dark"], ["system", "System"]];
+// Per browser, not per account: a theme belongs to the device you are looking
+// at, not to your profile on every other machine.
+function currentTheme() {
+  try { return localStorage.getItem("marko:theme") || "system"; } catch { return "system"; }
+}
+function applyTheme(t) {
+  if (t === "system") delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = t;
+  try {
+    if (t === "system") localStorage.removeItem("marko:theme");
+    else localStorage.setItem("marko:theme", t);
+  } catch {}
+}
+
 const PREF_ROWS = [
   ["mention", "Someone mentions me in a comment"],
   ["newComment", "New reply on a comment I created"],
@@ -1470,6 +1989,13 @@ function paintProfile() {
           </div>
         </div>
         <div class="prof-card" style="margin-top:16px">
+          <h3>Appearance</h3>
+          <p class="sub">Applies to this browser only. System follows your OS setting.</p>
+          <div class="themegroup" id="pf-theme">
+            ${THEMES.map(([id, label]) => `<button type="button" data-theme-opt="${id}" class="${currentTheme() === id ? "on" : ""}">${label}</button>`).join("")}
+          </div>
+        </div>
+        <div class="prof-card" style="margin-top:16px">
           <h3>Change password</h3>
           <p class="sub">Set a new password. You'll stay signed in on this device.</p>
           <label class="prof-field"><span>New password (8+ characters)</span><input id="pf-pw1" type="password" autocomplete="new-password" /></label>
@@ -1492,6 +2018,14 @@ function paintProfile() {
           <p class="status" id="pf-nstatus"></p>
         </div>`}
     </div>`;
+
+  const themeGroup = $("#pf-theme");
+  if (themeGroup) themeGroup.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-theme-opt]");
+    if (!btn || btn.classList.contains("on")) return;
+    themeGroup.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b === btn));
+    applyTheme(btn.dataset.themeOpt);
+  });
 
   document.querySelectorAll(".prof-tab").forEach((t) =>
     t.addEventListener("click", () => { profileTab = t.dataset.tab; paintProfile(); })
@@ -1977,7 +2511,6 @@ async function boot() {
   window.addEventListener("marko-content-ready", async () => {
     try { const { data } = await sb.auth.getSession(); if (data.session) bridgeToExtension(data.session); } catch {}
   }, { once: true });
-  $("#btn-create").addEventListener("click", openCreateModal);
   $("#sb-search").addEventListener("input", renderSidebar);
   document.querySelectorAll(".sb-tab").forEach((t) =>
     t.addEventListener("click", () => { sbTab = t.dataset.sbtab; renderSidebar(); })
@@ -1993,6 +2526,9 @@ async function boot() {
   $("#mi-install").addEventListener("click", () => {
     $("#acct-menu").hidden = true;
     window.open("https://github.com/strativ-dev/marko-site/releases/latest", "_blank", "noopener");
+  });
+  $("#btn-ext").addEventListener("click", () => {
+    window.open("index.html#install", "_blank", "noopener");
   });
   $("#btn-mentions").addEventListener("click", () => { location.hash = "#/mentions"; });
   refreshMentionBadge();
