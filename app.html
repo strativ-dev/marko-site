@@ -24,6 +24,7 @@
       --ink: #000000; --text: #000000; --sub: #4b5563; --muted: #7b828e;
       --line: #e3e3e3; --card: #f7f7f7; --surface: #ffffff;
       --solid: #000000; --solid-fg: #ffffff;
+      --sb-thumb: rgba(10, 14, 30, .22); --sb-thumb-hover: rgba(10, 14, 30, .38);
       --sev-neutral: #0099ff; --sev-low: #22c55e; --sev-medium: #eab308;
       --sev-high: #f97316; --sev-critical: #e5484d;
       --sidebar: #000000;
@@ -55,6 +56,7 @@
       --ink: #e8eaf0; --text: #e8eaf0; --sub: #b3bac7; --muted: #8b93a3;
       --line: #2c313c; --card: #23262e; --surface: #16181d;
       --solid: #eef0f5; --solid-fg: #14161b;
+      --sb-thumb: rgba(255, 255, 255, .20); --sb-thumb-hover: rgba(255, 255, 255, .34);
       --shadow-xs: 0 1px 2px rgba(0,0,0,.5);
       --shadow-sm: 0 1px 3px rgba(0,0,0,.55);
       --shadow-card: 0 5px 16px rgba(0,0,0,.55);
@@ -74,6 +76,7 @@
         --ink: #e8eaf0; --text: #e8eaf0; --sub: #b3bac7; --muted: #8b93a3;
         --line: #2c313c; --card: #23262e; --surface: #16181d;
         --solid: #eef0f5; --solid-fg: #14161b;
+        --sb-thumb: rgba(255, 255, 255, .20); --sb-thumb-hover: rgba(255, 255, 255, .34);
         --shadow-xs: 0 1px 2px rgba(0,0,0,.5);
         --shadow-sm: 0 1px 3px rgba(0,0,0,.55);
         --shadow-card: 0 5px 16px rgba(0,0,0,.55);
@@ -89,6 +92,17 @@
       }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Chromium/WebKit: 6px thumb, invisible track. Declaring the standard
+       scrollbar-width here would make Chrome ignore these pseudo-elements and
+       fall back to its own ~11px bar, so it is scoped to engines without them. */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-corner { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--sb-thumb); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--sb-thumb-hover); }
+    @supports not selector(::-webkit-scrollbar) {
+      * { scrollbar-width: thin; scrollbar-color: var(--sb-thumb) transparent; }
+    }
     /* Any element given the hidden attribute must stay hidden, even when a
        later rule sets display. */
     [hidden] { display: none !important; }
@@ -365,7 +379,7 @@
       /* Fixed width: a select otherwise sizes to its widest option, so the
          assignee/mention filters stretched to fit a full email address while
          the severity one stayed narrow. Long labels ellipsis-truncate. */
-      width: 170px; flex-shrink: 0; text-overflow: ellipsis;
+      width: 170px; flex-shrink: 0; text-overflow: ellipsis; font-weight: 500;
       border: 1px solid var(--line); border-radius: 9px; padding: 8px 32px 8px 10px;
       background: var(--surface); color: var(--sub); outline: 0;
       -webkit-appearance: none; -moz-appearance: none; appearance: none;
@@ -379,7 +393,7 @@
     }
     .col {
       width: 268px; flex-shrink: 0; background: var(--card);
-      border: 1px solid var(--line); border-radius: 18px;
+      border-radius: 18px;
       display: flex; flex-direction: column; overflow: hidden;
       min-height: 100%;
     }
@@ -547,7 +561,7 @@
     }
     .modal input::placeholder, .modal textarea::placeholder { color: var(--muted); }
     .modal select {
-      padding-right: 35px; background-color: var(--surface);
+      padding-right: 35px; background-color: var(--surface); font-weight: 500;
       -webkit-appearance: none; -moz-appearance: none; appearance: none;
       background-image: var(--chevron); background-repeat: no-repeat;
       background-position: right 13px center;
@@ -675,32 +689,50 @@
        own look; without base-select it is inert and never rendered. */
     #d-severity > button { all: unset; width: 100%; cursor: pointer; }
     .drawer .props select {
-      padding-right: 27px;
+      padding-right: 27px; font-weight: 500;
       -webkit-appearance: none; -moz-appearance: none; appearance: none;
       background-image: var(--chevron); background-repeat: no-repeat;
       background-position: right 9px center;
     }
-    .cmt { display: flex; gap: 10px; margin-bottom: 14px; }
+    .cmt { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+    /* Hairline between comments only — never above the first or below the last.
+       padding-top matches the row's margin-bottom so the line sits centred in
+       the gap. */
+    .cmt + .cmt { border-top: 1px solid var(--line); padding-top: 14px; }
     .cmt .av { width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .cmt .bubble { background: var(--card); border-radius: 10px; padding: 8px 12px; font-size: 13px; flex: 1; white-space: pre-wrap; word-wrap: break-word; }
-    .cmt .bubble .by { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
-    .cmt .bubble .at { color: var(--muted); font-size: 11px; margin-top: 4px; }
-    .drawer footer { border-top: 1px solid var(--line); padding: 14px 20px; display: flex; gap: 10px; }
+    /* Author and time share one row, the comment sits beneath it, and there is
+       no bubble — the avatar column alone carries the grouping. */
+    .cmt .cbody { flex: 1; min-width: 0; }
+    /* min-height matches the avatar, so the avatar, name and time all share one
+       centred band instead of the avatar hanging below the name. */
+    .cmt .chead { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+    .cmt .chead .by { font-weight: 600; font-size: 13px; color: var(--text); }
+    .cmt .chead .at { color: var(--muted); font-size: 11.5px; flex-shrink: 0; }
+    .cmt .ctxt { font-size: 13px; color: var(--text); white-space: pre-wrap; word-wrap: break-word; }
+    /* flex-end so the Send button stays beside the last line as the field
+       grows, instead of stretching into a tall pill. */
+    .drawer footer { border-top: 1px solid var(--line); padding: 14px 20px; display: flex; align-items: flex-end; gap: 10px; }
+    /* Matches one line of the composer (22.4px line + 20px padding + 2px
+       border), so a single-line footer looks exactly as it did. */
+    .drawer footer .btn { height: 44px; }
     .composer { position: relative; flex: 1; }
-    .composer input { width: 100%; }
+    .composer textarea { width: 100%; display: block; }
     /* Mention highlighter: a mirror div behind the input paints the coloured
        mention; the input renders transparent text over it and keeps its caret.
-       Every metric below must match `.drawer footer input` exactly, or the
+       Every metric below must match `.drawer footer textarea` exactly, or the
        colour drifts off the glyphs. */
     .composer .mkhl-back {
       position: absolute; inset: 0; overflow: hidden; pointer-events: none;
       border: 1px solid transparent; border-radius: 10px; padding: 10px 13px;
-      font: inherit; color: var(--ink); white-space: pre;
+      font: inherit; color: var(--ink);
+      /* pre-wrap + break-word so the mirror wraps exactly where the
+         textarea does; anything else walks the colour off the glyphs. */
+      white-space: pre-wrap; overflow-wrap: break-word;
     }
-    .composer input { position: relative; background: transparent; color: transparent; caret-color: var(--ink); }
-    .composer input::selection { background: rgba(0,153,255,.28); }
+    .composer textarea { position: relative; background: transparent; color: transparent; caret-color: var(--ink); }
+    .composer textarea::selection { background: rgba(0,153,255,.28); }
     /* color:transparent would take the placeholder with it. */
-    .composer input::placeholder { color: var(--muted); }
+    .composer textarea::placeholder { color: var(--muted); }
     /* Colour only — padding or a bolder weight would widen the mirrored text
        and walk the caret off the glyphs. */
     .composer .mkhl-back .mention { padding: 0; font-weight: inherit; }
@@ -721,8 +753,14 @@
     .mentions .who { min-width: 0; line-height: 1.25; }
     .mentions .who b { display: block; font-weight: 600; }
     .mentions .who span { color: var(--muted); font-size: 11.5px; }
-    .drawer footer input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; outline: 0; }
-    .drawer footer input:focus { border-color: var(--blue); }
+    .drawer footer textarea {
+      flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; outline: 0;
+      /* A textarea inherits neither font nor line-height; both must match
+         .mkhl-back above. resize/overflow off — grow() sets the height. */
+      font: inherit; resize: none; overflow-y: hidden;
+      min-height: 44px; max-height: 40vh;
+    }
+    .drawer footer textarea:focus { border-color: var(--blue); }
 
     .menu {
       position: absolute; background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
@@ -884,8 +922,8 @@ function bridgeToExtension(session) {
 // Kanban columns are workflow stages; severity is shown as a tag on each card.
 const STATUSES = [
   { id: "backlog",     label: "Backlog",     color: "#7b828e" },
-  { id: "todo",        label: "To do",       color: "#0099ff" },
-  { id: "in_progress", label: "In progress", color: "#eab308" },
+  { id: "todo",        label: "To do",       color: "#eab308" },
+  { id: "in_progress", label: "In progress", color: "#0099ff" },
   { id: "done",        label: "Done",        color: "#22c55e" },
 ];
 // Map any stored status onto a column. Legacy pins used active/resolved.
@@ -1428,13 +1466,13 @@ function openDrawer(hid) {
         </span>
       </div>` : ""}
       <div id="d-comments">${[
-        { by: h.createdBy, byName: localPart(h.createdBy), text: h.comment, at: h.createdAt },
+        { by: h.createdBy, text: h.comment, at: h.createdAt },
         ...(h.comments || []),
       ].map(renderComment).join("")}</div>
     </div>
     <footer>
       <div class="composer">
-        <input id="d-new-comment" placeholder="Add a comment, use @ to mention…" autocomplete="off" />
+        <textarea id="d-new-comment" rows="1" placeholder="Add a comment, use @ to mention…"></textarea>
         <div class="mentions" id="d-mentions" hidden></div>
       </div>
       <button class="btn blue" id="d-send">Send</button>
@@ -1513,11 +1551,24 @@ function openDrawer(hid) {
   $("#d-assignee").addEventListener("change", (e) => patch({ assignee: e.target.value }));
   // Assigned once attachMentions runs, below; send() is defined first.
   let repaintComposer = () => {};
+  // The field is a textarea so Shift+Enter can add a line; it has no scroll
+  // bar, it grows to fit instead (up to the CSS max-height, then scrolls).
+  const grow = () => {
+    const ta = $("#d-new-comment");
+    ta.style.height = "auto";
+    // scrollHeight covers content + padding only; with border-box the height
+    // has to carry the borders too, or every line clips by a pixel or two.
+    const border = ta.offsetHeight - ta.clientHeight;
+    ta.style.height = ta.scrollHeight + border + "px";
+    // Only past the CSS cap does it become a scrolling field.
+    ta.style.overflowY = ta.scrollHeight > ta.clientHeight ? "auto" : "hidden";
+  };
   const send = async () => {
     const text = $("#d-new-comment").value.trim();
     if (!text) return;
     $("#d-new-comment").value = "";
     repaintComposer();
+    grow();
     try {
       const { comment } = await api(`/projects/${current.project.id}/pins/${h.id}/comments`, { method: "POST", body: JSON.stringify({ text }) });
       h.comments = h.comments || [];
@@ -1534,13 +1585,27 @@ function openDrawer(hid) {
     if (!box.hidden && e.key === "Enter") { e.preventDefault(); box.querySelector(".on")?.click(); return; }
     if (!box.hidden && (e.key === "ArrowDown" || e.key === "ArrowUp")) { e.preventDefault(); moveMention(box, e.key === "ArrowDown" ? 1 : -1); return; }
     if (e.key === "Escape" && !box.hidden) { box.hidden = true; return; }
-    if (e.key === "Enter") send();
+    // Shift+Enter falls through to the textarea and inserts a newline.
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
   });
+  $("#d-new-comment").addEventListener("input", grow);
+  grow();
 }
 function renderComment(c) {
+  // Author names come from two shapes: comments carry a display name, pins only
+  // an email. Deriving from the email in both cases keeps one thread from
+  // mixing "Nibras Khan" and "nibras.khan".
+  const email = c.by || c.byName;
+  const who = localPart(email) || email;
   return `<div class="cmt">
-    <span class="av" style="background:${avatarColor(c.by || c.byName)}">${esc(initials(c.byName || c.by))}</span>
-    <div class="bubble"><div class="by">${esc(c.byName || c.by)}</div>${renderText(c.text)}<div class="at" title="${esc(new Date(c.at).toLocaleString())}">${esc(fmtStamp(c.at))}</div></div>
+    <span class="av" style="background:${avatarColor(email)}">${esc(initials(who))}</span>
+    <div class="cbody">
+      <div class="chead">
+        <b class="by">${esc(who)}</b>
+        <span class="at" title="${esc(new Date(c.at).toLocaleString())}">${esc(fmtStamp(c.at))}</span>
+      </div>
+      <div class="ctxt">${renderText(c.text)}</div>
+    </div>
   </div>`;
 }
 let drawerDismiss = null;
@@ -1591,11 +1656,13 @@ function attachHighlighter(input) {
   input.parentNode.insertBefore(back, input);
   const paint = () => {
     back.innerHTML = renderMentionsFull(input.value);
-    back.scrollLeft = input.scrollLeft;
+    sync();
   };
+  // Follow the field's scroll on both axes: a single-line input scrolls
+  // sideways with the caret, a wrapping textarea scrolls down.
+  const sync = () => { back.scrollLeft = input.scrollLeft; back.scrollTop = input.scrollTop; };
   input.addEventListener("input", paint);
-  // Single-line field: the caret scrolls the text horizontally, so follow it.
-  input.addEventListener("scroll", () => { back.scrollLeft = input.scrollLeft; });
+  input.addEventListener("scroll", sync);
   paint();
   return paint;
 }
@@ -1624,6 +1691,7 @@ function attachMentions(input, box) {
         const before = input.value.slice(0, pos).replace(/@[a-zA-Z0-9._%+-]*$/, "@" + b.dataset.m + " ");
         input.value = before + input.value.slice(pos);
         paint();
+        input.dispatchEvent(new Event("input"));
         close();
         input.focus();
       })

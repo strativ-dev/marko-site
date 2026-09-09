@@ -8,288 +8,238 @@
   <link rel="icon" href="marko-128.png?v=1.14.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Fragment+Mono&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <style>
-    /* ── Design tokens — identical to index.html ─────── */
+    /* ── Design tokens — mirrored from index.html ─────────────────
+       Kept name-for-name with the landing page so the two cannot drift
+       apart silently. If a token changes there, change it here too. */
     :root {
-      --sky-1: #190096;
-      --sky-2: #0080ff;
-      --sky-3: #78d2ff;
-      --blue-deep: #0099ff;
-      --blue-mid: #0080ff;
-      --ink: #000000;
-      --text: #000000;
-      --sub: #3a3f49;
-      --muted: #7b828e;
-      --line: #e3e3e3;
-      --card: #f6f7f9;
+      --violet: #190096;
+      --blue: #0080ff;
+      --blue-bright: #0099ff;
+      --soft: #78d2ff;
+
+      --sev-high: #e5484d;
+      --sev-done: #22c55e;
+
+      --ink: #06070b;
+      --paper: #ffffff;
+      --paper-2: #f4f6f8;
+
+      --text: #06070b;
+      --sub: #3d4354;
+      --muted: #767d8f;
+      --line: #e5e8ec;
+
       --display: "Inter Tight", "Inter", -apple-system, sans-serif;
-      --radius-xl: 30px;
-      --radius-pill: 100px;
-      --ease: .25s ease;
+      --body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: "Instrument Serif", Georgia, serif;
+      --mono: "Fragment Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      --r-sm: 8px;
+      --r-md: 14px;
+      --r-xl: 30px;
+      --ease: cubic-bezier(.2, .6, .2, 1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* setMode() toggles .hidden on rows, so this has to stay. */
     [hidden] { display: none !important; }
-    html { scroll-behavior: smooth; }
+    html { overflow-x: clip; }
     body {
       min-height: 100vh;
-      font: 15px/1.55 "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-      color: var(--text);
+      background: var(--ink);
+      color: #fff;
+      font: 15px/1.6 var(--body);
       -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
     }
     a { text-decoration: none; }
+    :focus-visible { outline: 2px solid var(--blue-bright); outline-offset: 3px; border-radius: 4px; }
 
-    /* ── Navbar — copied from index.html ─────────────── */
-    .navbar {
-      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-      z-index: 100;
-      width: min(660px, calc(100% - 32px));
-      background: rgba(0,0,0,.86);
-      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-      border-radius: 0 0 26px 26px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 9px 8px 10px 16px;
-      color: #fff;
-    }
-    .brand {
-      display: flex; align-items: center; gap: 8px;
-      font-weight: 700; font-size: 14px; color: #fff;
-    }
-    .logo-chip {
-      width: 24px; height: 24px; border-radius: 7px; display: block;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.18);
-    }
-    .nav-back {
-      background: #fff; color: var(--ink);
-      padding: 7px 14px; border-radius: 999px;
-      font-size: 12.5px; font-weight: 600;
-      display: inline-flex; align-items: center; gap: 6px;
-      transition: background var(--ease);
-    }
-    .nav-back:hover { background: #f3f4f6; }
-
-    /* ── Page wrapper — full hero gradient + hills ────── */
+    /* ── The ink field, as on the landing hero ───────────────────── */
+    /* Padding here is additive to the centred content, so an over-generous
+       band forces a scrollbar that reveals nothing but empty space. The top
+       only needs to clear the fixed nav (whose bottom edge sits at ~54px);
+       the bottom only needs a gutter. */
     .page-wrap {
-      position: relative;
-      min-height: 100vh;
-      background: linear-gradient(180deg,
-        var(--sky-1) 0%,
-        var(--sky-2) 21%,
-        var(--sky-3) 52.7%,
-        #ffffff 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 120px 20px 280px;
+      position: relative; min-height: 100vh; min-height: 100dvh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 88px 20px 32px;
       overflow: hidden;
     }
-    .hero-hills {
-      position: absolute; left: 0; right: 0; bottom: -1px;
-      width: 100%; height: min(30vw, 340px);
-      pointer-events: none; z-index: 1;
+    .field { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .field::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(58% 52% at 78% 8%, rgba(0,128,255,.34), transparent 68%),
+        radial-gradient(52% 48% at 8% 88%, rgba(25,0,150,.55), transparent 70%),
+        radial-gradient(40% 34% at 62% 78%, rgba(120,210,255,.14), transparent 72%);
     }
-    .page-wrap > *:not(.hero-hills):not(.bg-art) { position: relative; z-index: 2; }
+    .field::after {
+      content: ""; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.055) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.055) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(70% 60% at 50% 45%, #000 30%, transparent 100%);
+      mask-image: radial-gradient(70% 60% at 50% 45%, #000 30%, transparent 100%);
+    }
+    .page-wrap > *:not(.field):not(.rule) { position: relative; z-index: 2; }
+    .rule {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 2px; z-index: 3;
+      background: linear-gradient(90deg, var(--violet), var(--blue), var(--soft), var(--blue), var(--violet));
+    }
 
-    /* ── Background art (product hints) ──────────────── */
-    .bg-art {
-      position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+    /* ── Nav — the landing page's glass capsule ──────────────────── */
+    .navbar {
+      position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+      z-index: 100;
+      width: min(920px, calc(100% - 24px));
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 8px 8px 8px 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      color: #fff;
     }
-    /* Browser frame — left, tilted */
-    .bg-browser {
-      position: absolute;
-      left: calc(50% - 440px); top: 100px;
-      width: 300px;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 16px; padding: 13px;
-      transform: rotate(-7deg);
+    .brand { display: flex; align-items: center; gap: 9px; font: 700 14.5px var(--display); letter-spacing: -.02em; color: #fff; }
+    .logo-chip { width: 24px; height: 24px; border-radius: 7px; display: block; }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff; color: var(--ink);
+      padding: 9px 16px; border-radius: 999px;
+      font: 600 13.5px var(--body);
+      transition: background .2s var(--ease);
     }
-    .bg-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 11px; }
-    .bg-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.3); }
-    .bg-url { flex: 1; height: 14px; border-radius: 999px; background: rgba(255,255,255,.16); margin-left: 4px; }
-    .bg-page { background: rgba(255,255,255,.07); border-radius: 10px; padding: 11px; }
-    .bg-block { height: 8px; border-radius: 5px; background: rgba(255,255,255,.20); margin-bottom: 7px; }
-    .bg-block.short { width: 60%; }
-    .bg-el {
-      margin-top: 12px; border: 2px solid rgba(249,115,22,.55);
-      border-radius: 8px; height: 36px; position: relative;
-      background: rgba(249,115,22,.09);
-    }
-    .bg-pin {
-      position: absolute; top: -13px; left: 10px;
-      width: 21px; height: 21px;
-      border-radius: 11px 11px 11px 3px;
-      background: #f97316; color: #fff;
-      font: 700 11px "Inter", sans-serif;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 6px rgba(249,115,22,.4);
-    }
-    .bg-comment-card {
-      margin-top: 10px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 10px; padding: 9px 10px;
-    }
-    .bg-cline { height: 7px; border-radius: 4px; background: rgba(255,255,255,.22); margin-bottom: 5px; }
-    .bg-cline.short { width: 55%; margin-bottom: 0; }
-    .bg-chip-row { display: flex; gap: 5px; margin-top: 7px; }
-    .bg-chip {
-      border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
-      padding: 2px 8px; font: 500 10px "Inter", sans-serif;
-      color: rgba(255,255,255,.55);
-    }
-    /* Comment thread — right, tilted */
-    .bg-thread {
-      position: absolute;
-      right: calc(50% - 440px); top: 140px;
-      width: 200px; transform: rotate(5deg);
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .bg-tcard {
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 12px; padding: 10px 12px;
-    }
-    .bg-av {
-      width: 20px; height: 20px; border-radius: 50%;
-      display: inline-flex; align-items: center; justify-content: center;
-      font: 700 9px "Inter", sans-serif; color: #fff;
-      vertical-align: middle; margin-right: 5px;
-    }
-    .bg-tline { height: 7px; border-radius: 4px; background: rgba(255,255,255,.20); margin-top: 7px; }
-    .bg-tline.short { width: 65%; margin-top: 4px; }
-    .bg-badge {
-      display: inline-block; border-radius: 6px;
-      padding: 2px 7px; font: 600 9px "Inter", sans-serif;
-      color: #fff; margin-top: 7px;
-    }
-    /* Floating solo pin — top right */
-    .bg-solo-pin {
-      position: absolute; right: calc(50% - 360px); top: 88px;
-      width: 24px; height: 24px;
-      border-radius: 12px 12px 12px 3px;
-      background: #0099ff; color: #fff;
-      font: 700 11px "Inter", sans-serif;
-      display: flex; align-items: center; justify-content: center;
-      transform: rotate(5deg);
-      box-shadow: 0 3px 10px rgba(0,153,255,.35);
-      opacity: .7;
-    }
-    @media (max-width: 860px) { .bg-art { display: none; } }
+    .nav-back:hover { background: #eef0f3; }
 
-    /* ── Hero copy above the card ─────────────────────── */
+    /* ── Hero copy above the card ────────────────────────────────── */
     .si-eyebrow {
-      color: rgba(255,255,255,.78); font-size: 12.5px; font-weight: 600;
-      letter-spacing: .7px; text-transform: uppercase;
-      margin-bottom: 14px; text-align: center;
+      display: inline-flex; align-items: center; gap: 10px;
+      font: 11.5px/1 var(--mono);
+      letter-spacing: .16em; text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 16px;
     }
+    .si-eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; opacity: .55; }
     .si-hero-title {
       font-family: var(--display);
-      font-size: clamp(30px, 5vw, 52px);
-      font-weight: 700; letter-spacing: -0.04em; line-height: 1;
-      color: #fff; text-align: center; margin-bottom: 36px;
+      font-size: clamp(32px, 5.2vw, 54px);
+      font-weight: 700; letter-spacing: -.045em; line-height: 1.02;
+      color: #fff; text-align: center; margin-bottom: 28px;
     }
+    /* setMode() injects this span, so it must stay a block-level payoff. */
     .serif {
-      font-family: "Instrument Serif", Georgia, serif;
-      font-style: italic; font-weight: 400;
-      display: block; letter-spacing: -0.04em;
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      display: block; letter-spacing: -.03em;
     }
 
-    /* ── Card ─────────────────────────────────────────── */
+    /* ── Card ────────────────────────────────────────────────────── */
     .si-card {
       width: min(420px, 100%);
-      background: #fff;
-      border-radius: var(--radius-xl);
-      padding: 34px 28px;
-      box-shadow:
-        0 1px 2px rgba(10,14,30,.06),
-        0 24px 60px rgba(10,14,30,.20);
+      background: var(--paper);
+      color: var(--text);
+      border-radius: var(--r-xl);
+      padding: 30px 28px 26px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.10), 0 28px 70px rgba(0,0,0,.45);
     }
 
-    /* ── Tabs ─────────────────────────────────────────── */
+    /* ── Tabs — the install section's segmented control ──────────── */
     .si-tabs {
-      display: flex; gap: 6px; margin-bottom: 20px;
-      background: var(--card); padding: 4px; border-radius: 12px;
+      display: flex; gap: 4px; margin-bottom: 22px;
+      background: var(--paper-2); padding: 4px; border-radius: 999px;
     }
     .si-tab {
-      flex: 1; padding: 8px 12px; border: 0; background: transparent;
-      border-radius: 9px; font: 600 13.5px "Inter", sans-serif; color: var(--sub);
-      cursor: pointer; transition: background var(--ease), color var(--ease);
+      flex: 1; padding: 9px 12px; border: 0; background: transparent;
+      border-radius: 999px; font: 600 13.5px var(--body); color: var(--muted);
+      cursor: pointer;
+      transition: background .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease);
     }
-    .si-tab.active {
-      background: #fff; color: var(--text);
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    }
+    .si-tab.active { background: var(--paper); color: var(--text); box-shadow: 0 2px 8px rgba(6,7,11,.1); }
+    .si-tab:not(.active):hover { color: var(--sub); }
 
-    /* ── Form fields ──────────────────────────────────── */
+    /* ── Form ────────────────────────────────────────────────────── */
     .si-h2 {
       font-family: var(--display);
-      font-size: 21px; font-weight: 700; letter-spacing: -0.03em;
-      margin: 4px 0 4px;
+      font-size: 22px; font-weight: 700; letter-spacing: -.035em;
+      color: var(--text); margin-bottom: 5px;
     }
-    .si-sub { color: var(--muted); font-size: 13.5px; margin-bottom: 20px; }
+    .si-sub { color: var(--muted); font-size: 13.5px; line-height: 1.5; margin-bottom: 20px; }
     .si-field { display: block; margin-bottom: 12px; }
-    .si-field span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; font-weight: 500; }
+    .si-field span { display: block; font: 500 12.5px var(--body); color: var(--sub); margin-bottom: 6px; }
     .si-field input {
-      width: 100%; padding: 11px 14px; border: 1px solid var(--line);
-      border-radius: 10px; font: 15px "Inter", sans-serif; color: var(--text);
-      background: #fff; transition: border-color var(--ease), box-shadow var(--ease);
+      width: 100%; padding: 12px 14px;
+      border: 1px solid var(--line); border-radius: var(--r-sm);
+      font: 15px var(--body); color: var(--text); background: var(--paper);
+      transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
     }
     .si-field input:focus {
-      outline: 0; border-color: var(--blue-mid);
-      box-shadow: 0 0 0 3px rgba(0,128,255,.14);
+      outline: 0; border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(0,128,255,.15);
     }
 
-    /* ── Buttons ──────────────────────────────────────── */
+    /* ── Buttons — the landing page's pill language ──────────────── */
     .si-submit {
-      width: 100%; padding: 13px 18px; margin-top: 6px;
-      background: var(--ink); color: #fff; border: 0;
-      border-radius: var(--radius-pill);
-      font: 600 15px "Inter", sans-serif; cursor: pointer;
-      transition: transform .3s ease-out, box-shadow var(--ease), opacity var(--ease);
+      width: 100%; margin-top: 8px; padding: 14px 20px;
+      background: var(--ink); color: #fff; border: 0; border-radius: 999px;
+      font: 600 15px var(--body); letter-spacing: -.01em; cursor: pointer;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), opacity .2s var(--ease);
     }
-    .si-submit:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 28px rgba(0,0,0,.20);
-    }
-    .si-submit:disabled { opacity: .5; cursor: default; }
+    .si-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(6,7,11,.24); }
+    .si-submit:disabled { opacity: .45; cursor: default; }
 
     .si-google {
-      width: 100%; padding: 11px 18px; margin-bottom: 14px;
-      background: var(--card); color: var(--text);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-pill);
-      font: 600 14.5px "Inter", sans-serif; cursor: pointer;
+      width: 100%; margin-bottom: 16px; padding: 12px 20px;
+      background: var(--paper); color: var(--text);
+      border: 1.5px solid var(--line); border-radius: 999px;
+      font: 600 14.5px var(--body); cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      transition: background var(--ease), transform .3s ease-out, box-shadow var(--ease);
+      transition: transform .25s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
     }
-    .si-google:hover:not(:disabled) {
-      background: #efefef;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    }
-    .si-google:disabled { opacity: .5; cursor: default; }
+    .si-google:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--ink); }
+    .si-google:disabled { opacity: .45; cursor: default; }
 
-    /* ── Divider ──────────────────────────────────────── */
     .si-divider {
-      display: flex; align-items: center; gap: 10px;
-      margin: 0 0 14px; color: var(--muted); font-size: 12px;
+      display: flex; align-items: center; gap: 12px;
+      margin: 0 0 16px;
+      font: 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
     }
-    .si-divider::before, .si-divider::after {
-      content: ""; flex: 1; height: 1px; background: var(--line);
-    }
+    .si-divider::before, .si-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
-    /* ── Status / footnote ───────────────────────────── */
+    /* ── Status / footnotes ──────────────────────────────────────── */
+    /* setStatus() rewrites className to "si-status [err|ok]". */
     .si-status { min-height: 20px; margin-top: 12px; font-size: 13px; color: var(--muted); }
-    .si-status.err { color: #e5484d; }
-    .si-status.ok { color: #22c55e; }
-    .si-foot { color: var(--muted); font-size: 12px; margin-top: 14px; line-height: 1.5; }
-    .si-foot a { color: var(--blue-mid); font-weight: 500; }
+    .si-status.err { color: var(--sev-high); }
+    .si-status.ok { color: var(--sev-done); }
+    .si-foot { color: var(--muted); font-size: 12px; margin-top: 14px; line-height: 1.55; }
+    .si-foot a { color: var(--blue-bright); font-weight: 600; }
 
-    @media (max-width: 480px) {
-      .page-wrap { padding-top: 100px; padding-bottom: 220px; }
-      .si-hero-title { font-size: 28px; }
+    @media (prefers-reduced-motion: reduce) {
+      .si-submit:hover:not(:disabled), .si-google:hover:not(:disabled) { transform: none; }
+      .si-submit, .si-google, .si-tab, .si-field input { transition: none; }
+    }
+    /* Short windows: the card is ~608px and non-negotiable, so the hero copy
+       gives way instead — kicker out, payoff back inline, smaller type. That
+       buys ~110px, which covers the common 760-820px laptop viewports. Below
+       ~700px the content genuinely exceeds the window and scrolling is right. */
+    @media (max-height: 820px) {
+      .si-eyebrow { display: none; }
+      .si-hero-title { font-size: clamp(26px, 3.4vw, 34px); margin-bottom: 20px; }
+      .si-hero-title .serif { display: inline; }
+      .page-wrap { padding: 78px 20px 26px; }
+    }
+    /* 1366x768 laptops land at ~760 usable; 8px was all that stood between
+       them and a scrollbar. */
+    @media (max-height: 780px) {
+      .page-wrap { padding: 72px 20px 20px; }
+      .si-hero-title { margin-bottom: 16px; }
+    }
+    @media (max-width: 560px) {
+      .page-wrap { padding: 80px 18px 28px; }
+      .si-card { padding: 26px 22px 22px; }
+      .navbar { padding: 8px 8px 8px 14px; }
+      .nav-back { padding: 8px 13px; font-size: 12.5px; }
     }
   </style>
 </head>
@@ -300,55 +250,15 @@
     <img class="logo-chip" src="marko-128.png?v=1.14.0" alt="" />
     Marko
   </a>
-  <a class="nav-back" href="index.html">← Back to home</a>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to home
+  </a>
 </nav>
 
 <div class="page-wrap">
 
-  <div class="bg-art" aria-hidden="true">
-    <!-- Browser + pin annotation — left -->
-    <div class="bg-browser">
-      <div class="bg-bar">
-        <span class="bg-dot"></span><span class="bg-dot"></span><span class="bg-dot"></span>
-        <span class="bg-url"></span>
-      </div>
-      <div class="bg-page">
-        <div class="bg-block"></div>
-        <div class="bg-block short"></div>
-        <div class="bg-el">
-          <div class="bg-pin">1</div>
-        </div>
-        <div class="bg-comment-card">
-          <div class="bg-cline"></div>
-          <div class="bg-cline short"></div>
-          <div class="bg-chip-row">
-            <span class="bg-chip">High</span>
-            <span class="bg-chip">@anna</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Comment thread — right -->
-    <div class="bg-thread">
-      <div class="bg-tcard">
-        <span class="bg-av" style="background:#0080ff">A</span>
-        <span style="font:500 10px 'Inter',sans-serif;color:rgba(255,255,255,.5)">acme.example</span>
-        <div class="bg-tline"></div>
-        <div class="bg-tline short"></div>
-        <div class="bg-badge" style="background:rgba(239,68,68,.55)">Critical</div>
-      </div>
-      <div class="bg-tcard">
-        <span class="bg-av" style="background:#17b26a">B</span>
-        <span style="font:500 10px 'Inter',sans-serif;color:rgba(255,255,255,.5)">Replied</span>
-        <div class="bg-tline"></div>
-        <div class="bg-badge" style="background:rgba(234,179,8,.55)">Medium</div>
-      </div>
-    </div>
-
-    <!-- Solo floating pin -->
-    <div class="bg-solo-pin">4</div>
-  </div>
+  <div class="field" aria-hidden="true"></div>
 
   <p class="si-eyebrow">Your account</p>
   <h1 class="si-hero-title" id="si-hero-title">
@@ -386,7 +296,7 @@
     </p>
   </div>
 
-  <img class="hero-hills" src="hills.svg" alt="" />
+  <div class="rule" aria-hidden="true"></div>
 </div>
 
 <script src="vendor/supabase.js"></script>
