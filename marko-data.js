@@ -243,6 +243,34 @@
         return { email: u.email, name: (data && data.name) || "", prefs: (data && data.prefs) || { mention: true, newComment: true, invited: true } };
       }
 
+      // /admin  [ /users/:id | /admins ] — every leg is re-checked server-side
+      // by is_admin(), so a non-admin calling these just gets "forbidden".
+      if (seg[0] === "admin") {
+        if (seg[1] === "me") {
+          const { data } = await sb.rpc("is_admin");
+          return { admin: data === true };
+        }
+        if (seg.length === 1) {
+          const { data, error } = await sb.rpc("admin_overview");
+          if (error) throw error;
+          return data;
+        }
+        if (seg[1] === "users" && seg[2] && method === "PATCH") {
+          const { error } = await sb.rpc("admin_set_disabled", { uid: seg[2], off: !!body.disabled });
+          if (error) throw error;
+          return { ok: true };
+        }
+        if (seg[1] === "admins") {
+          const email = String(body.email || "").trim().toLowerCase();
+          const u = await me();
+          const { error } = method === "DELETE"
+            ? await sb.from("admins").delete().eq("email", email)
+            : await sb.from("admins").insert({ email, added_by: u.email });
+          if (error) throw error;
+          return { ok: true };
+        }
+      }
+
       // /auth/change-password
       if (rawPath === "/auth/change-password" && method === "POST") {
         const { error } = await sb.auth.updateUser({ password: body.newPassword });

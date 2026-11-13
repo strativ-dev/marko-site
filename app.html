@@ -245,6 +245,30 @@
     }
     .acct-ws span:not(.av) { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+    /* Admin view: the sidebar drops the user-only project list and keeps the
+       account menu, so the switch back is always where it was. */
+    .acct-menu .view-on::after { content: "✓"; float: right; color: #4da3f7; font-weight: 700; }
+    body.admin-view .sb-mentions, body.admin-view .sb-tabs,
+    body.admin-view .sb-search, body.admin-view .sb-list { display: none; }
+    body.admin-view .sb-foot { margin-top: auto; }
+    .adm-body { flex: 1; overflow-y: auto; padding: 24px; background: var(--card); display: flex; flex-direction: column; gap: 16px; }
+    .adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+    .adm-stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+    .adm-stat span { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+    .adm-stat b { display: block; font-family: var(--display); font-size: 24px; font-weight: 700; letter-spacing: -.02em; margin-top: 2px; }
+    .adm-stat small { font-size: 12px; color: var(--muted); }
+    .adm-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; overflow-x: auto; }
+    .adm-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+    .adm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .adm-table th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); padding: 0 10px 8px 0; white-space: nowrap; }
+    .adm-table td { padding: 10px 10px 10px 0; border-top: 1px solid var(--line); vertical-align: middle; }
+    .adm-table td.num, .adm-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .adm-table .sub { display: block; color: var(--muted); font-size: 12px; }
+    .adm-tag { font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--blue-wash); color: var(--blue-deep); margin-left: 6px; }
+    .adm-tag.off { background: rgba(229,72,77,.14); color: #e5484d; }
+    .adm-add { display: flex; gap: 8px; margin-top: 12px; }
+    .adm-add input { flex: 1; padding: 9px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0; background: var(--surface); color: var(--text); }
+
     /* profile view */
     .prof-tabs { display: flex; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--line); }
     .prof-tab { padding: 12px 14px; font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
@@ -849,6 +873,11 @@
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#4da3f7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
       </div>
       <hr />
+      <div id="mi-views" hidden>
+        <button id="mi-view-user">User view</button>
+        <button id="mi-view-admin">Admin view</button>
+        <hr />
+      </div>
       <button id="mi-settings">Settings</button>
       <hr />
       <button id="mi-install">Install extension</button>
@@ -2518,7 +2547,108 @@ function paintMentions() {
   );
 }
 
+/* ── admin view ── */
+let isAdmin = false;
+
+function fmtBytes(n) {
+  n = Number(n) || 0;
+  if (n < 1024) return n + " B";
+  const u = ["KB", "MB", "GB", "TB"];
+  let i = -1;
+  do { n /= 1024; i++; } while (n >= 1024 && i < u.length - 1);
+  return n.toFixed(n < 10 ? 1 : 0) + " " + u[i];
+}
+
+async function renderAdmin() {
+  $("#main").innerHTML = `<div class="state"><div class="big">Loading…</div></div>`;
+  let d;
+  try { d = await api("/admin"); }
+  catch (e) { $("#main").innerHTML = `<div class="state"><div class="big">Can't load the admin panel</div><p>${esc(e.message)}</p></div>`; return; }
+  const me = session.email.toLowerCase();
+  const disabled = d.users.filter((u) => u.disabled).length;
+  const st = d.storage;
+  $("#main").innerHTML = `
+    <div class="topbar">
+      <div class="title"><h1>Admin</h1><div class="url">Users, projects and storage</div></div>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="adm-refresh">Refresh</button>
+    </div>
+    <div class="adm-body">
+      <div class="adm-stats">
+        <div class="adm-stat"><span>Users</span><b>${d.users.length}</b><small>${disabled} disabled</small></div>
+        <div class="adm-stat"><span>Projects</span><b>${d.projects.length}</b><small>${d.projects.filter((p) => p.archived).length} archived</small></div>
+        <div class="adm-stat"><span>Screenshot storage</span><b>${fmtBytes(st.shotBytes)}</b><small>${st.shotFiles} files</small></div>
+        <div class="adm-stat"><span>Database size</span><b>${fmtBytes(st.dbBytes)}</b><small>whole Postgres database</small></div>
+      </div>
+      <div class="adm-card">
+        <h3>Users</h3>
+        <table class="adm-table">
+          <tr><th>User</th><th>Joined</th><th>Last sign-in</th><th class="num">Projects</th><th class="num">Enabled</th></tr>
+          ${d.users.map((u) => `<tr>
+            <td><b>${esc(u.name || u.email.split("@")[0])}</b>${u.admin ? `<span class="adm-tag">Admin</span>` : ""}${u.disabled ? `<span class="adm-tag off">Disabled</span>` : ""}<span class="sub">${esc(u.email)}</span></td>
+            <td>${fmtDate(u.createdAt)}</td>
+            <td>${u.lastSignIn ? fmtWhen(Date.parse(u.lastSignIn)) : "Never"}</td>
+            <td class="num">${u.projects}</td>
+            <td class="num"><label class="sw" title="${u.email.toLowerCase() === me ? "You can't disable yourself" : ""}"><input type="checkbox" data-uid="${esc(u.id)}" data-email="${esc(u.email)}" ${u.disabled ? "" : "checked"} ${u.email.toLowerCase() === me ? "disabled" : ""} /><i></i></label></td>
+          </tr>`).join("")}
+        </table>
+      </div>
+      <div class="adm-card">
+        <h3>Projects</h3>
+        <table class="adm-table">
+          <tr><th>Project</th><th>Owner</th><th class="num">Pins</th><th class="num">Members</th><th class="num">Screenshots</th><th class="num">Storage</th></tr>
+          ${d.projects.map((p) => `<tr>
+            <td><b>${esc(p.name)}</b>${p.archived ? `<span class="adm-tag off">Archived</span>` : ""}<span class="sub">${esc(p.url || "")}</span></td>
+            <td>${esc(p.owner || "")}</td>
+            <td class="num">${p.pins}</td>
+            <td class="num">${p.members}</td>
+            <td class="num">${p.files}</td>
+            <td class="num">${fmtBytes(p.bytes)}</td>
+          </tr>`).join("") || `<tr><td colspan="6" style="color:var(--muted)">No projects yet.</td></tr>`}
+        </table>
+      </div>
+      <div class="adm-card">
+        <h3>Admins</h3>
+        <table class="adm-table">
+          <tr><th>Email</th><th>Added</th><th></th></tr>
+          ${d.admins.map((a) => `<tr>
+            <td>${esc(a.email)}</td>
+            <td>${fmtDate(a.createdAt)}${a.addedBy && a.addedBy !== "seed" ? `<span class="sub">by ${esc(a.addedBy)}</span>` : ""}</td>
+            <td class="num">${a.email === me ? `<span class="sub">You</span>` : `<button class="btn ghost" data-rm-admin="${esc(a.email)}">Remove</button>`}</td>
+          </tr>`).join("")}
+        </table>
+        <div class="adm-add"><input id="adm-email" type="email" placeholder="name@company.com" /><button class="btn blue" id="adm-add">Add admin</button></div>
+        <p class="status" id="adm-status" style="font-size:13px;color:#e5484d;margin-top:8px"></p>
+      </div>
+    </div>`;
+
+  const fail = (e) => { $("#adm-status").textContent = (e && e.message) || "Something went wrong."; };
+  $("#adm-refresh").addEventListener("click", renderAdmin);
+  document.querySelectorAll("input[data-uid]").forEach((cb) => cb.addEventListener("change", async () => {
+    const off = !cb.checked;
+    if (off && !(await confirmModal({ title: "Disable user?", body: `${cb.dataset.email} won't be able to sign in until re-enabled. Their projects and pins stay.`, okLabel: "Disable", danger: true }))) { cb.checked = true; return; }
+    try { await api("/admin/users/" + cb.dataset.uid, { method: "PATCH", body: JSON.stringify({ disabled: off }) }); renderAdmin(); }
+    catch (e) { cb.checked = !off; fail(e); }
+  }));
+  document.querySelectorAll("[data-rm-admin]").forEach((b) => b.addEventListener("click", async () => {
+    const email = b.dataset.rmAdmin;
+    if (!(await confirmModal({ title: "Remove admin?", body: `${email} will lose access to the admin panel.`, okLabel: "Remove", danger: true }))) return;
+    try { await api("/admin/admins", { method: "DELETE", body: JSON.stringify({ email }) }); renderAdmin(); } catch (e) { fail(e); }
+  }));
+  $("#adm-add").addEventListener("click", async () => {
+    const email = $("#adm-email").value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { fail({ message: "Enter a valid email." }); return; }
+    try { await api("/admin/admins", { method: "POST", body: JSON.stringify({ email }) }); renderAdmin(); }
+    catch (e) { fail(/duplicate/i.test(e.message) ? { message: "Already an admin." } : e); }
+  });
+}
+
 async function route() {
+  const adminView = isAdmin && location.hash === "#/admin";
+  document.body.classList.toggle("admin-view", adminView);
+  $("#mi-view-admin").classList.toggle("view-on", adminView);
+  $("#mi-view-user").classList.toggle("view-on", !adminView);
+  if (adminView) { current = null; renderSidebar(); await renderAdmin(); return; }
   if (location.hash === "#/mentions") {
     current = null;
     renderSidebar();
@@ -2602,6 +2732,13 @@ async function boot() {
     window.open("index.html#install", "_blank", "noopener");
   });
   $("#btn-mentions").addEventListener("click", () => { location.hash = "#/mentions"; });
+  $("#mi-view-admin").addEventListener("click", () => { $("#acct-menu").hidden = true; location.hash = "#/admin"; });
+  $("#mi-view-user").addEventListener("click", () => {
+    $("#acct-menu").hidden = true;
+    if (location.hash === "#/admin") location.hash = "";
+  });
+  try { isAdmin = (await api("/admin/me")).admin; } catch {}
+  $("#mi-views").hidden = !isAdmin;
   refreshMentionBadge();
   subscribeNotifications();
   // Refetch when the tab is refocused — a no-realtime safety net.
