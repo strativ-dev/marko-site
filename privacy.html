@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marko privacy policy</title>
+  <link rel="icon" href="marko-128.png?v=1.14.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --text: #000; --sub: #3a3f49; --muted: #7b828e; --line: #e3e3e3; --blue-mid: #0080ff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 0%, #78d2ff 0%, #0080ff 40%, #190096 100%) fixed;
+      color: var(--text);
+      font: 15px/1.6 "Inter", -apple-system, sans-serif;
+      padding: 40px 16px;
+    }
+    .card {
+      width: min(720px, 100%); margin: 0 auto;
+      background: #fff; border-radius: 22px;
+      padding: 32px 28px;
+      box-shadow: 0 30px 70px rgba(10, 14, 30, .35);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .brand img { width: 34px; height: 34px; border-radius: 9px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+    .brand b { font-weight: 700; font-size: 16px; }
+    h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+    .date { color: var(--muted); font-size: 13px; margin: 4px 0 20px; }
+    h2 { font-size: 17px; font-weight: 700; margin: 26px 0 8px; letter-spacing: -0.01em; }
+    p, li { color: var(--sub); }
+    p + p { margin-top: 10px; }
+    ul { padding-left: 20px; margin-top: 6px; }
+    li + li { margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-weight: 600; }
+    td { color: var(--sub); }
+    code { font: 13px ui-monospace, Menlo, monospace; }
+    a { color: var(--blue-mid); font-weight: 600; }
+    .foot { color: var(--muted); font-size: 13px; margin-top: 28px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand"><img src="marko-128.png?v=1.14.0" alt="" /><b>Marko</b></div>
+    <h1>Privacy policy</h1>
+    <p class="date">Last updated: 13 November 2026</p>
+
+    <p>Marko is a browser extension and web app from Strativ AB for pinning bug reports and UX feedback to live web pages. This page explains what Marko stores, where, and who can see it.</p>
+
+    <h2>What Marko stores</h2>
+    <ul>
+      <li><b>Your account:</b> email address, display name and, if you sign in with Google, your profile photo URL.</li>
+      <li><b>Your work:</b> projects, pins (the page URL, element selector, comment, severity, status, assignee and due date), comment threads and @mentions.</li>
+      <li><b>Screenshots</b> of the element you pin, captured only when you drop a pin.</li>
+      <li><b>Notifications</b> about mentions, comments, invites and status changes.</li>
+    </ul>
+
+    <h2>Google sign-in</h2>
+    <p>"Continue with Google" asks Google only for your <b>email address</b> and <b>profile photo</b> (the <code>email</code> and <code>profile</code> scopes). Marko never requests or accesses your Drive, Gmail, Calendar, Contacts or any other Google data. Your email identifies you to your team and matches project invites; your photo appears next to your pins and comments.</p>
+
+    <h2>Where it is stored</h2>
+    <ul>
+      <li><b>Supabase</b> hosts accounts, the database and screenshots. Row-level security means only members of a project can read them.</li>
+    </ul>
+    <p>Notifications appear inside Marko only. The one email Marko sends is the invite to a new address, delivered by Supabase.</p>
+    <p>The extension keeps a signed-in session token in your browser's local extension storage so you stay signed in. It never holds your Google password.</p>
+
+    <h2>Who can see your data</h2>
+    <p>Only people invited to a project. If a project owner creates a public share link, anyone with that link can view that project read-only until the link is turned off. Exports (PDF and CSV) are files you create and share yourself.</p>
+
+    <h2>What Marko does not do</h2>
+    <ul>
+      <li>No analytics, tracking, advertising or crash reporting.</li>
+      <li>No selling or sharing of your data with anyone beyond the services above.</li>
+      <li>No reading of pages you are not actively reviewing.</li>
+    </ul>
+
+    <h2>Browser permissions</h2>
+    <table>
+      <tr><th>Permission</th><th>Why</th></tr>
+      <tr><td><code>storage</code>, <code>unlimitedStorage</code></td><td>Keep your session and settings in the browser</td></tr>
+      <tr><td><code>activeTab</code>, <code>tabs</code>, <code>scripting</code></td><td>Show the review dock on the page you are reviewing and capture pin screenshots</td></tr>
+      <tr><td>All sites</td><td>Let you review any website you open</td></tr>
+      <tr><td><code>alarms</code></td><td>Check for new @mentions every minute to badge the toolbar icon</td></tr>
+    </table>
+
+    <h2>Deleting your data</h2>
+    <p>You can delete projects, pins and comments in the app at any time. To delete your account and everything attached to it, contact us and we will remove it.</p>
+
+    <h2>Contact</h2>
+    <p>Strativ AB, <a href="https://strativ.se">strativ.se</a>.</p>
+
+    <p class="foot"><a href="index.html">Back to Marko</a></p>
+  </main>
+</body>
+</html>

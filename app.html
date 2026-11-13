@@ -881,7 +881,7 @@ const SEVERITIES = [
   { id: "high",     label: "High",     color: "var(--sev-high)" },
   { id: "critical", label: "Critical", color: "var(--sev-critical)" },
 ];
-const SHOTS_URL = "https://marko-shots.strativ.workers.dev";
+const SHOTS_URL = window.marko.SUPABASE_URL + "/storage/v1/object/authenticated/shots";
 const EXT_ID = "jhnnkjnpggliikhiiceijlkclhlblgjf";
 const CALLBACK = "chrome-extension://" + EXT_ID + "/auth/callback.html";
 // Hand the current Supabase session to the extension (hidden iframe → its
@@ -2038,7 +2038,10 @@ const PREF_ROWS = [
 ];
 
 function paintProfile() {
-  const tabs = [["personal", "Personal"], ["notifications", "Notifications"]];
+  // Email notifications are off (no Brevo webhook), and these toggles only ever
+  // gated email, so the tab is hidden. Re-add ["notifications", "Notifications"]
+  // here to bring it back; the panel below is kept for that.
+  const tabs = [["personal", "Personal"]];
   $("#main").innerHTML = `
     <div class="topbar"><div class="title"><h1>Profile</h1><div class="url">${esc(session.email)}</div></div></div>
     <div class="prof-tabs">
@@ -2319,7 +2322,7 @@ function openExportModal() {
 }
 
 function shotUrl(h) {
-  return h.hasShot ? `${SHOTS_URL}/shot/${current.project.id}/${h.id}` : "";
+  return h.hasShot ? `${SHOTS_URL}/${current.project.id}/${h.id}` : "";
 }
 
 // Minimal RFC-4180 CSV parser (handles quotes, escaped quotes, newlines in fields).

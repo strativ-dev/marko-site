@@ -3,9 +3,9 @@
 // Exposes window.MarkoData.api(path, opts) with the SAME signature and return
 // shapes the app used against the old Cloudflare Worker, so the dashboard's
 // render code is untouched — only the transport changed. Paths map to Postgres
-// queries (via supabase-js) and, for screenshots, to the R2 proxy worker.
+// queries (via supabase-js) and, for screenshots, to the private 'shots'
+// Storage bucket (<project>/<pin>, member-only by RLS).
 (() => {
-  const SHOTS_URL = "https://marko-shots.strativ.workers.dev";
   const sb = window.marko && window.marko.supabase;
 
   // ── shape mappers: DB rows → the JSON the app expects ──
@@ -41,20 +41,15 @@
     if (!data.session || !data.session.user) throw new Error("unauthorized");
     return data.session.user;
   }
-  async function accessToken() {
-    const { data } = await sb.auth.getSession();
-    return data.session ? data.session.access_token : "";
-  }
-
-  // ── screenshots via the R2 proxy worker ──
+  // ── screenshots in Supabase Storage ──
   async function uploadShot(pid, pinId, dataUrl) {
     const blob = await (await fetch(dataUrl)).blob();
-    const r = await fetch(`${SHOTS_URL}/shot/${pid}/${pinId}`, {
-      method: "PUT",
-      headers: { Authorization: "Bearer " + (await accessToken()), "Content-Type": blob.type || "image/png" },
-      body: blob,
-    });
-    if (!r.ok) throw new Error("shot_upload_failed");
+    const { error } = await sb.storage.from("shots").upload(`${pid}/${pinId}`, blob, { contentType: blob.type || "image/png" });
+    if (error) throw new Error("shot_upload_failed");
+  }
+  function removeShot(pid, pinId) {
+    dropShot(pid, pinId);
+    return sb.storage.from("shots").remove([`${pid}/${pinId}`]).catch(() => {});
   }
   // A shot is written once and never changes, so cache the object URL per pin.
   // Without this, reopening a drawer re-downloads the image and strands another
@@ -63,11 +58,9 @@
   async function getShot(pid, pinId) {
     const key = `${pid}/${pinId}`;
     if (shotCache.has(key)) return { shot: shotCache.get(key) };
-    const r = await fetch(`${SHOTS_URL}/shot/${pid}/${pinId}`, {
-      headers: { Authorization: "Bearer " + (await accessToken()) },
-    });
-    if (!r.ok) return { shot: null };
-    const url = URL.createObjectURL(await r.blob());
+    const { data, error } = await sb.storage.from("shots").download(`${pid}/${pinId}`);
+    if (error) return { shot: null };
+    const url = URL.createObjectURL(data);
     shotCache.set(key, url);
     return { shot: url };
   }
@@ -201,7 +194,7 @@
           const hid = seg[3];
           if (seg[4] === "shot") {
             if (method === "PUT") { await uploadShot(pid, hid, body.shot); await sb.from("pins").update({ has_shot: true }).eq("id", hid); return { ok: true }; }
-            if (method === "DELETE") { dropShot(pid, hid); await fetch(`${SHOTS_URL}/shot/${pid}/${hid}`, { method: "DELETE", headers: { Authorization: "Bearer " + (await accessToken()) } }); return { ok: true }; }
+            if (method === "DELETE") { await removeShot(pid, hid); return { ok: true }; }
             return await getShot(pid, hid);
           }
           if (seg[4] === "comments" && method === "POST") {
@@ -224,8 +217,7 @@
           }
           if (method === "DELETE") {
             // Both deletes are independent; the shot leg is best-effort.
-            dropShot(pid, hid);
-            const shotGone = fetch(`${SHOTS_URL}/shot/${pid}/${hid}`, { method: "DELETE", headers: { Authorization: "Bearer " + (await accessToken()) } }).catch(() => {});
+            const shotGone = removeShot(pid, hid);
             const { error } = await sb.from("pins").delete().eq("id", hid);
             await shotGone;
             if (error) throw error;
