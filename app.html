@@ -266,6 +266,13 @@
     .adm-table .sub { display: block; color: var(--muted); font-size: 12px; }
     .adm-tag { font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--blue-wash); color: var(--blue-deep); margin-left: 6px; }
     .adm-tag.off { background: rgba(229,72,77,.14); color: #e5484d; }
+    /* A label is inline by default, which ignores .sw's width and height; in a
+       table cell (unlike a flex row) that collapsed the switch to nothing. */
+    .adm-table .sw { display: inline-block; vertical-align: middle; }
+    .adm-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: -4px; }
+    .adm-meter { height: 6px; border-radius: 999px; background: var(--line); margin: 8px 0 6px; overflow: hidden; }
+    .adm-meter i { display: block; height: 100%; border-radius: inherit; background: var(--blue); }
+    .adm-meter i.hot { background: #e5484d; }
     .adm-add { display: flex; gap: 8px; margin-top: 12px; }
     .adm-add input { flex: 1; padding: 9px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0; background: var(--surface); color: var(--text); }
 
@@ -2549,6 +2556,15 @@ function paintMentions() {
 
 /* ── admin view ── */
 let isAdmin = false;
+let adminTab = "users";
+// Supabase Free plan quotas (org "strativ-team-design org", checked 2026-11-13).
+// Nothing in Postgres exposes the plan, so change these if the plan changes.
+const PLAN_DB_BYTES = 500 * 1024 * 1024;
+const PLAN_FILE_BYTES = 1024 * 1024 * 1024;
+function meter(used, total) {
+  const pct = Math.min(100, (used / total) * 100);
+  return `<div class="adm-meter"><i class="${pct >= 80 ? "hot" : ""}" style="width:${pct.toFixed(1)}%"></i></div>`;
+}
 
 function fmtBytes(n) {
   n = Number(n) || 0;
@@ -2577,11 +2593,15 @@ async function renderAdmin() {
       <div class="adm-stats">
         <div class="adm-stat"><span>Users</span><b>${d.users.length}</b><small>${disabled} disabled</small></div>
         <div class="adm-stat"><span>Projects</span><b>${d.projects.length}</b><small>${d.projects.filter((p) => p.archived).length} archived</small></div>
-        <div class="adm-stat"><span>Screenshot storage</span><b>${fmtBytes(st.shotBytes)}</b><small>${st.shotFiles} files</small></div>
-        <div class="adm-stat"><span>Database size</span><b>${fmtBytes(st.dbBytes)}</b><small>whole Postgres database</small></div>
+        <div class="adm-stat"><span>Screenshot storage</span><b>${fmtBytes(st.shotBytes)}</b>${meter(st.shotBytes, PLAN_FILE_BYTES)}<small>of ${fmtBytes(PLAN_FILE_BYTES)} · ${st.shotFiles} files</small></div>
+        <div class="adm-stat"><span>Database size</span><b>${fmtBytes(st.dbBytes)}</b>${meter(st.dbBytes, PLAN_DB_BYTES)}<small>of ${fmtBytes(PLAN_DB_BYTES)} · ${Math.round((st.dbBytes / PLAN_DB_BYTES) * 100)}% used</small></div>
       </div>
-      <div class="adm-card">
-        <h3>Users</h3>
+      <div class="adm-tabs">
+        ${[["users", "Users", d.users.length], ["projects", "Projects", d.projects.length], ["admins", "Admins", d.admins.length]]
+          .map(([id, label, n]) => `<button class="prof-tab ${adminTab === id ? "on" : ""}" data-admtab="${id}">${label} <span class="sub" style="font-weight:500">${n}</span></button>`).join("")}
+      </div>
+      <p class="status" id="adm-status" style="font-size:13px;color:#e5484d" hidden></p>
+      <div class="adm-card" data-admpanel="users">
         <table class="adm-table">
           <tr><th>User</th><th>Joined</th><th>Last sign-in</th><th class="num">Projects</th><th class="num">Enabled</th></tr>
           ${d.users.map((u) => `<tr>
@@ -2593,8 +2613,7 @@ async function renderAdmin() {
           </tr>`).join("")}
         </table>
       </div>
-      <div class="adm-card">
-        <h3>Projects</h3>
+      <div class="adm-card" data-admpanel="projects">
         <table class="adm-table">
           <tr><th>Project</th><th>Owner</th><th class="num">Pins</th><th class="num">Members</th><th class="num">Screenshots</th><th class="num">Storage</th></tr>
           ${d.projects.map((p) => `<tr>
@@ -2607,8 +2626,7 @@ async function renderAdmin() {
           </tr>`).join("") || `<tr><td colspan="6" style="color:var(--muted)">No projects yet.</td></tr>`}
         </table>
       </div>
-      <div class="adm-card">
-        <h3>Admins</h3>
+      <div class="adm-card" data-admpanel="admins">
         <table class="adm-table">
           <tr><th>Email</th><th>Added</th><th></th></tr>
           ${d.admins.map((a) => `<tr>
@@ -2618,11 +2636,17 @@ async function renderAdmin() {
           </tr>`).join("")}
         </table>
         <div class="adm-add"><input id="adm-email" type="email" placeholder="name@company.com" /><button class="btn blue" id="adm-add">Add admin</button></div>
-        <p class="status" id="adm-status" style="font-size:13px;color:#e5484d;margin-top:8px"></p>
       </div>
     </div>`;
 
-  const fail = (e) => { $("#adm-status").textContent = (e && e.message) || "Something went wrong."; };
+  // Tabs only show and hide panels: everything came in the one fetch above.
+  const showTab = () => {
+    document.querySelectorAll("[data-admtab]").forEach((t) => t.classList.toggle("on", t.dataset.admtab === adminTab));
+    document.querySelectorAll("[data-admpanel]").forEach((el) => { el.hidden = el.dataset.admpanel !== adminTab; });
+  };
+  showTab();
+  document.querySelectorAll("[data-admtab]").forEach((t) => t.addEventListener("click", () => { adminTab = t.dataset.admtab; showTab(); }));
+  const fail = (e) => { const st = $("#adm-status"); st.textContent = (e && e.message) || "Something went wrong."; st.hidden = false; };
   $("#adm-refresh").addEventListener("click", renderAdmin);
   document.querySelectorAll("input[data-uid]").forEach((cb) => cb.addEventListener("change", async () => {
     const off = !cb.checked;
